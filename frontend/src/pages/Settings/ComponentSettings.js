@@ -127,8 +127,36 @@ const ComponentSettings = ({ settings, getSettingValue, handleChangeBooleanSetti
                             </SettingItem>
                         ))}
                     </SettingCard>
-                </Grid>
-            ))}
+            </Grid>
+
+            <Grid item xs={12}>
+                <SectionTitle variant="h6">{t("settings.general.userInterface")}</SectionTitle>
+                <SettingCard>
+                    <SettingItem>
+                        <Box sx={{ width: '100%' }}>
+                            <Tooltip title={t("settings.general.welcomeMessage.note")} placement="top-start">
+                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                    {t("settings.general.welcomeMessage.name")}
+                                </Typography>
+                            </Tooltip>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                name="welcomeMessage"
+                                value={settings && settings.length > 0 ? getSettingValue("welcomeMessage") : ""}
+                                onChange={(e) => {
+                                    clearTimeout(window.welcomeMessageTimeout);
+                                    window.welcomeMessageTimeout = setTimeout(() => {
+                                        handleChangeSetting(e);
+                                    }, 500);
+                                }}
+                                placeholder={t("settings.general.welcomeMessage.placeholder")}
+                            />
+                        </Box>
+                    </SettingItem>
+                </SettingCard>
+            </Grid>
             
             <Grid item xs={12}>
                 <SectionTitle variant="h6">{t("settings.general.callSettings")}</SectionTitle>
