@@ -132,6 +132,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
     name: "Press Ticket®",
     url: "https://github.com/rtenorioh/Press-Ticket"
   });
+  const [welcomeMessage, setWelcomeMessage] = useState("Bienvenido al sistema.");
 
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -167,6 +168,22 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
     return () => {
       socket.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchWelcomeMessage = async () => {
+      try {
+        const { data } = await api.get("/settings");
+        const welcomeSetting = data.find(s => s.key === "welcomeMessage");
+        if (welcomeSetting && welcomeSetting.value) {
+          setWelcomeMessage(welcomeSetting.value);
+        }
+      } catch (err) {
+        console.error("Error fetching welcome message:", err);
+      }
+    };
+
+    fetchWelcomeMessage();
   }, []);
 
   useEffect(() => {
@@ -346,7 +363,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
           >
             {document.body.offsetWidth < 600 ? 
               companyData.name || "Press Ticket®" :
-              `${t("mainDrawer.appBar.message.hi")} ${user?.name || "Visitante"}, ${t("mainDrawer.appBar.message.text")} ${companyData.name || "Press Ticket®"}.`
+              `${t("mainDrawer.appBar.message.hi")} ${user?.name || "Visitante"}, ${welcomeMessage} ${companyData.name || "Press Ticket®"}.`
             }
           </Title>
 
