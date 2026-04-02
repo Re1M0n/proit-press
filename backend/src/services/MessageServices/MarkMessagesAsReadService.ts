@@ -1,0 +1,127 @@
+import { getIO } from "../../libs/socket";
+import Message from "../../models/Message";
+import Ticket from "../../models/Ticket";
+import GetTicketWbot from "../../helpers/GetTicketWbot";
+import { getWbot, restartWbot } from "../../libs/wbot";
+import { logger } from "../../utils/logger";
+import Whatsapp from "../../models/Whatsapp";
+
+interface Request {
+  ticketId: string | number;
+}
+
+const MarkMessagesAsReadService = async ({
+  ticketId
+}: Request): Promise<void> => {
+  const io = getIO();
+  
+  const unreadMessages = await Message.findAll({
+    where: {
+      ticketId,
+      read: false,
+      fromMe: false
+    },
+    include: [
+      {
+        model: Ticket,
+        as: "ticket",
+        include: ["contact"]
+      }
+    ]
+  });
+
+  if (unreadMessages.length === 0) {
+    return;
+  }
+
+  const ticket = await Ticket.findByPk(ticketId, { include: ["contact"] });
+
+  if (!ticket) {
+    throw new Error("Ticket no encontrado");
+  }
+
+  try {
+    const whatsapp = await Whatsapp.findByPk(ticket.whatsappId);
+    if (!whatsapp) {
+      throw new Error(`WhatsApp no encontrado para el ticket ${ticketId}`);
+    }
+    
+    let wbot: any;
+    try {
+      wbot = getWbot(ticket.whatsappId);
+      
+      if (!wbot.info || !wbot.info.wid) {
+        logger.warn(`Sesión WhatsApp para el ticket ${ticketId} no está totalmente inicializada. Intentando reiniciar...`);
+        wbot = await restartWbot(ticket.whatsappId);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
+    } catch (wbotError) {
+      logger.error(`Error al obtener wbot para el ticket ${ticketId}: ${wbotError.message}`);
+      logger.info(`Intentando reiniciar la sesión WhatsApp para el ticket ${ticketId}...`);
+      try {
+        wbot = await restartWbot(ticket.whatsappId);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      } catch (restartError) {
+        logger.error(`Fallo al reiniciar sesión WhatsApp: ${restartError.message}`);
+        throw new Error(`No fue posible obtener una sesión válida de WhatsApp: ${restartError.message}`);
+      }
+    }
+    
+    const chatId = ticket.isGroup 
+      ? `${ticket.contact.number}@g.us` 
+      : `${ticket.contact.number}@c.us`;
+    
+    logger.info(`Marcando mensajes como leídos para el ticket ${ticket.id}, chat ${chatId}`);
+    
+    try {
+      const chat = await wbot.getChatById(chatId);
+      
+      if (!chat || !chat.sendSeen) {
+        logger.error(`Chat inválido para el ID ${chatId}`);
+        throw new Error(`Chat inválido o no inicializado para el ID ${chatId}`);
+      }
+      
+      const sendSeenWithRetry = async (retries = 3): Promise<boolean> => {
+        try {
+          wbot.sendPresenceAvailable();
+          
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          await chat.sendSeen();
+          
+          logger.info(`SendSeen ejecutado con éxito para el chat ${chatId}`);
+          return true;
+        } catch (seenError) {
+          if (retries > 0) {
+            logger.warn(`Error al enviar sendSeen, intentando de nuevo (${retries} intentos restantes): ${seenError.message}`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return sendSeenWithRetry(retries - 1);
+          }
+          logger.error(`Fallo al enviar sendSeen tras múltiples intentos: ${seenError.message}`);
+          return false;
+        }
+      };
+      
+      await sendSeenWithRetry();
+    } catch (chatError) {
+      logger.error(`Error al obtener chat para marcar como leído: ${chatError.message}`);
+    }
+    
+    for (const message of unreadMessages) {
+      await message.update({ read: true, ack: 3 });
+      
+      io.to(message.ticketId.toString()).emit("appMessage", {
+        action: "update",
+        message
+      });
+    }
+    
+    await ticket.update({ unreadMessages: 0 });
+    
+  } catch (error) {
+    logger.error(`Error al marcar mensajes como leídos para el ticket ${ticketId}: ${error.message}`);
+    console.error("Error al marcar mensajes como leídos:", error);
+  }
+};
+
+export default MarkMessagesAsReadService;
