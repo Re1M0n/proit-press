@@ -580,6 +580,13 @@ const verifyQueue = async (
   ticket: Ticket,
   contact: Contact
 ) => {
+
+  // Si el usuario responde a un mensaje iniciado por un agente, no enviar greeting automático
+  if (!msg.fromMe && ticket.lastMessage) {
+    console.info(`[GREETING_SKIP] Ticket  ya tenía lastMessage, no se envía greeting.`);
+    return;
+  }
+
   const { queues, greetingMessage, isDisplay } = await ShowWhatsAppService(
     wbot.id!
   );
@@ -762,16 +769,23 @@ const verifyQueue = async (
         ticketId: ticket.id
       });
 
-      const body = formatBody(`\u200e${greetingMessage}`, ticket);
-      const body2 = formatBody(`\u200e${queues[0].greetingMessage}`, ticket);
+      const body = greetingMessage?.trim()
+        ? formatBody(`\u200e${greetingMessage}`, ticket)
+        : null;
+
+      const body2 = queues[0].greetingMessage?.trim()
+        ? formatBody(`\u200e${queues[0].greetingMessage}`, ticket)
+        : null;
 
       const debouncedSentMessage = debounce(
         async () => {
-          const sentMessage = await wbot.sendMessage(
-            `${contact.number}@c.us`,
-            body
-          );
-          verifyMessage(sentMessage, ticket, contact);
+          if (body) {
+            const sentMessage = await wbot.sendMessage(
+              `${contact.number}@c.us`,
+              body
+      );
+      verifyMessage(sentMessage, ticket, contact);
+          }
         },
         3000,
         ticket.id
@@ -782,11 +796,13 @@ const verifyQueue = async (
       setTimeout(() => {
         const debouncedSecondMessage = debounce(
           async () => {
-            const sentMessage = await wbot.sendMessage(
-              `${contact.number}@c.us`,
-              body2
+            if (body2) {
+               const sentMessage = await wbot.sendMessage(
+                `${contact.number}@c.us`,
+               body2
             );
             verifyMessage(sentMessage, ticket, contact);
+            }
           },
           2000,
           ticket.id
@@ -1097,7 +1113,10 @@ const handleMessage = async (
     } else {
       await verifyMessage(msg, ticket, contact);
     }
-
+    const now = Math.floor(Date.now() / 1000);
+    const msgAge = now - msg.timestamp;
+    const greetingMaxAge = 300; // 5 minutos
+    const isOldMessage = msgAge > greetingMaxAge;
     const backCommands = ["voltar", "menu", "inicio", "sair", "0", "#"];
     if (backCommands.includes(msg.body.toLowerCase().trim())) {
 
@@ -1106,7 +1125,11 @@ const handleMessage = async (
         ticketId: ticket.id
       });
 
-      await verifyQueue(wbot, msg, ticket, contact);
+      if(!isOldMessage) {
+	await verifyQueue(wbot, msg, ticket, contact);
+	} else {
+	  logger.info(`[GREETING_IGNORADO] Mensagem antiga (backCommands). ID=${msg.id.id} age=${msgAge}s`);
+	}
       return;
     }
 
@@ -1117,7 +1140,11 @@ const handleMessage = async (
       !ticket.userId &&
       whatsapp.queues.length >= 1
     ) {
-      await verifyQueue(wbot, msg, ticket, contact);
+      if (!isOldMessage) {
+	await verifyQueue(wbot, msg, ticket, contact);
+      } else {
+	console.info(`[GREETING_IGNORADO] Mensagem antiga (autoQueue). ID=${msg.id.id} age=${msgAge}s`);
+	}
     }
 
     if (msg.type === "vcard") {

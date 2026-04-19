@@ -45,11 +45,13 @@ const UpdateTicketService = async ({
     await CheckContactOpenTickets(ticket.contact.id, ticket.whatsappId);
   }
 
-  await ticket.update({
-    status,
-    queueId,
-    userId
-  });
+   const updateData: any = {};
+
+   if (status !== undefined) updateData.status = status;
+   if (queueId !== undefined) updateData.queueId = queueId;
+   if (userId !== undefined) updateData.userId = userId;
+
+   await ticket.update(updateData);
 
   if (whatsappId) {
     await ticket.update({

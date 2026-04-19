@@ -20,16 +20,18 @@ import routes from "./routes";
 import swaggerSpec from "./config/swagger";
 import { apiLimiter } from "./config/rateLimiter";
 
+import isAuth from "./middleware/isAuth";
+
 if (process.env.NODE_ENV === "production") {
   Sentry.init({ dsn: process.env.SENTRY_DSN });
 }
 
 const app = express();
 
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 app.use((req, res, next) => {
-  if (req.path === '/api-docs' || req.path.startsWith('/api-docs/')) {
+  if (req.path === "/api-docs" || req.path.startsWith("/api-docs/")) {
     helmet({
       contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: false,
@@ -38,18 +40,19 @@ app.use((req, res, next) => {
       xContentTypeOptions: false,
       permittedCrossDomainPolicies: { permittedPolicies: "none" }
     })(req, res, () => {
-      res.setHeader('X-Frame-Options', 'ALLOWALL');
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Content-Security-Policy', 
+      res.setHeader("X-Frame-Options", "ALLOWALL");
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader(
+        "Content-Security-Policy",
         "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; " +
-        "script-src * 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src * 'unsafe-inline'; " +
-        "img-src * data: blob: 'unsafe-inline'; " +
-        "font-src * data:; " +
-        "connect-src *; " +
-        "frame-src *; " +
-        "media-src *; " +
-        "object-src *;"
+          "script-src * 'unsafe-inline' 'unsafe-eval'; " +
+          "style-src * 'unsafe-inline'; " +
+          "img-src * data: blob: 'unsafe-inline'; " +
+          "font-src * data:; " +
+          "connect-src *; " +
+          "frame-src *; " +
+          "media-src *; " +
+          "object-src *;"
       );
       next();
     });
@@ -65,8 +68,9 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  res.setHeader('Permissions-Policy', 
-    'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+  res.setHeader(
+    "Permissions-Policy",
+    "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
   );
   next();
 });
@@ -74,7 +78,10 @@ app.use((req, res, next) => {
 app.use(compression());
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
     if (!origin) {
       return callback(null, true);
     }
@@ -82,41 +89,46 @@ const corsOptions = {
       return callback(null, true);
     }
 
-    if (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) {
+    if (process.env.NODE_ENV !== "production" && origin.includes("localhost")) {
       return callback(null, true);
     }
     logger.warn(`CORS bloqueó origen no permitido: ${origin}`);
-    callback(new Error('No permitido por CORS'));
+    callback(new Error("No permitido por CORS"));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Range', 'Accept', 'x-api-token'],
-  exposedHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length'],
-  maxAge: 86400 // 24 horas de cache para preflight
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Range", "Accept", "x-api-token"],
+  exposedHeaders: ["Content-Range", "Accept-Ranges", "Content-Length"],
+  maxAge: 86400
 };
 
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.raw({ limit: '500mb' }));
-app.use(express.urlencoded({ limit: '500mb', extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.raw({ limit: "500mb" }));
+app.use(express.urlencoded({ limit: "500mb", extended: true }));
 app.use(Sentry.Handlers.requestHandler());
 
 const openApiCorsOptions = {
   credentials: true,
   origin: "*",
-  allowedHeaders: ["Content-Type", "Authorization", "x-api-token"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-api-token"]
 };
 
-app.use("/api-docs", (req: Request, res: Response, next: NextFunction) => {
-  res.setHeader('X-Frame-Options', 'ALLOWALL');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-}, swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: "Press Ticket® API Documentation"
-}));
+app.use(
+  "/api-docs",
+  (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader("X-Frame-Options", "ALLOWALL");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    next();
+  },
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Press Ticket® API Documentation"
+  })
+);
 
 app.get("/api-docs.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -131,15 +143,17 @@ const publicCorsOptions = {
   methods: ["GET", "HEAD", "OPTIONS"],
   allowedHeaders: ["Range", "Content-Type", "Accept", "Origin"],
   exposedHeaders: ["Content-Range", "Accept-Ranges", "Content-Length", "Content-Type"],
-  maxAge: 86400, // Cache de 24h para preflight
+  maxAge: 86400,
   optionsSuccessStatus: 200
 };
 
 app.use("/public", cors(publicCorsOptions), (req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
   next();
-}, express.static(uploadConfig.directory));
+});
+
+app.use("/uploads", isAuth, express.static(uploadConfig.directory));
 app.use(routes);
 app.use(updateLastActivity);
 

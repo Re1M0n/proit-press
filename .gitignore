@@ -1,8 +1,16 @@
-.docker/data/
-ssl/
 .env
-.wwebjs_auth
-.vscode
+.env.*
+!.env.example
 
-estrutura_projeto.txt
-log/
+node_modules/
+dist/
+build/
+coverage/
+
+*.log
+logs/
+.pm2/
+
+.DS_Store
+.idea/
+.vscode/
