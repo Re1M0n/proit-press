@@ -1,25 +1,48 @@
-# ProIT CRM
+# ProIT CRM®
 
-Bienvenido a ProIT CRM, la solución definitiva para la gestión de tickets. Asigne, rastree y resuelva tickets de manera efectiva y eficiente.  
+Bienvenido a ProIT CRM®, su solución integral para la gestión de relaciones con clientes. Esta guía le proporcionará todas las instrucciones necesarias para la instalación, así como información sobre secciones, opciones de contribución, credenciales de demostración e información de hospedaje.
 
-## Características
+## Instrucciones de Instalación
 
-- Interfaz fácil de usar
-- Asignación de tickets a miembros del equipo
-- Seguimiento del progreso de los tickets
-- Informes detallados sobre los tickets
+1. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/Re1M0n/proit-press.git
+   cd proit-press
+   ```
+2. **Instalar dependencias**:
+   ```bash
+   npm install
+   ```
+3. **Configurar el entorno**:
+   Asegúrese de que su archivo `.env` esté correctamente configurado.
+4. **Ejecutar la aplicación**:
+   ```bash
+   npm start
+   ```
 
-## Instalación
+## Sección de Canales
 
-Siga estos pasos para instalar ProIT CRM en su sistema:
-1. Descargue el paquete
-2. Extraiga el contenido
-3. Ejecute el instalador
+ProIT CRM® admite múltiples canales de comunicación, incluyendo:
+- Correo Electrónico
+- SMS 
+- Mensajería Instantánea
 
-## Contribución
+## Opciones de Contribución
 
-Las contribuciones son bienvenidas. Si desea contribuir, por favor, abra un *issue* o solicite un *pull request*.
+Nos encantaría que contribuyas al proyecto. Aquí te mostramos cómo puedes hacerlo:
+1. **Fork el repositorio**
+2. **Crea una nueva rama**: `git checkout -b feature/nueva-funcionalidad`
+3. **Haz tus cambios y prueba**
+4. **Crea un Pull Request**
 
-## Licencia
+## Credenciales de Demostración
 
-Este proyecto está bajo la Licencia MIT - consulte el archivo [LICENSE](LICENSE) para más detalles.
+- **Usuario**: demo@proitcrm.com
+- **Contraseña**: demo123
+
+## Información de Hospedaje
+
+ProIT CRM® está hospedado en un entorno seguro y escalable. Para más información sobre nuestros planes de hospedaje, visite [nuestro sitio web](https://proitcrm.com/hospedaje).
+
+![Badge](https://img.shields.io/badge/version-1.0.0-green)
+![Badge](https://img.shields.io/badge/license-MIT-yellow)
