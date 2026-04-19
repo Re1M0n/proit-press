@@ -108,39 +108,10 @@ Este sistema é ideal para empresas que buscam melhorar seu atendimento ao clien
 ## Canais disponíveis:
 
 - WhatsApp (wwebjs);
-- Telegram;
-- Facebook;
-- Instagram; e
-- WebChat.
-
-Para ativar **Facebook**, **Instagram**, **Telegram** e **WebChat**:
-
-1. [Realize seu cadastro aqui](https://hub.notificame.com.br/signup/registrar?from=@pressticket);
-2. Adquira a quantidade desejada de canais usando o cupom de desconto: **PRESS60**;
-3. Conecte aos canais que deseja ativar, seguindo as instruções ao conectar; e
-4. Insira o token da sua Account na página de Configurações para finalizar a integração.
-
-> Use o cupom de desconto oferece para 50% de desconto na compra dos canais!
-
-## Caso queira ajudar a manter o projeto, pode contribuir com uma das opções abaixo:
-
-- Mensais:
-  - Brasil:
-    - Chave PIX:
-    - ![49.700.429/0001.80](img/image.png)
-    - CNPJ: 49.700.429/0001.80
-  - Demais Países:
-    - [Contribuir via Paypal](https://www.paypal.com/donate/?hosted_button_id=TY7GF22DBYZSA)
-
-## Registro de todas as alterações:
 
 - [Changelog](https://github.com/rtenorioh/Press-Ticket/blob/main/docs/CHANGELOG.md)
 
-## Demo:
-
-```bash
-https://demo.pressticket.com.br
-```                                         
+                                    
 
 | User Type   | User                           | Password    |
 | ----------- | ------------------------------ | ----------- |
