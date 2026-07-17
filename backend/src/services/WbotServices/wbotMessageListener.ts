@@ -224,7 +224,11 @@ const verifyMediaMessage = async (
   }
   
   try {
-    const newMessage = await CreateMessageService({ messageData });
+    const newMessage = 
+logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+await CreateMessageService({ messageData });
+logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+
     
     const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
     const formattedLastMessage = FormatLastMessage({
@@ -245,7 +249,11 @@ const verifyMediaMessage = async (
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
-          const newMessage = await CreateMessageService({ messageData });
+          const newMessage = 
+logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+await CreateMessageService({ messageData });
+logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+
           
           const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
           const formattedLastMessage = FormatLastMessage({
@@ -521,7 +529,11 @@ const verifyMessage = async (
   }
 
   try {
-    await CreateMessageService({ messageData });
+    
+logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+await CreateMessageService({ messageData });
+logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+
     
     const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
     const formattedLastMessage = FormatLastMessage({
@@ -539,7 +551,11 @@ const verifyMessage = async (
     console.error("Erro ao salvar mensagem no banco de dados:", error);
     setTimeout(async () => {
       try {
-        await CreateMessageService({ messageData });
+        
+logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+await CreateMessageService({ messageData });
+logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+
         
         const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
         const formattedLastMessage = FormatLastMessage({
@@ -601,7 +617,8 @@ const verifyQueue = async (
       ticketId: ticket.id
     });
 
-    const chat = await msg.getChat();
+    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
     await chat.sendStateTyping();
 
     const body = formatBody(`\u200e${queues[0].greetingMessage}`, ticket);
@@ -666,7 +683,8 @@ const verifyQueue = async (
         ticketId: ticket.id
       });
 
-      const chat = await msg.getChat();
+      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
       
       const messageToSend = isBreakTime && choosenQueue.breakMessage 
@@ -693,7 +711,8 @@ const verifyQueue = async (
         ticketId: ticket.id
       });
 
-      const chat = await msg.getChat();
+      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
 
       const body = formatBody(`\u200e${choosenQueue.greetingMessage}`, ticket);
@@ -720,7 +739,8 @@ const verifyQueue = async (
     }
 
     if (greetingCounts[contactId] < greetingLimit) {
-      const chat = await msg.getChat();
+      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
       greetingCounts[contactId]++;
       console.info(`Contador de saudações para ${contactId}:`, greetingCounts[contactId]);
@@ -878,10 +898,30 @@ const getSafeContact = async (
   }
 };
 
+const getSafeChat = async (wbot: Session, msg: WbotMessage): Promise<any> => {
+  try {
+    return await msg.getChat();
+  } catch (err) {
+    logger.warn("[FALLBACK] getChat falló: " + (err?.message || String(err)));
+    return {
+      sendStateTyping: async () => {}
+    };
+  }
+};
+
 const handleMessage = async (
   msg: WbotMessage,
   wbot: Session
 ): Promise<void> => {
+
+    logger.info("====================================================");
+    logger.info("[HANDLE_MESSAGE] Evento recibido");
+    logger.info(`[HANDLE_MESSAGE] id=${msg.id?.id}`);
+    logger.info(`[HANDLE_MESSAGE] from=${msg.from}`);
+    logger.info(`[HANDLE_MESSAGE] to=${msg.to}`);
+    logger.info(`[HANDLE_MESSAGE] fromMe=${msg.fromMe}`);
+    logger.info(`[HANDLE_MESSAGE] type=${msg.type}`);
+    logger.info(`[HANDLE_MESSAGE] body=${(msg.body || "").substring(0,80)}`);
   try {
     if (wbot.id) {
       incrementMessageCount(wbot.id);
@@ -912,7 +952,8 @@ const handleMessage = async (
   });
 
   if (Integrationdb?.value) {
-    const chat = await msg.getChat();
+    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
     let groupContact;
     let baseContact: WbotContact;
     
@@ -929,6 +970,7 @@ const handleMessage = async (
     }
     
     const contact = await verifyContact(baseContact);
+      logger.info(`[CONTACT] id=${contact.id} number=${contact.number}`);
     
     const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
     
@@ -940,6 +982,7 @@ const handleMessage = async (
       undefined,
       groupContact
     );
+      logger.info(`[TICKET] id=${ticket.id}`);
     
     const options = {
       method: "POST",
@@ -964,7 +1007,8 @@ const handleMessage = async (
     where: { key: "CheckMsgIsGroup" }
   });
   if (Settingdb?.value === "enabled") {
-    const chat = await msg.getChat();
+    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
     if (
       msg.type === "sticker" ||
       msg.type === "e2e_notification" ||
@@ -983,7 +1027,8 @@ const handleMessage = async (
     let userId;
     let queueId;
 
-    const chat = await msg.getChat();
+    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+const chat = await getSafeChat(wbot, msg);
 
     if (msg.fromMe) {
       if (/\u200e/.test(msg.body[0])) return;
