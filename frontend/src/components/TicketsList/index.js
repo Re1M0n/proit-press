@@ -74,9 +74,12 @@ const reducer = (state, action) => {
                                         merged.unreadMessages = incoming.unreadMessages;
                                 }
                                 state[ticketIndex] = merged;
-                                if (merged.unreadMessages > 0) {
-                                        state.unshift(state.splice(ticketIndex, 1)[0]);
-                                }
+                                const oldDate = existing.updatedAt ? new Date(existing.updatedAt) : null;
+                          const newDate = merged.updatedAt ? new Date(merged.updatedAt) : null;
+
+                          if ((newDate && oldDate && newDate > oldDate) || merged.unreadMessages > 0) {
+                                  state.unshift(state.splice(ticketIndex, 1)[0]);
+                          }
                         } else {
                                 state.push(incoming);
                         }
@@ -108,9 +111,12 @@ const reducer = (state, action) => {
                                 lastMessage: incoming.lastMessage || existing.lastMessage,
                         };
                         state[ticketIndex] = merged;
-                        if (merged.unreadMessages > 0) {
-                                state.unshift(state.splice(ticketIndex, 1)[0]);
-                        }
+                        const oldDate = existing.updatedAt ? new Date(existing.updatedAt) : null;
+                          const newDate = merged.updatedAt ? new Date(merged.updatedAt) : null;
+
+                          if ((newDate && oldDate && newDate > oldDate) || merged.unreadMessages > 0) {
+                                  state.unshift(state.splice(ticketIndex, 1)[0]);
+                          }
                 } else {
                         state.unshift(incoming);
                 }
@@ -333,6 +339,8 @@ const TicketsList = (props) => {
                         socket.on("reconnect", handleConnect);
 
                         socket.on("ticket", (data) => {
+                                  console.log("EVENTO TICKET", data);
+
                                 try {
                                         if (data.action === "update") {
                                                 if (isGroup !== undefined && data.ticket?.contact) {

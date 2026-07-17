@@ -68,7 +68,7 @@ const AcceptTicketWithouSelectQueue = ({ modalOpen, onClose, ticketId, onSuccess
 		setSelectedQueue(INITIAL_QUEUE_VALUE);
 	}, [onClose]);
 
-	const checkOpenTickets = useCallback(async (contactId) => {
+        	const checkOpenTickets = useCallback(async (contactId) => {
 		try {
 			const response = await api.get(`/tickets/contact/${contactId}/open`);
 
@@ -156,6 +156,15 @@ const AcceptTicketWithouSelectQueue = ({ modalOpen, onClose, ticketId, onSuccess
 			toastError(err, t);
 		}
 	}, [ticketId, userId, navigate, handleClose, checkOpenTickets, t, settings, onSuccess]);
+    useEffect(() => {
+      if (modalOpen && user?.queues?.length === 1 && !loading) {
+        const onlyQueueId = user.queues[0].id;
+        handleUpdateTicketStatus(onlyQueueId);
+      }
+    }, [modalOpen, user, loading, handleUpdateTicketStatus]);
+
+
+
 
 	return (
 		<StyledDialog

@@ -322,7 +322,7 @@ const ListTicketsService = async ({
     distinct: true,
     limit,
     offset,
-    order: [[settingCreated, settingASC]]
+    order: [["updatedAt", "DESC"]]
   });
 
   const hasMore = !(all === "true") && count > offset + defaultLimit;

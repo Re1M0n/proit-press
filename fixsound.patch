@@ -1,0 +1,71 @@
+diff --git a/frontend/src/components/NotificationsPopOver/index.js b/frontend/src/components/NotificationsPopOver/index.js
+index 1234567..89abcde 100644
+--- a/frontend/src/components/NotificationsPopOver/index.js
++++ b/frontend/src/components/NotificationsPopOver/index.js
+@@ -15,9 +15,8 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+ import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+ import { format } from "date-fns";
+ import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+ import { useTranslation } from "react-i18next";
+ import { useNavigate, useLocation } from "react-router-dom";
+ import { toast } from "react-toastify";
+-import useSound from "use-sound";
+ import alertSound from "../../assets/sound.mp3";
+ import { AuthContext } from "../../context/Auth/AuthContext";
+ import toastError from "../../errors/toastError";
+ import { getImageUrl } from "../../helpers/imageHelper";
+ import useTickets from "../../hooks/useTickets";
+@@ -52,13 +51,20 @@ const NotificationsPopOver = () => {
+         const [notificationsAllowed, setNotificationsAllowed] = useState(
+                 Notification.permission === "granted"
+         );
+         const { tickets } = useTickets({ withUnreadMessages: "true", all: true });
+-        const [play, { stop }] = useSound(alertSound, { soundEnabled: isAudioEnabled });
+-        const soundAlertRef = useRef(play);
+ 
+-        useEffect(() => {
+-                soundAlertRef.current = play;
+-        }, [play]);
++        const audioRef = useRef(null);
++
++        useEffect(() => {
++                audioRef.current = new Audio(alertSound);
++                audioRef.current.volume = 1;
++        }, []);
++
++        const playSound = () => {
++                try {
++                        if (!audioRef.current) return;
++                        audioRef.current.currentTime = 0;
++                        audioRef.current.play();
++                } catch (e) {
++                        console.log("Sound error:", e);
++                }
++        };
+ 
+         useEffect(() => {
+                 setNotifications((tickets || []).filter(t => t.status !== "closed"));
+         }, [tickets]);
+@@ -130,8 +136,8 @@ const NotificationsPopOver = () => {
+                                 console.error("[NOTIFICAÇÃO] Erro ao exibir notificação:", error);
+                         }
+ 
+-                        if (isAudioEnabled && soundAlertRef.current) {
+-                                soundAlertRef.current();
++                        if (isAudioEnabled) {
++                                playSound();
+                         }
+                 },
+                 [isAudioEnabled, navigate, notificationsAllowed, t]
+         );
+@@ -244,11 +250,9 @@ const NotificationsPopOver = () => {
+         const toggleAudio = () => {
+                 const newAudioStatus = !isAudioEnabled;
+                 setIsAudioEnabled(newAudioStatus);
+                 localStorage.setItem("userAudioEnabled", newAudioStatus.toString());
+-
+-                if (!newAudioStatus) {
+-                        stop();
+-                }
+         };

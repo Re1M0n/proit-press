@@ -1,0 +1,87 @@
+*** src/components/NotificationsPopOver/index.js.orig
+--- src/components/NotificationsPopOver/index.js
+***************
+*** 17,23 ****
+  import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+  import { useTranslation } from "react-i18next";
+  import { useNavigate, useLocation } from "react-router-dom";
+  import { toast } from "react-toastify";
+- import useSound from "use-sound";
+  import alertSound from "../../assets/sound.mp3";
+  import { AuthContext } from "../../context/Auth/AuthContext";
+  import toastError from "../../errors/toastError";
+--- 17,22 ----
+***************
+*** 62,72 ****
+          const [notificationsAllowed, setNotificationsAllowed] = useState(
+                  Notification.permission === "granted"
+          );
+          const { tickets } = useTickets({ withUnreadMessages: "true", all: true });
+-         const [play, { stop }] = useSound(alertSound, { soundEnabled: isAudioEnabled });
+-         const soundAlertRef = useRef(play);
+- 
+-         useEffect(() => {
+-                 soundAlertRef.current = play;
+-         }, [play]);
+  
+          useEffect(() => {
+                  setNotifications((tickets || []).filter(t => t.status !== "closed"));
+          }, [tickets]);
+--- 61,81 ----
+          const [notificationsAllowed, setNotificationsAllowed] = useState(
+                  Notification.permission === "granted"
+          );
+          const { tickets } = useTickets({ withUnreadMessages: "true", all: true });
++ 
++         const audioRef = useRef(null);
++ 
++         useEffect(() => {
++                 audioRef.current = new Audio(alertSound);
++                 audioRef.current.volume = 1;
++         }, []);
++ 
++         const playSound = () => {
++                 try {
++                         if (!audioRef.current) return;
++                         audioRef.current.currentTime = 0;
++                         audioRef.current.play();
++                 } catch (e) {
++                         console.log("Sound error:", e);
++                 }
++         };
+  
+          useEffect(() => {
+                  setNotifications((tickets || []).filter(t => t.status !== "closed"));
+          }, [tickets]);
+***************
+*** 137,142 ****
+  
+-                         if (isAudioEnabled && soundAlertRef.current) {
+-                                 soundAlertRef.current();
+-                         }
+                  },
+                  [isAudioEnabled, navigate, notificationsAllowed, t]
+          );
+--- 146,151 ----
+  
++                         if (isAudioEnabled) {
++                                 playSound();
++                         }
+                  },
+                  [isAudioEnabled, navigate, notificationsAllowed, t]
+          );
+***************
+*** 250,256 ****
+                  localStorage.setItem("userAudioEnabled", newAudioStatus.toString());
+  
+-                 if (!newAudioStatus) {
+-                         stop();
+-                 }
+          };
+  
+          const handleClick = () => {
+--- 259,262 ----
+                  localStorage.setItem("userAudioEnabled", newAudioStatus.toString());
+          };
+  
+          const handleClick = () => {

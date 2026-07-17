@@ -110,14 +110,6 @@ const syncUnreadMessages = async (wbot: Session) => {
       }
 
       const chats = await wbot.getChats();
-
-        if (chats.length > 0) {
-          console.log(JSON.stringify({
-            keys: Object.keys(chats[0]),
-            data: chats[0]._data
-          }, null, 2));
-        }
-
       
       if (!chats || !Array.isArray(chats)) {
         console.warn('syncUnreadMessages: chats inválidos');

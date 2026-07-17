@@ -7,9 +7,12 @@ let lastPongTime = Date.now();
 let isSocketHealthy = true;
 
 const connectToSocket = () => {
-    if (socketInstance && socketInstance.connected) {
-        return socketInstance;
-    }
+    if (socketInstance) {
+          if (!socketInstance.connected) {
+              socketInstance.connect();
+          }
+          return socketInstance;
+      }
 
     try {
         const token = localStorage.getItem("token");
@@ -37,10 +40,6 @@ const connectToSocket = () => {
         } catch (err) {
             console.error("Erro ao verificar expiração do token");
             return null;
-        }
-
-        if (socketInstance) {
-            socketInstance.disconnect();
         }
         
         const socket = openSocket(getBackendUrl(), {
@@ -174,9 +173,6 @@ const startHealthCheck = (socket) => {
 };
 
 const reconnectSocket = () => {
-    if (socketInstance) {
-        socketInstance.disconnect();
-    }
     return connectToSocket();
 };
 

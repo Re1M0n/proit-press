@@ -153,7 +153,8 @@ app.use("/public", cors(publicCorsOptions), (req, res, next) => {
   next();
 });
 
-app.use("/uploads", isAuth, express.static(uploadConfig.directory));
+app.use("/public", express.static(uploadConfig.directory));
+app.use("/uploads", express.static(uploadConfig.directory));
 app.use(routes);
 app.use(updateLastActivity);
 

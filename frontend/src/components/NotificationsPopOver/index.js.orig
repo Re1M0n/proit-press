@@ -56,7 +56,7 @@ const NotificationsPopOver = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [notifications, setNotifications] = useState([]);
 	const [isAudioEnabled, setIsAudioEnabled] = useState(
-		localStorage.getItem("userAudioEnabled") !== "false"
+		localStorage.getItem("userAudioEnabled") === "true"
 	);
 	const [notificationsAllowed, setNotificationsAllowed] = useState(
 		Notification.permission === "granted"
@@ -97,14 +97,10 @@ const NotificationsPopOver = () => {
 	const handleNotifications = useCallback(
 		(data) => {
 
-			if (isAudioEnabled && soundAlertRef.current) {
-                                  soundAlertRef.current();
-                          }
-
-                          if (!notificationsAllowed) {
-                                  console.warn("[NOTIFICAÇÃO] Notificações não permitidas pelo navegador");
-                                  return;
-                          }
+			if (!notificationsAllowed) {
+				console.warn("[NOTIFICAÇÃO] Notificações não permitidas pelo navegador");
+				return;
+			}
 
 			const { message, contact, ticket } = data;
 
@@ -129,7 +125,12 @@ const NotificationsPopOver = () => {
 
 			} catch (error) {
 				console.error("[NOTIFICAÇÃO] Erro ao exibir notificação:", error);
-			}		},
+			}
+
+			if (isAudioEnabled && soundAlertRef.current) {
+				soundAlertRef.current();
+			}
+		},
 		[isAudioEnabled, navigate, notificationsAllowed, t]
 	);
 
@@ -140,7 +141,8 @@ const NotificationsPopOver = () => {
 			socket.emit("joinNotification");
 		});
 
-		socket.on("appMessage", (data) => {			if (!data.ticket) {
+		socket.on("appMessage", (data) => {
+			if (!data.ticket) {
 				return;
 			}
 			
@@ -160,7 +162,7 @@ const NotificationsPopOver = () => {
 
 			if (
 				data.action === "create" &&
-				data.ticket.unreadMessages > 0 &&
+				!data.message.read &&
 				(shouldNotifyOpenTicket || shouldNotifyPendingTicket)
 			) {
 				if (data.ticket.status === "closed") {
