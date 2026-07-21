@@ -226,6 +226,10 @@ const SendWhatsAppMessage = async ({
 
     try {
       sentMessage = await wbot.sendMessage(userId, payload, sendOptions);
+
+      console.log("======================================");
+      console.dir(sentMessage, { depth: null });
+      console.log("======================================");
     } catch (e: any) {
       lidError = e?.message?.includes("No LID for user") || String(e).includes("No LID for user");
       if (!lidError) throw e;
@@ -260,10 +264,17 @@ const SendWhatsAppMessage = async ({
     }
     
     return sentMessage;
-  } catch (err) {
-    console.error("Erro ao enviar mensagem:", err);
-    throw new AppError("ERR_SENDING_WAPP_MSG");
-  }
+} catch (err: any) {
+
+  console.error("======================================");
+  console.error("[SEND ERROR]");
+  console.error(err);
+  console.error(err?.message);
+  console.error(err?.stack);
+  console.error("======================================");
+
+  throw new AppError("ERR_SENDING_WAPP_MSG");
+}
 };
 
 export default SendWhatsAppMessage;

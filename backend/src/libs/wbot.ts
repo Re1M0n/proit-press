@@ -114,7 +114,7 @@ const syncUnreadMessages = async (wbot: Session) => {
         if (chats.length > 0) {
           console.log(JSON.stringify({
             keys: Object.keys(chats[0]),
-            data: chats[0]._data
+            data: "debug"
           }, null, 2));
         }
 

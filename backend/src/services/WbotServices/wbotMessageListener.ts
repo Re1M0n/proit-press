@@ -25,6 +25,7 @@ import { debounce } from "../../helpers/Debounce";
 import formatBody from "../../helpers/Mustache";
 import { getIO } from "../../libs/socket";
 import { logger } from "../../utils/logger";
+import { downloadMediaFallback } from "../../libs/downloadMediaFallback";
 import CreateContactService from "../ContactServices/CreateContactService";
 import CreateOrUpdateContactService from "../ContactServices/CreateOrUpdateContactService";
 import GetContactService from "../ContactServices/GetContactService";
@@ -131,11 +132,41 @@ const verifyMediaMessage = async (
 ): Promise<Message> => {
   const quotedMsg = await verifyQuotedMessage(msg);
 
-  const media = await msg.downloadMedia();
+  logger.info(`[MEDIA] Antes downloadMedia id=`);
+    logger.info("[MEDIA KEYS] " + Object.keys(msg).join(","));
+    logger.info("[MEDIA RAW] " + JSON.stringify(msg, null, 2));
+let media: import("whatsapp-web.js").MessageMedia;
 
-  if (!media) {
-    throw new Error("ERR_WAPP_DOWNLOAD_MEDIA");
+try {
+  logger.info("[MEDIA] Intentando downloadMedia");
+
+const exists = await (msg as any).client.pupPage.evaluate((id: string) => {
+  const WA = (window as any).require("WAWebCollections");
+
+  return {
+    total: WA.Msg.models.length,
+    exists: !!WA.Msg.get(id),
+    lastIds: WA.Msg.models.slice(-5).map((m: any) => m.id?._serialized)
+  };
+}, msg.id._serialized);
+
+console.log("[WA CHECK]", JSON.stringify(exists, null, 2));
+
+  const downloaded = await msg.downloadMedia();
+
+  if (!downloaded) {
+    throw new Error("DOWNLOAD_MEDIA_UNDEFINED");
   }
+
+  media = downloaded;
+
+  logger.info("[MEDIA] downloadMedia OK");
+} catch (err) {
+  logger.warn("[MEDIA] downloadMedia falló, usando fallback");
+  media = await downloadMediaFallback(msg);
+}
+
+logger.info(`[MEDIA] Después downloadMedia id=${msg.id.id}`);
 
   if (!media.filename) {
     const ext = media.mimetype.split("/")[1].split(";")[0];
@@ -224,10 +255,9 @@ const verifyMediaMessage = async (
   }
   
   try {
-    const newMessage = 
-logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
-await CreateMessageService({ messageData });
-logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+    logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+      const newMessage = await CreateMessageService({ messageData });
+      logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
     
     const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
@@ -249,10 +279,9 @@ logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageDat
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
-          const newMessage = 
-logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
-await CreateMessageService({ messageData });
-logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
+          logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
+      const newMessage = await CreateMessageService({ messageData });
+      logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
           
           const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
