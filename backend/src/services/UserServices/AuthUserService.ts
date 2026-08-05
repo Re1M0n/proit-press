@@ -89,34 +89,39 @@ const AuthUserService = async ({
     }
   });
 
+  let sessionToReuse = lastSession;
+
   if (lastSession) {
     const lastActivity = new Date(lastSession.lastActivity).getTime();
     const currentTime = new Date().getTime();
     const diffHours = (currentTime - lastActivity) / (1000 * 60 * 60);
 
     if (diffHours >= 8) {
+      // La sesión anterior estuvo inactiva más de 8 horas: se cierra y se crea
+      // una nueva abajo. Antes esto lanzaba ERR_SESSION_EXPIRED (401), lo que
+      // hacía que el PRIMER intento de login fallara siempre con credenciales
+      // correctas (y el segundo entrara porque la sesión vieja ya quedaba
+      // cerrada). El usuario acaba de validar su contraseña: no hay razón para
+      // fallarle el login.
       await lastSession.update({
         logoutAt: new Date()
       });
 
-      await user.update({
-        online: false,
-        currentSessionId: null
-      });
+      sessionToReuse = null;
 
       io.emit("userSessionExpired", {
         userId: user.id,
         expired: true,
         message: "ERR_SESSION_EXPIRED"
       });
-
-      throw new AppError("ERR_SESSION_EXPIRED", 401);
+    } else {
+      await lastSession.update({
+        lastActivity: new Date()
+      });
     }
+  }
 
-    await lastSession.update({
-      lastActivity: new Date()
-    });
-  } else {
+  if (!sessionToReuse) {
     const newSessionId = uuidv4();
 
     await UserSession.create({

@@ -100,7 +100,16 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      handleLogout();
+      // Si el propio request de /auth/login devuelve ERR_SESSION_EXPIRED (p.
+      // ej. una sesión vieja que el backend cerró en el primer intento), no hay
+      // que recargar la página ni limpiar credenciales: la pantalla de login
+      // muestra el error y el usuario puede reintentar sin recarga.
+      const isLoginRequest = originalRequest?.url?.includes("/auth/login");
+
+      if (!isLoginRequest) {
+        handleLogout();
+      }
+
       return Promise.reject(error);
     }
 

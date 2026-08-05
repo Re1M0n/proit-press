@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import AppError from "../errors/AppError";
 import { SendRefreshToken } from "../helpers/SendRefreshToken";
 import User from "../models/User";
+import UserSession from "../models/UserSession";
 import { RefreshTokenService } from "../services/AuthServices/RefreshTokenService";
 import AuthUserService from "../services/UserServices/AuthUserService";
 import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
@@ -68,7 +69,19 @@ export const remove = async (
   if (id) {
     const user = await User.findByPk(id);
     if (user) {
-      await user.update({ online: false });
+      await user.update({ online: false, currentSessionId: null });
+
+      // Cerrar la sesión activa del usuario (logoutAt): antes el logout no
+      // cerraba la UserSession, por lo que el siguiente login encontraba una
+      // sesión vieja y el primer intento fallaba con ERR_SESSION_EXPIRED.
+      try {
+        await UserSession.update(
+          { logoutAt: new Date() },
+          { where: { userId: user.id, logoutAt: null } }
+        );
+      } catch (sessionErr) {
+        console.error("Error al cerrar la UserSession en logout:", sessionErr);
+      }
       
       // LOG: Logout
       try {
