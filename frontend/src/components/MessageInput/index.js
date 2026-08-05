@@ -829,29 +829,7 @@ const MessageInput = ({ ticketStatus }) => {
             read: 1
           };
           
-          setTimeout(() => {
-            const event = new CustomEvent('newMessage', { 
-              detail: { 
-                message: messageData,
-                ticketId: ticketId 
-              } 
-            });
-            document.dispatchEvent(event);
-            
-            const messagesContainer = document.querySelector('.messages-list-scrollable');
-            if (messagesContainer) {
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-          }, 0);
-          
-          const socket = openSocket();
-          if (socket) {
-            socket.emit("appMessage", {
-              action: "create",
-              message: messageData,
-              ticket: { id: ticketId }
-            });
-          }
+          // Esperar el appMessage emitido por el backend.
         }
       } catch (err) {
         toastError(err, t);
@@ -1017,29 +995,7 @@ const MessageInput = ({ ticketStatus }) => {
             read: 1
           };
           
-          setTimeout(() => {
-            const event = new CustomEvent('newMessage', { 
-              detail: { 
-                message: messageData,
-                ticketId: ticketId 
-              } 
-            });
-            document.dispatchEvent(event);
-            
-            const messagesContainer = document.querySelector('.messages-list-scrollable');
-            if (messagesContainer) {
-              messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-          }, 0);
-          
-          const socket = openSocket();
-          if (socket) {
-            socket.emit("appMessage", {
-              action: "create",
-              message: messageData,
-              ticket: { id: ticketId }
-            });
-          }
+          // Esperar el appMessage emitido por el backend.
         }
       }
     } catch (err) {

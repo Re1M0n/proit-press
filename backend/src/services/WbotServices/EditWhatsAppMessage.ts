@@ -30,22 +30,31 @@ const EditWhatsAppMessage = async (
   const oldBody = message.body;
   
   let messageToEdit;
-  try {
-    messageToEdit = await GetWbotMessage(ticket, messageId);
-  } catch (getMessageError: any) {
-    console.error(`[EditWhatsAppMessage] Erro ao buscar mensagem no WhatsApp:`, getMessageError);
-    throw new AppError("ERR_FETCH_WAPP_MSG_TO_EDIT");
-  }
 
   try {
-    const res = await messageToEdit.edit(newBody);
-    
-    if (res === null) {
-      throw new Error("Não foi possível editar a mensagem. Ela pode ser muito antiga (mais de 15 minutos) ou não ser editável.");
-    }
-    
+    messageToEdit = await GetWbotMessage(ticket, messageId);
   } catch (err: any) {
-    throw new AppError("ERR_EDITING_WAPP_MSG");
+    console.error(
+      "[EditWhatsAppMessage] No se pudo localizar el mensaje en WhatsApp:",
+      err
+    );
+    throw new AppError("ERR_FETCH_WAPP_MSG", 400);
+  }
+
+  let res: any;
+
+  try {
+    res = await messageToEdit.edit(newBody);
+  } catch (err: any) {
+    console.error("[EditWhatsAppMessage] edit() lanzó un error:", err);
+    throw new AppError("ERR_EDITING_WAPP_MSG", 400);
+  }
+
+  // wwebjs devuelve null/undefined cuando WhatsApp no permite editar:
+  // mensaje muy antiguo (>15 min) o enviado desde otro dispositivo (ej. el
+  // teléfono). Se avisa con un mensaje claro en lugar de un error genérico.
+  if (res === null || res === undefined) {
+    throw new AppError("ERR_MSG_NOT_EDITABLE", 400);
   }
 
 
