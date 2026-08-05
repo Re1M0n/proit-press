@@ -152,13 +152,6 @@ export const initIO = (httpServer: Server): void => {
       socket.disconnect();
     }
 
-    socket.onAny((eventName: string, ...args: unknown[]) => {
-        logger.debug("Evento recibido", {
-        event: eventName,
-        socketId: socket.id,
-        args
-      });
-    });
 
     socket.on("userStatus", async ({ userId, online }: UserStatus) => {
         logger.info("Cambio de estado del usuario", {

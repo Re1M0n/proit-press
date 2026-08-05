@@ -5,6 +5,7 @@ import GetWbotMessage from "../../helpers/GetWbotMessage";
 import SerializeWbotMsgId from "../../helpers/SerializeWbotMsgId";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
+import { logger } from "../../utils/logger";
 
 import formatBody from "../../helpers/Mustache";
 
@@ -37,6 +38,20 @@ interface Request {
   mentions?: string[];
 }
 
+const updateTicketLastMessage = async (
+  ticket: Ticket,
+  body: string
+): Promise<void> => {
+  try {
+    await ticket.update({ lastMessage: body });
+    await ticket.reload();
+  } catch (err) {
+    logger.warn(
+      `Message sent, but ticket ${ticket.id} lastMessage could not be updated: ${err}`
+    );
+  }
+};
+
 const SendWhatsAppMessage = async ({
   body,
   ticket,
@@ -68,9 +83,8 @@ const SendWhatsAppMessage = async ({
         }
         const sentMessage = await originalMessage.reply(formatBody(body, ticket), undefined, replyOptions);
 
-        await ticket.update({ lastMessage: body });
-        await ticket.reload();
-        return sentMessage;
+        await updateTicketLastMessage(ticket, body);
+      return sentMessage;
       } catch (replyError) {
         console.error(`Erro ao usar reply nativo: ${replyError}`);
 
@@ -93,8 +107,7 @@ const SendWhatsAppMessage = async ({
             sentMessage = await wbot.sendMessage(groupId, payload, sendOpts);
           }
 
-          await ticket.update({ lastMessage: body });
-          await ticket.reload();
+          await updateTicketLastMessage(ticket, body);
           return sentMessage;
         } catch (idError) {
           console.error(`Erro ao usar ID serializado diretamente: ${idError}`);
@@ -120,8 +133,7 @@ const SendWhatsAppMessage = async ({
       sentMessage = await wbot.sendMessage(groupId, payload, sendOpts);
     }
 
-    await ticket.update({ lastMessage: body });
-    await ticket.reload();
+    await updateTicketLastMessage(ticket, body);
     return sentMessage;
   }
   
@@ -145,8 +157,14 @@ const SendWhatsAppMessage = async ({
         sentMessage = await wbot.sendMessage(groupId, payload, sendOpts);
       }
 
-      await ticket.update({ lastMessage: body });
-      await ticket.reload();
+      await updateTicketLastMessage(ticket, body);
+
+      if (!sentMessage?.id?.id) {
+        logger.warn(
+          `Message was sent, but WhatsApp returned no message id for ticket ${ticket.id}`
+        );
+        return sentMessage;
+      }
       
       const messageData = {
         id: sentMessage.id.id,
@@ -226,10 +244,6 @@ const SendWhatsAppMessage = async ({
 
     try {
       sentMessage = await wbot.sendMessage(userId, payload, sendOptions);
-
-      console.log("======================================");
-      console.dir(sentMessage, { depth: null });
-      console.log("======================================");
     } catch (e: any) {
       lidError = e?.message?.includes("No LID for user") || String(e).includes("No LID for user");
       if (!lidError) throw e;
@@ -240,8 +254,14 @@ const SendWhatsAppMessage = async ({
       sentMessage = await wbot.sendMessage(lidUserId, payload, sendOptions);
     }
 
-    await ticket.update({ lastMessage: body });
-    await ticket.reload();
+    await updateTicketLastMessage(ticket, body);
+
+    if (!sentMessage?.id?.id) {
+      logger.warn(
+        `Message was sent, but WhatsApp returned no message id for ticket ${ticket.id}`
+      );
+      return sentMessage;
+    }
     
     const messageData = {
       id: sentMessage.id.id,

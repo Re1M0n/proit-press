@@ -25,7 +25,6 @@ import { debounce } from "../../helpers/Debounce";
 import formatBody from "../../helpers/Mustache";
 import { getIO } from "../../libs/socket";
 import { logger } from "../../utils/logger";
-import { downloadMediaFallback } from "../../libs/downloadMediaFallback";
 import CreateContactService from "../ContactServices/CreateContactService";
 import CreateOrUpdateContactService from "../ContactServices/CreateOrUpdateContactService";
 import GetContactService from "../ContactServices/GetContactService";
@@ -132,41 +131,22 @@ const verifyMediaMessage = async (
 ): Promise<Message> => {
   const quotedMsg = await verifyQuotedMessage(msg);
 
-  logger.info(`[MEDIA] Antes downloadMedia id=`);
-    logger.info("[MEDIA KEYS] " + Object.keys(msg).join(","));
-    logger.info("[MEDIA RAW] " + JSON.stringify(msg, null, 2));
 let media: import("whatsapp-web.js").MessageMedia;
 
 try {
-  logger.info("[MEDIA] Intentando downloadMedia");
 
-const exists = await (msg as any).client.pupPage.evaluate((id: string) => {
-  const WA = (window as any).require("WAWebCollections");
 
-  return {
-    total: WA.Msg.models.length,
-    exists: !!WA.Msg.get(id),
-    lastIds: WA.Msg.models.slice(-5).map((m: any) => m.id?._serialized)
-  };
-}, msg.id._serialized);
-
-console.log("[WA CHECK]", JSON.stringify(exists, null, 2));
-
-  const downloaded = await msg.downloadMedia();
+const downloaded = await msg.downloadMedia();
 
   if (!downloaded) {
     throw new Error("DOWNLOAD_MEDIA_UNDEFINED");
   }
 
   media = downloaded;
-
-  logger.info("[MEDIA] downloadMedia OK");
 } catch (err) {
-  logger.warn("[MEDIA] downloadMedia falló, usando fallback");
-  media = await downloadMediaFallback(msg);
+  console.error("[MEDIA] Error al descargar media:", err);
+  throw err;
 }
-
-logger.info(`[MEDIA] Después downloadMedia id=${msg.id.id}`);
 
   if (!media.filename) {
     const ext = media.mimetype.split("/")[1].split(";")[0];
@@ -255,9 +235,7 @@ logger.info(`[MEDIA] Después downloadMedia id=${msg.id.id}`);
   }
   
   try {
-    logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
       const newMessage = await CreateMessageService({ messageData });
-      logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
     
     const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
@@ -279,9 +257,7 @@ logger.info(`[MEDIA] Después downloadMedia id=${msg.id.id}`);
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
-          logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
       const newMessage = await CreateMessageService({ messageData });
-      logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
           
           const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
@@ -391,12 +367,6 @@ const verifyMessage = async (
     const poll = msg as any;
     const pollName = poll.pollName || "Enquete";
     const pollOptions = poll.pollOptions || [];
-    
-    logger.info(`[POLL_RECEIVED] Estrutura completa da enquete: ${JSON.stringify({
-      pollName,
-      pollOptions,
-      totalOptions: pollOptions.length
-    })}`);
     
     pollBody = `📊 Enquete: ${pollName}\n\n`;
     pollBody += `Selecione uma ou mais opções:\n\n`;
@@ -559,9 +529,7 @@ const verifyMessage = async (
 
   try {
     
-logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
 await CreateMessageService({ messageData });
-logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
     
     const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
@@ -581,9 +549,7 @@ logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageDat
     setTimeout(async () => {
       try {
         
-logger.info("[CREATE_MESSAGE] Antes de CreateMessageService id=" + messageData.id);
 await CreateMessageService({ messageData });
-logger.info("[CREATE_MESSAGE] Después de CreateMessageService id=" + messageData.id);
 
         
         const FormatLastMessage = require("../../helpers/FormatLastMessage").default;
@@ -646,7 +612,7 @@ const verifyQueue = async (
       ticketId: ticket.id
     });
 
-    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+
 const chat = await getSafeChat(wbot, msg);
     await chat.sendStateTyping();
 
@@ -712,7 +678,7 @@ const chat = await getSafeChat(wbot, msg);
         ticketId: ticket.id
       });
 
-      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+  
 const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
       
@@ -740,7 +706,7 @@ const chat = await getSafeChat(wbot, msg);
         ticketId: ticket.id
       });
 
-      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+  
 const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
 
@@ -768,7 +734,7 @@ const chat = await getSafeChat(wbot, msg);
     }
 
     if (greetingCounts[contactId] < greetingLimit) {
-      console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+  
 const chat = await getSafeChat(wbot, msg);
       await chat.sendStateTyping();
       greetingCounts[contactId]++;
@@ -943,14 +909,6 @@ const handleMessage = async (
   wbot: Session
 ): Promise<void> => {
 
-    logger.info("====================================================");
-    logger.info("[HANDLE_MESSAGE] Evento recibido");
-    logger.info(`[HANDLE_MESSAGE] id=${msg.id?.id}`);
-    logger.info(`[HANDLE_MESSAGE] from=${msg.from}`);
-    logger.info(`[HANDLE_MESSAGE] to=${msg.to}`);
-    logger.info(`[HANDLE_MESSAGE] fromMe=${msg.fromMe}`);
-    logger.info(`[HANDLE_MESSAGE] type=${msg.type}`);
-    logger.info(`[HANDLE_MESSAGE] body=${(msg.body || "").substring(0,80)}`);
   try {
     if (wbot.id) {
       incrementMessageCount(wbot.id);
@@ -964,11 +922,8 @@ const handleMessage = async (
     // }
     
     if (!isValidMsg(msg)) {
-      logger.info(`[MSG_IGNORADA] Mensagem ignorada por não ser válida: ID=${msg.id?.id || 'unknown'}`);
       return;
     }
-    
-    logger.info(`[MSG_PROCESSANDO] Iniciando processamento da mensagem: ID=${msg.id?.id || 'unknown'}`);
   } catch (err) {
     logger.error(`[MSG_ERRO_LOG] Erro ao registrar logs iniciais: ${err}`);
     if (wbot.id) {
@@ -981,7 +936,7 @@ const handleMessage = async (
   });
 
   if (Integrationdb?.value) {
-    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+
 const chat = await getSafeChat(wbot, msg);
     let groupContact;
     let baseContact: WbotContact;
@@ -999,7 +954,6 @@ const chat = await getSafeChat(wbot, msg);
     }
     
     const contact = await verifyContact(baseContact);
-      logger.info(`[CONTACT] id=${contact.id} number=${contact.number}`);
     
     const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
     
@@ -1011,7 +965,6 @@ const chat = await getSafeChat(wbot, msg);
       undefined,
       groupContact
     );
-      logger.info(`[TICKET] id=${ticket.id}`);
     
     const options = {
       method: "POST",
@@ -1036,7 +989,7 @@ const chat = await getSafeChat(wbot, msg);
     where: { key: "CheckMsgIsGroup" }
   });
   if (Settingdb?.value === "enabled") {
-    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+
 const chat = await getSafeChat(wbot, msg);
     if (
       msg.type === "sticker" ||
@@ -1056,7 +1009,7 @@ const chat = await getSafeChat(wbot, msg);
     let userId;
     let queueId;
 
-    console.log("\n=== GETCHAT ===", msg.id.id, msg.from, msg.to, msg.fromMe);
+
 const chat = await getSafeChat(wbot, msg);
 
     if (msg.fromMe) {
@@ -1576,7 +1529,7 @@ const chat = await getSafeChat(wbot, msg);
       logger.error(`[MSG_ERRO_LOG] Erro ao tentar registrar detalhes do erro: ${logErr}`);
     }
   } finally {
-    logger.info(`[MSG_FINALIZADA] Processamento da mensagem finalizado: ID=${msg?.id?.id || 'unknown'}, Timestamp=${new Date().toISOString()}`);
+    // sin log por mensaje (evita ruido en el log de pm2)
   }
 };
 
@@ -1585,19 +1538,8 @@ const handleMsgAck = async (msg: WbotMessage, ack: MessageAck) => {
   await new Promise(r => setTimeout(r, 500));
 
   const io = getIO();
-  const timestamp = new Date().toISOString();
 
   try {
-    logger.info(`[ACK_EVENTO] Recebido evento de ACK: ID=${msg.id.id}, ACK=${ack}, Timestamp=${timestamp}`);
-    
-    logger.info(`[ACK_DETALHES] Detalhes da mensagem: ${JSON.stringify({
-      id: msg.id,
-      fromMe: msg.fromMe,
-      to: msg.to,
-      deviceType: msg.deviceType,
-      timestamp: msg.timestamp
-    })}`);
-    
     const messageToUpdate = await Message.findByPk(msg.id.id, {
       include: [
         "contact",
@@ -1623,34 +1565,20 @@ const handleMsgAck = async (msg: WbotMessage, ack: MessageAck) => {
     let ackToUpdate = ack || 0;
     
     if (messageToUpdate.read === true && ackToUpdate < 3 && messageToUpdate.fromMe) {
-      logger.info(`[ACK_DEBUG] Mensagem marcada como lida (read=true), mas ACK=${ackToUpdate}. Mantendo ACK original conforme documentação.`);
+      // Mensagem lida con ACK inferior: se mantiene el ACK original.
     }
     
     if (ackToUpdate > currentAck) {
-      logger.info(`[ACK_ATUALIZACAO] Atualizando ACK da mensagem ${msg.id.id}: ${currentAck} -> ${ackToUpdate}`);
-      
-      const beforeUpdate = new Date().getTime();
       await messageToUpdate.update({ ack: ackToUpdate });
-      const afterUpdate = new Date().getTime();
-      
-      logger.info(`[ACK_PERFORMANCE] Tempo para atualizar ACK no banco: ${afterUpdate - beforeUpdate}ms`);
 
-      const beforeEmit = new Date().getTime();
       io.to(messageToUpdate.ticketId.toString()).emit("appMessage", {
         action: "update",
         message: messageToUpdate
       });
-      const afterEmit = new Date().getTime();
-      
-      logger.info(`[ACK_SOCKET] Socket emitido para ticket ${messageToUpdate.ticketId}, tempo: ${afterEmit - beforeEmit}ms`);
-    } else {
-      logger.info(`[ACK_IGNORADO] ACK ignorado: valor atual (${currentAck}) >= novo valor (${ackToUpdate})`);
     }
     
     if (ackToUpdate >= 2) {
       try {
-        logger.info(`[ACK_BATCH_CHECK] Verificando outras mensagens do ticket ${messageToUpdate.ticketId} para sincronização`);
-        
         const messagesToUpdate = await Message.findAll({
           where: {
             ticketId: messageToUpdate.ticketId,
@@ -1661,8 +1589,6 @@ const handleMsgAck = async (msg: WbotMessage, ack: MessageAck) => {
         });
         
         if (messagesToUpdate.length > 0) {
-          logger.info(`[ACK_BATCH_UPDATE] Encontradas ${messagesToUpdate.length} mensagens para atualização em lote`);
-          
           for (const msg of messagesToUpdate) {
             await msg.update({ ack: ackToUpdate >= 3 ? 3 : 2 });
             
@@ -1671,8 +1597,6 @@ const handleMsgAck = async (msg: WbotMessage, ack: MessageAck) => {
               message: msg
             });
           }
-          
-          logger.info(`[ACK_BATCH_COMPLETE] Atualização em lote concluída`);
         }
       } catch (batchErr) {
         logger.error(`[ACK_BATCH_ERROR] Erro ao processar atualização em lote: ${batchErr}`);

@@ -7,10 +7,21 @@ import { MessageMedia, Message as WbotMessage } from "whatsapp-web.js";
 import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import Ticket from "../../models/Ticket";
+import { logger } from "../../utils/logger";
 
 const writeFileAsync = promisify(fs.writeFile);
 
 import formatBody from "../../helpers/Mustache";
+
+const removeFileSafely = (filePath: string): void => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (err) {
+    logger.warn(`Could not remove temporary media file ${filePath}: ${err}`);
+  }
+};
 
 interface Request {
   media: Express.Multer.File;
@@ -19,6 +30,20 @@ interface Request {
   mentions?: string[];
   sendAsDocument?: boolean;
 }
+
+const updateTicketLastMessage = async (
+  ticket: Ticket,
+  body: string
+): Promise<void> => {
+  try {
+    await ticket.update({ lastMessage: body });
+    await ticket.reload();
+  } catch (err) {
+    logger.warn(
+      `Media sent, but ticket ${ticket.id} lastMessage could not be updated: ${err}`
+    );
+  }
+};
 
 const compressVideo = (inputPath: string, outputPath: string, ticketId: number, socketIo?: any): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -37,7 +62,6 @@ const compressVideo = (inputPath: string, outputPath: string, ticketId: number, 
       .on('progress', (progress) => {
         if (socketIo && progress.percent) {
           const percent = Math.round(progress.percent);
-          console.log(`Progresso da compressão: ${percent}%`);
           socketIo.emit(`video-compression-progress-${ticketId}`, {
             ticketId,
             progress: percent,
@@ -339,8 +363,7 @@ const SendWhatsAppMedia = async ({
       throw new AppError("Erro ao processar arquivo para envio");
     }
 
-    await ticket.update({ lastMessage: body || media.filename });
-    await ticket.reload();
+    await updateTicketLastMessage(ticket, body || media.filename);
     
     let savedFilename = media.filename;
     let downloadSuccess = false;
@@ -405,7 +428,8 @@ const SendWhatsAppMedia = async ({
       console.warn("[SendWhatsAppMedia] Não foi possível obter tamanho do arquivo:", err?.message);
     }
 
-    const messageData = {
+    if (sentMessage?.id?.id) {
+      const messageData = {
       id: sentMessage.id.id,
       ticketId: ticket.id,
       contactId: undefined,
@@ -418,17 +442,22 @@ const SendWhatsAppMedia = async ({
       fileSize: fileSize
     };
 
-    const CreateMessageService = require("../MessageServices/CreateMessageService").default;
+      const CreateMessageService = require("../MessageServices/CreateMessageService").default;
     
-    try {
-      await CreateMessageService({ messageData });
-    } catch (err) {
-      console.error("Erro ao salvar mensagem de mídia no banco de dados:", err);
+      try {
+        await CreateMessageService({ messageData });
+      } catch (err) {
+        console.error("Erro ao salvar mensagem de mídia no banco de dados:", err);
+      }
+    } else {
+      logger.warn(
+        `Media was sent, but WhatsApp returned no message id for ticket ${ticket.id}`
+      );
     }
 
-    fs.unlinkSync(media.path);
+    removeFileSafely(media.path);
     if (shouldDeleteCompressed && fs.existsSync(finalMediaPath)) {
-      fs.unlinkSync(finalMediaPath);
+      removeFileSafely(finalMediaPath);
     }
 
     return sentMessage;

@@ -96,7 +96,6 @@ const NotificationsPopOver = () => {
 
 	const handleNotifications = useCallback(
 		(data) => {
-
 			if (isAudioEnabled && soundAlertRef.current) {
                                   soundAlertRef.current();
                           }
@@ -140,7 +139,8 @@ const NotificationsPopOver = () => {
 			socket.emit("joinNotification");
 		});
 
-		socket.on("appMessage", (data) => {			if (!data.ticket) {
+		socket.on("appMessage", (data) => {	
+		           if (!data.ticket) {
 				return;
 			}
 			
@@ -158,9 +158,8 @@ const NotificationsPopOver = () => {
 			const shouldNotifyPendingTicket = data.ticket.status === "pending" && 
 				(!data.ticket.userId && (isUserQueue || isAdminUser));
 
-			if (
-				data.action === "create" &&
-				data.ticket.unreadMessages > 0 &&
+			if (data.action === "create" &&
+				data.message?.fromMe !== true &&
 				(shouldNotifyOpenTicket || shouldNotifyPendingTicket)
 			) {
 				if (data.ticket.status === "closed") {
@@ -176,9 +175,7 @@ const NotificationsPopOver = () => {
 					return [data.ticket, ...prevState].filter(t => t.status !== "closed");
 				});
 
-				const shouldNotNotify = data.message.ticketId === ticketIdUrl && document.visibilityState === "visible";
-
-				if (shouldNotNotify) {
+				const shouldNotNotify = data.message.ticketId === ticketIdUrl && document.visibilityState === "visible";				if (shouldNotNotify) {
 					console.warn("[NOTIFICAÇÃO] Notificação bloqueada - ticket já está aberto na tela");
 					return;
 				}
@@ -187,6 +184,7 @@ const NotificationsPopOver = () => {
 			} else {
 				console.warn("[NOTIFICAÇÃO] Condições NÃO atendidas:", {
 					isCreate: data.action === "create",
+                                    fromMe: data.message?.fromMe,
 					isUnread: !data.message.read,
 					ticketStatus: data.ticket.status,
 					shouldNotifyOpenTicket: data.ticket.status === "open" && (data.ticket.userId === user?.id || isAdminUser),
