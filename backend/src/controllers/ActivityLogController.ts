@@ -58,7 +58,7 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
     const { entityType, entityId } = req.query;
 
     if (!entityType || !entityId) {
-      return res.status(400).json({ error: "Tipo de entidade e ID são obrigatórios" });
+      return res.status(400).json({ error: "El tipo de entidad y el ID son obligatorios" });
     }
 
     const details = await getEntityDetails(
@@ -67,7 +67,7 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
     );
 
     if (!details) {
-      return res.status(404).json({ error: "Detalhes da entidade não encontrados" });
+      return res.status(404).json({ error: "Detalles de la entidad no encontrados" });
     }
 
     return res.status(200).json(details);

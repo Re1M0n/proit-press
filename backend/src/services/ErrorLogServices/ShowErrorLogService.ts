@@ -5,7 +5,7 @@ const ShowErrorLogService = async (id: number): Promise<ErrorLog> => {
   const errorLog = await ErrorLog.findByPk(id);
   
   if (!errorLog) {
-    throw new AppError("Log de erro não encontrado", 404);
+    throw new AppError("Log de error no encontrado", 404);
   }
   
   return errorLog;

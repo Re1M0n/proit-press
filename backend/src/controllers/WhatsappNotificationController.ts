@@ -12,7 +12,7 @@ export const notifyChannel = async (
   const { whatsappId } = req.params;
 
   if (!whatsappId || isNaN(Number(whatsappId))) {
-    throw new AppError("ID do canal inválido", 400);
+    throw new AppError("ID del canal inválido", 400);
   }
 
   const notified = await WhatsappNotificationService.notifyIfNeeded({ 
@@ -20,7 +20,7 @@ export const notifyChannel = async (
   });
 
   if (notified) {
-    return res.status(200).json({ message: "Notificação enviada com sucesso." });
+    return res.status(200).json({ message: "Notificación enviada con éxito." });
   } else {
     return res.status(200).json({ 
       message: "Notificação não enviada. Tempo mínimo entre notificações não atingido." 
@@ -37,5 +37,5 @@ export const notifyAllDisconnected = async (
   
   io.emit("checkDisconnectedChannels");
 
-  return res.status(200).json({ message: "Verificação de canais desconectados iniciada" });
+  return res.status(200).json({ message: "Verificación de canales desconectados iniciada" });
 };

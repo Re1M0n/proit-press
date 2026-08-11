@@ -48,7 +48,7 @@ class GroupManagementService {
       const wbot = getWbot(whatsappId);
 
       if (participants.length < 1) {
-        throw new AppError("É necessário pelo menos 1 participante para criar um grupo");
+        throw new AppError("Se necesita al menos 1 participante para crear un grupo");
       }
 
       const formattedParticipants = participants.map(p => {
@@ -71,7 +71,7 @@ class GroupManagementService {
       };
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao criar grupo: ${err}`);
-      throw new AppError(`Erro ao criar grupo: ${err}`);
+      throw new AppError(`Error al crear el grupo: ${err}`);
     }
   }
 
@@ -81,7 +81,7 @@ class GroupManagementService {
       const chat = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       const groupChat = chat as any;
@@ -104,7 +104,7 @@ class GroupManagementService {
       };
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao obter informações do grupo: ${err}`);
-      throw new AppError(`Erro ao obter informações do grupo: ${err}`);
+      throw new AppError(`Error al obtener la información del grupo: ${err}`);
     }
   }
 
@@ -112,7 +112,7 @@ class GroupManagementService {
     const { whatsappId, groupId, name } = data;
 
     if (!name) {
-      throw new AppError("Nome do grupo é obrigatório");
+      throw new AppError("El nombre del grupo es obligatorio");
     }
 
     try {
@@ -120,14 +120,14 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       await chat.setSubject(name);
       logger.info(`[GROUP_MANAGEMENT] Nome do grupo ${groupId} atualizado para "${name}"`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao atualizar nome do grupo: ${err}`);
-      throw new AppError(`Erro ao atualizar nome do grupo: ${err}`);
+      throw new AppError(`Error al actualizar el nombre del grupo: ${err}`);
     }
   }
 
@@ -135,7 +135,7 @@ class GroupManagementService {
     const { whatsappId, groupId, description } = data;
 
     if (!description) {
-      throw new AppError("Descrição do grupo é obrigatória");
+      throw new AppError("La descripción del grupo es obligatoria");
     }
 
     try {
@@ -143,14 +143,14 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       await chat.setDescription(description);
       logger.info(`[GROUP_MANAGEMENT] Descrição do grupo ${groupId} atualizada`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao atualizar descrição do grupo: ${err}`);
-      throw new AppError(`Erro ao atualizar descrição do grupo: ${err}`);
+      throw new AppError(`Error al actualizar la descripción del grupo: ${err}`);
     }
   }
 
@@ -162,7 +162,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       const formattedParticipants = participants.map(p => {
@@ -181,7 +181,7 @@ class GroupManagementService {
       return result;
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao adicionar participantes: ${err}`);
-      throw new AppError(`Erro ao adicionar participantes: ${err}`);
+      throw new AppError(`Error al agregar participantes: ${err}`);
     }
   }
 
@@ -193,7 +193,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       const formattedParticipants = participants.map(p => {
@@ -210,7 +210,7 @@ class GroupManagementService {
       logger.info(`[GROUP_MANAGEMENT] Participantes removidos com sucesso`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao remover participantes: ${err}`);
-      throw new AppError(`Erro ao remover participantes: ${err}`);
+      throw new AppError(`Error al eliminar participantes: ${err}`);
     }
   }
 
@@ -222,7 +222,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       const formattedParticipants = participants.map(p => {
@@ -239,7 +239,7 @@ class GroupManagementService {
       logger.info(`[GROUP_MANAGEMENT] Participantes promovidos com sucesso`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao promover participantes: ${err}`);
-      throw new AppError(`Erro ao promover participantes: ${err}`);
+      throw new AppError(`Error al promover participantes: ${err}`);
     }
   }
 
@@ -251,7 +251,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       const formattedParticipants = participants.map(p => {
@@ -268,7 +268,7 @@ class GroupManagementService {
       logger.info(`[GROUP_MANAGEMENT] Participantes rebaixados com sucesso`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao rebaixar participantes: ${err}`);
-      throw new AppError(`Erro ao rebaixar participantes: ${err}`);
+      throw new AppError(`Error al degradar participantes: ${err}`);
     }
   }
 
@@ -278,7 +278,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       logger.info(`[GROUP_MANAGEMENT] Saindo do grupo ${groupId}`);
@@ -288,7 +288,7 @@ class GroupManagementService {
       logger.info(`[GROUP_MANAGEMENT] Saiu do grupo com sucesso`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao sair do grupo: ${err}`);
-      throw new AppError(`Erro ao sair do grupo: ${err}`);
+      throw new AppError(`Error al salir del grupo: ${err}`);
     }
   }
 
@@ -298,7 +298,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       logger.info(`[GROUP_MANAGEMENT] Obtendo link de convite do grupo ${groupId}`);
@@ -311,7 +311,7 @@ class GroupManagementService {
       return inviteLink;
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao obter link de convite: ${err}`);
-      throw new AppError(`Erro ao obter link de convite: ${err}`);
+      throw new AppError(`Error al obtener el enlace de invitación: ${err}`);
     }
   }
 
@@ -321,7 +321,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       logger.info(`[GROUP_MANAGEMENT] Revogando link de convite do grupo ${groupId}`);
@@ -334,7 +334,7 @@ class GroupManagementService {
       return newInviteLink;
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao revogar link de convite: ${err}`);
-      throw new AppError(`Erro ao revogar link de convite: ${err}`);
+      throw new AppError(`Error al revocar el enlace de invitación: ${err}`);
     }
   }
 
@@ -393,7 +393,7 @@ class GroupManagementService {
       return groups;
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao listar grupos: ${err}`);
-      throw new AppError(`Erro ao listar grupos: ${err}`);
+      throw new AppError(`Error al listar grupos: ${err}`);
     }
   }
 
@@ -410,7 +410,7 @@ class GroupManagementService {
       const chat: any = await wbot.getChatById(groupId);
 
       if (!chat.isGroup) {
-        throw new AppError("O ID fornecido não é de um grupo");
+        throw new AppError("El ID proporcionado no es de un grupo");
       }
 
       logger.info(`[GROUP_MANAGEMENT] Atualizando configurações do grupo ${groupId}`);
@@ -426,7 +426,7 @@ class GroupManagementService {
       logger.info(`[GROUP_MANAGEMENT] Configurações do grupo atualizadas com sucesso`);
     } catch (err) {
       logger.error(`[GROUP_MANAGEMENT] Erro ao atualizar configurações do grupo: ${err}`);
-      throw new AppError(`Erro ao atualizar configurações do grupo: ${err}`);
+      throw new AppError(`Error al actualizar las configuraciones del grupo: ${err}`);
     }
   }
 }

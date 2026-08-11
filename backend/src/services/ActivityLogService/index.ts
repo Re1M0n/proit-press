@@ -128,7 +128,7 @@ export const logActivity = async (
     return log;
   } catch (error: any) {
     logger.error(`Erro ao registrar log de atividade: ${error.message}`);
-    throw new Error(`Não foi possível registrar o log de atividade: ${error.message}`);
+    throw new Error(`No fue posible registrar el log de actividad: ${error.message}`);
   }
 };
 
@@ -205,7 +205,7 @@ export const listActivityLogs = async (
     };
   } catch (error: any) {
     logger.error(`Erro ao listar logs de atividade: ${error.message}`);
-    throw new Error(`Não foi possível listar os logs de atividade: ${error.message}`);
+    throw new Error(`No fue posible listar los logs de actividad: ${error.message}`);
   }
 };
 

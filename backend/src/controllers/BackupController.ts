@@ -65,7 +65,7 @@ export const show = async (req: Request, res: Response): Promise<void> => {
     const fs = require('fs');
     if (!fs.existsSync(filePath)) {
       logger.error(`Arquivo de backup não encontrado: ${filePath}`);
-      res.status(404).json({ error: `Arquivo de backup não encontrado: ${filename}` });
+      res.status(404).json({ error: `Archivo de backup no encontrado: ${filename}` });
       return;
     }
     
@@ -114,7 +114,7 @@ export const update = async (req: Request, res: Response): Promise<Response> => 
 export const upload = async (req: Request, res: Response): Promise<Response> => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "Nenhum arquivo foi enviado" });
+      return res.status(400).json({ error: "Ningún archivo fue enviado" });
     }
 
     const backupInfo = await uploadBackup(req.file);

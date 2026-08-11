@@ -144,7 +144,7 @@ export const deleteFiles = async (filePaths: string[]): Promise<{ success: boole
 
       // Verificar se o arquivo existe
       if (!fs.existsSync(fullPath)) {
-        errors.push(`Arquivo não encontrado: ${filePath}`);
+        errors.push(`Archivo no encontrado: ${filePath}`);
         continue;
       }
 

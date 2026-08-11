@@ -278,7 +278,7 @@ export const getMediaBase64 = async (req: Request, res: Response): Promise<Respo
     }
 
     if (!message.mediaUrl) {
-      throw new AppError("Este mensaje no tiene mídia", 400);
+      throw new AppError("Este mensaje no tiene multimedia", 400);
     }
 
     const mediaUrlParts = message.mediaUrl.split('/');
@@ -288,7 +288,7 @@ export const getMediaBase64 = async (req: Request, res: Response): Promise<Respo
     const filePath = path.join(publicFolder, filename);
 
     if (!fs.existsSync(filePath)) {
-      throw new AppError("Archivo de mídia no encontrado en el servidor", 404);
+      throw new AppError("Archivo multimedia no encontrado en el servidor", 404);
     }
 
     const fileBuffer = fs.readFileSync(filePath);

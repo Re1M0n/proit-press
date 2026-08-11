@@ -139,7 +139,7 @@ export const deleteLogo = async (
     const currentTheme = personalizations.find(p => p.theme === theme);
     
     if (!currentTheme) {
-      return res.status(404).json({ message: "Tema não encontrado" });
+      return res.status(404).json({ message: "Tema no encontrado" });
     }
 
     const currentFileName = currentTheme[logoType];

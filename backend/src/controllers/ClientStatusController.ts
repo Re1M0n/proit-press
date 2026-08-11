@@ -84,7 +84,7 @@ export const update = async (
     const clientStatusData = req.body;
 
     if (!clientStatusData.name && !clientStatusData.color) {
-      throw new AppError("É necessário fornecer pelo menos um campo para atualização (nome ou cor)", 400);
+      throw new AppError("Es necesario proporcionar al menos un campo para actualizar (nombre o color)", 400);
     }
 
     const clientStatus = await UpdateService({ clientStatusData, id: clientStatusId });

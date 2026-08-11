@@ -403,7 +403,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
               const isMyReaction = myNumber && sender === myNumber;
               
               const reactionText = isMyReaction 
-                ? `Você reagiu com ${emoji} a: "${msg.body || 'mídia'}"`
+                ? `Reaccionaste con ${emoji} a: "${msg.body || 'multimedia'}"`
                 : `Reagiu com ${emoji} a: "${msg.body || 'mídia'}"`;
               
               await ticket.update({ lastMessage: reactionText });

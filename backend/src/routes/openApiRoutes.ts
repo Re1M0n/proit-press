@@ -41,8 +41,8 @@ const openApiRouter = express.Router();
  * @swagger
  * /v1/messages/send:
  *   post:
- *     summary: Enviar Mensagem de Texto
- *     description: Envia uma mensagem de texto via WhatsApp
+ *     summary: Enviar Mensaje de Texto
+ *     description: Envía un mensaje de texto vía WhatsApp
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -61,33 +61,33 @@ const openApiRouter = express.Router();
  *             properties:
  *               number:
  *                 type: string
- *                 description: Número do destinatário (formato 5511999999999)
+ *                 description: Número del destinatario (formato 5511999999999)
  *                 example: "5511999999999"
  *               body:
  *                 type: string
- *                 description: Texto da mensagem
- *                 example: "Olá, esta é uma mensagem de teste!"
+ *                 description: Texto del mensaje
+ *                 example: "Hola, este es un mensaje de prueba!"
  *               userId:
  *                 type: integer
- *                 description: ID do usuário
+ *                 description: ID del usuario
  *                 example: 1
  *               queueId:
  *                 type: integer
- *                 description: ID do setor
+ *                 description: ID del sector
  *                 example: 1
  *               whatsappId:
  *                 type: integer
- *                 description: ID da conexão WhatsApp
+ *                 description: ID de la conexión de WhatsApp
  *                 example: 1
  *     responses:
  *       200:
- *         description: Mensagem enviada com sucesso
+ *         description: Mensaje enviado con éxito
  *       401:
- *         description: Token inválido ou não fornecido
+ *         description: Token inválido o no proporcionado
  *       403:
- *         description: Sem permissão create:messages
+ *         description: Sin permiso create:messages
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.post("/messages/send", isApiToken('create:messages'), ApiController.sendMessage);
 
@@ -95,8 +95,8 @@ openApiRouter.post("/messages/send", isApiToken('create:messages'), ApiControlle
  * @swagger
  * /v1/messages/send-media:
  *   post:
- *     summary: Enviar Mensagem com Mídia
- *     description: Envia mensagem com arquivos (imagem, vídeo, áudio, documento)
+ *     summary: Enviar Mensaje con Multimedia
+ *     description: Envía mensaje con archivos (imagen, video, audio, documento)
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -118,8 +118,8 @@ openApiRouter.post("/messages/send", isApiToken('create:messages'), ApiControlle
  *                 example: "5511999999999"
  *               body:
  *                 type: string
- *                 description: Legenda (opcional)
- *                 example: "Veja esta imagem"
+ *                 description: Leyenda (opcional)
+ *                 example: "Mirá esta imagen"
  *               medias:
  *                 type: array
  *                 items:
@@ -136,11 +136,11 @@ openApiRouter.post("/messages/send", isApiToken('create:messages'), ApiControlle
  *                 example: 1
  *     responses:
  *       200:
- *         description: Mídia enviada com sucesso
+ *         description: Multimedia enviado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão
+ *         description: Sin permiso
  */
 openApiRouter.post("/messages/send-media", isApiToken('create:messages'), upload.array("medias"), ApiController.sendMedia);
 
@@ -148,8 +148,8 @@ openApiRouter.post("/messages/send-media", isApiToken('create:messages'), upload
  * @swagger
  * /v1/messages/{messageId}/media:
  *   get:
- *     summary: Obter Mídia em Base64
- *     description: Retorna a mídia de uma mensagem em formato base64
+ *     summary: Obtener Multimedia en Base64
+ *     description: Devuelve el multimedia de un mensaje en formato base64
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -159,12 +159,12 @@ openApiRouter.post("/messages/send-media", isApiToken('create:messages'), upload
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da mensagem
+ *         description: ID del mensaje
  *     responses:
  *       200:
- *         description: Mídia retornada com sucesso
+ *         description: Multimedia devuelto con éxito
  *       404:
- *         description: Mensagem ou mídia não encontrada
+ *         description: Mensaje o multimedia no encontrado
  */
 openApiRouter.get("/messages/:messageId/media", isApiToken('read:messages'), ApiController.getMediaBase64);
 
@@ -174,18 +174,18 @@ openApiRouter.get("/messages/:messageId/media", isApiToken('read:messages'), Api
  * @swagger
  * /v1/contacts:
  *   get:
- *     summary: Listar Contatos
- *     description: Retorna lista de todos os contatos
+ *     summary: Listar Contactos
+ *     description: Devuelve lista de todos los contactos
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de contatos
+ *         description: Lista de contactos
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts", isApiToken('read:contacts'), ContactController.index);
 
@@ -193,8 +193,8 @@ openApiRouter.get("/contacts", isApiToken('read:contacts'), ContactController.in
  * @swagger
  * /v1/contacts:
  *   post:
- *     summary: Criar Contato
- *     description: Cria um novo contato
+ *     summary: Crear Contacto
+ *     description: Crea un nuevo contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -213,15 +213,15 @@ openApiRouter.get("/contacts", isApiToken('read:contacts'), ContactController.in
  *                 example: "5511999999999"
  *               name:
  *                 type: string
- *                 example: "João Silva"
+ *                 example: "Juan Silva"
  *               email:
  *                 type: string
- *                 example: "joao@example.com"
+ *                 example: "usuario@example.com"
  *     responses:
  *       200:
- *         description: Contato criado
+ *         description: Contacto creado
  *       400:
- *         description: Dados inválidos
+ *         description: Datos inválidos
  */
 openApiRouter.post("/contacts", isApiToken('create:contacts'), ContactController.store);
 
@@ -229,8 +229,8 @@ openApiRouter.post("/contacts", isApiToken('create:contacts'), ContactController
  * @swagger
  * /v1/contacts/{contactId}:
  *   get:
- *     summary: Obter Contato
- *     description: Retorna detalhes de um contato
+ *     summary: Obtener Contacto
+ *     description: Devuelve detalles de un contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -242,9 +242,9 @@ openApiRouter.post("/contacts", isApiToken('create:contacts'), ContactController
  *           type: integer
  *     responses:
  *       200:
- *         description: Contato encontrado
+ *         description: Contacto encontrado
  *       404:
- *         description: Contato não encontrado
+ *         description: Contacto no encontrado
  */
 openApiRouter.get("/contacts/:contactId", isApiToken('read:contacts'), ContactController.show);
 
@@ -252,8 +252,8 @@ openApiRouter.get("/contacts/:contactId", isApiToken('read:contacts'), ContactCo
  * @swagger
  * /v1/contacts/{contactId}:
  *   put:
- *     summary: Atualizar Contato
- *     description: Atualiza dados de um contato
+ *     summary: Actualizar Contacto
+ *     description: Actualiza datos de un contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -275,7 +275,7 @@ openApiRouter.get("/contacts/:contactId", isApiToken('read:contacts'), ContactCo
  *                 type: string
  *     responses:
  *       200:
- *         description: Contato atualizado
+ *         description: Contacto actualizado
  */
 openApiRouter.put("/contacts/:contactId", isApiToken('update:contacts'), ContactController.update);
 
@@ -283,8 +283,8 @@ openApiRouter.put("/contacts/:contactId", isApiToken('update:contacts'), Contact
  * @swagger
  * /v1/contacts/{contactId}:
  *   delete:
- *     summary: Excluir Contato
- *     description: Remove um contato
+ *     summary: Eliminar Contacto
+ *     description: Elimina un contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -296,7 +296,7 @@ openApiRouter.put("/contacts/:contactId", isApiToken('update:contacts'), Contact
  *           type: integer
  *     responses:
  *       200:
- *         description: Contato excluído
+ *         description: Contacto eliminado
  */
 openApiRouter.delete("/contacts/:contactId", isApiToken('delete:contacts'), ContactController.remove);
 
@@ -304,8 +304,8 @@ openApiRouter.delete("/contacts/:contactId", isApiToken('delete:contacts'), Cont
  * @swagger
  * /v1/contact:
  *   post:
- *     summary: Buscar Contato por Número
- *     description: Busca contato pelo número de telefone
+ *     summary: Buscar Contacto por Número
+ *     description: Busca contacto por número de teléfono
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -321,7 +321,7 @@ openApiRouter.delete("/contacts/:contactId", isApiToken('delete:contacts'), Cont
  *                 example: "5511999999999"
  *     responses:
  *       200:
- *         description: Contato encontrado
+ *         description: Contacto encontrado
  */
 openApiRouter.post("/contact", isApiToken('read:contacts'), ContactController.getContact);
 
@@ -329,8 +329,8 @@ openApiRouter.post("/contact", isApiToken('read:contacts'), ContactController.ge
  * @swagger
  * /v1/contacts/{contactId}/tags:
  *   put:
- *     summary: Atualizar Tags do Contato
- *     description: Atualiza as tags associadas ao contato
+ *     summary: Actualizar Tags del Contacto
+ *     description: Actualiza las tags asociadas al contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -352,7 +352,7 @@ openApiRouter.post("/contact", isApiToken('read:contacts'), ContactController.ge
  *                   type: integer
  *     responses:
  *       200:
- *         description: Tags atualizadas
+ *         description: Tags actualizadas
  */
 openApiRouter.put("/contacts/:contactId/tags", isApiToken('update:contacts'), ContactController.updateTags);
 
@@ -362,14 +362,14 @@ openApiRouter.put("/contacts/:contactId/tags", isApiToken('update:contacts'), Co
  * @swagger
  * /v1/queue:
  *   get:
- *     summary: Listar Setores
- *     description: Retorna lista de todos os setores
+ *     summary: Listar Sectores
+ *     description: Devuelve lista de todos los sectores
  *     tags: [Setores]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de setores
+ *         description: Lista de sectores
  */
 openApiRouter.get("/queue", isApiToken('read:queue'), QueueController.index);
 
@@ -377,8 +377,8 @@ openApiRouter.get("/queue", isApiToken('read:queue'), QueueController.index);
  * @swagger
  * /v1/queue:
  *   post:
- *     summary: Criar Setor
- *     description: Cria um novo setor/fila
+ *     summary: Crear Sector
+ *     description: Crea un nuevo sector/fila
  *     tags: [Setores]
  *     security:
  *       - apiToken: []
@@ -397,7 +397,7 @@ openApiRouter.get("/queue", isApiToken('read:queue'), QueueController.index);
  *                 example: "#FF0000"
  *     responses:
  *       200:
- *         description: Setor criado
+ *         description: Sector creado
  */
 openApiRouter.post("/queue", isApiToken('create:queue'), QueueController.store);
 
@@ -405,8 +405,8 @@ openApiRouter.post("/queue", isApiToken('create:queue'), QueueController.store);
  * @swagger
  * /v1/queue/{queueId}:
  *   get:
- *     summary: Obter Setor
- *     description: Retorna detalhes de um setor
+ *     summary: Obtener Sector
+ *     description: Devuelve detalles de un sector
  *     tags: [Setores]
  *     security:
  *       - apiToken: []
@@ -418,7 +418,7 @@ openApiRouter.post("/queue", isApiToken('create:queue'), QueueController.store);
  *           type: integer
  *     responses:
  *       200:
- *         description: Setor encontrado
+ *         description: Sector encontrado
  */
 openApiRouter.get("/queue/:queueId", isApiToken('read:queue'), QueueController.show);
 
@@ -426,8 +426,8 @@ openApiRouter.get("/queue/:queueId", isApiToken('read:queue'), QueueController.s
  * @swagger
  * /v1/queue/{queueId}:
  *   put:
- *     summary: Atualizar Setor
- *     description: Atualiza dados de um setor
+ *     summary: Actualizar Sector
+ *     description: Actualiza datos de un sector
  *     tags: [Setores]
  *     security:
  *       - apiToken: []
@@ -439,7 +439,7 @@ openApiRouter.get("/queue/:queueId", isApiToken('read:queue'), QueueController.s
  *           type: integer
  *     responses:
  *       200:
- *         description: Setor atualizado
+ *         description: Sector actualizado
  */
 openApiRouter.put("/queue/:queueId", isApiToken('update:queue'), QueueController.update);
 
@@ -447,8 +447,8 @@ openApiRouter.put("/queue/:queueId", isApiToken('update:queue'), QueueController
  * @swagger
  * /v1/queue/{queueId}:
  *   delete:
- *     summary: Excluir Setor
- *     description: Remove um setor
+ *     summary: Eliminar Sector
+ *     description: Elimina un sector
  *     tags: [Setores]
  *     security:
  *       - apiToken: []
@@ -460,7 +460,7 @@ openApiRouter.put("/queue/:queueId", isApiToken('update:queue'), QueueController
  *           type: integer
  *     responses:
  *       200:
- *         description: Setor excluído
+ *         description: Sector eliminado
  */
 openApiRouter.delete("/queue/:queueId", isApiToken('delete:queue'), QueueController.remove);
 
@@ -471,7 +471,7 @@ openApiRouter.delete("/queue/:queueId", isApiToken('delete:queue'), QueueControl
  * /v1/tags:
  *   get:
  *     summary: Listar Tags
- *     description: Retorna lista de todas as tags
+ *     description: Devuelve lista de todas las tags
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -486,7 +486,7 @@ openApiRouter.get("/tags", isApiToken('read:tags'), TagController.index);
  * /v1/tags/list:
  *   get:
  *     summary: Listar Tags (Simplificado)
- *     description: Retorna lista simplificada de tags
+ *     description: Devuelve lista simplificada de tags
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -500,8 +500,8 @@ openApiRouter.get("/tags/list", isApiToken('read:tags'), TagController.list);
  * @swagger
  * /v1/tags:
  *   post:
- *     summary: Criar Tag
- *     description: Cria uma nova tag
+ *     summary: Crear Tag
+ *     description: Crea una nueva tag
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -520,7 +520,7 @@ openApiRouter.get("/tags/list", isApiToken('read:tags'), TagController.list);
  *                 example: "#FFD700"
  *     responses:
  *       200:
- *         description: Tag criada
+ *         description: Tag creada
  */
 openApiRouter.post("/tags", isApiToken('create:tags'), TagController.store);
 
@@ -528,8 +528,8 @@ openApiRouter.post("/tags", isApiToken('create:tags'), TagController.store);
  * @swagger
  * /v1/tags/{tagId}:
  *   get:
- *     summary: Obter Tag
- *     description: Retorna detalhes de uma tag
+ *     summary: Obtener Tag
+ *     description: Devuelve detalles de una tag
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -549,8 +549,8 @@ openApiRouter.get("/tags/:tagId", isApiToken('read:tags'), TagController.show);
  * @swagger
  * /v1/tags/{tagId}:
  *   put:
- *     summary: Atualizar Tag
- *     description: Atualiza uma tag
+ *     summary: Actualizar Tag
+ *     description: Actualiza una tag
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -562,7 +562,7 @@ openApiRouter.get("/tags/:tagId", isApiToken('read:tags'), TagController.show);
  *           type: integer
  *     responses:
  *       200:
- *         description: Tag atualizada
+ *         description: Tag actualizada
  */
 openApiRouter.put("/tags/:tagId", isApiToken('update:tags'), TagController.update);
 
@@ -570,8 +570,8 @@ openApiRouter.put("/tags/:tagId", isApiToken('update:tags'), TagController.updat
  * @swagger
  * /v1/tags/{tagId}:
  *   delete:
- *     summary: Excluir Tag
- *     description: Remove uma tag
+ *     summary: Eliminar Tag
+ *     description: Elimina una tag
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -583,7 +583,7 @@ openApiRouter.put("/tags/:tagId", isApiToken('update:tags'), TagController.updat
  *           type: integer
  *     responses:
  *       200:
- *         description: Tag excluída
+ *         description: Tag eliminada
  */
 openApiRouter.delete("/tags/:tagId", isApiToken('delete:tags'), TagController.remove);
 
@@ -592,7 +592,7 @@ openApiRouter.delete("/tags/:tagId", isApiToken('delete:tags'), TagController.re
  * /v1/tags/sync:
  *   post:
  *     summary: Sincronizar Tags
- *     description: Sincroniza tags do sistema
+ *     description: Sincroniza tags del sistema
  *     tags: [Tags]
  *     security:
  *       - apiToken: []
@@ -609,7 +609,7 @@ openApiRouter.post("/tags/sync", isApiToken('create:tags'), TagController.syncTa
  * /v1/tickets:
  *   get:
  *     summary: Listar Tickets
- *     description: Retorna lista de tickets
+ *     description: Devuelve lista de tickets
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -624,13 +624,13 @@ openApiRouter.get("/tickets", isApiToken('read:tickets'), TicketController.index
  * /v1/tickets/count:
  *   get:
  *     summary: Contar Tickets
- *     description: Retorna contagem de tickets por status
+ *     description: Devuelve conteo de tickets por estado
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Contagem de tickets
+ *         description: Conteo de tickets
  */
 openApiRouter.get("/tickets/count", isApiToken('read:tickets'), TicketController.count);
 
@@ -638,8 +638,8 @@ openApiRouter.get("/tickets/count", isApiToken('read:tickets'), TicketController
  * @swagger
  * /v1/tickets:
  *   post:
- *     summary: Criar Ticket
- *     description: Cria um novo ticket
+ *     summary: Crear Ticket
+ *     description: Crea un nuevo ticket
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -661,7 +661,7 @@ openApiRouter.get("/tickets/count", isApiToken('read:tickets'), TicketController
  *                 example: 1
  *     responses:
  *       200:
- *         description: Ticket criado
+ *         description: Ticket creado
  */
 openApiRouter.post("/tickets", isApiToken('create:tickets'), TicketController.store);
 
@@ -669,8 +669,8 @@ openApiRouter.post("/tickets", isApiToken('create:tickets'), TicketController.st
  * @swagger
  * /v1/tickets/{ticketId}:
  *   get:
- *     summary: Obter Ticket
- *     description: Retorna detalhes de um ticket
+ *     summary: Obtener Ticket
+ *     description: Devuelve detalles de un ticket
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -690,8 +690,8 @@ openApiRouter.get("/tickets/:ticketId", isApiToken('read:tickets'), TicketContro
  * @swagger
  * /v1/tickets/{ticketId}:
  *   put:
- *     summary: Atualizar Ticket
- *     description: Atualiza um ticket
+ *     summary: Actualizar Ticket
+ *     description: Actualiza un ticket
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -703,7 +703,7 @@ openApiRouter.get("/tickets/:ticketId", isApiToken('read:tickets'), TicketContro
  *           type: integer
  *     responses:
  *       200:
- *         description: Ticket atualizado
+ *         description: Ticket actualizado
  */
 openApiRouter.put("/tickets/:ticketId", isApiToken('update:tickets'), TicketController.update);
 
@@ -711,8 +711,8 @@ openApiRouter.put("/tickets/:ticketId", isApiToken('update:tickets'), TicketCont
  * @swagger
  * /v1/tickets/{ticketId}:
  *   delete:
- *     summary: Excluir Ticket
- *     description: Remove um ticket
+ *     summary: Eliminar Ticket
+ *     description: Elimina un ticket
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -724,7 +724,7 @@ openApiRouter.put("/tickets/:ticketId", isApiToken('update:tickets'), TicketCont
  *           type: integer
  *     responses:
  *       200:
- *         description: Ticket excluído
+ *         description: Ticket eliminado
  */
 openApiRouter.delete("/tickets/:ticketId", isApiToken('delete:tickets'), TicketController.remove);
 
@@ -732,8 +732,8 @@ openApiRouter.delete("/tickets/:ticketId", isApiToken('delete:tickets'), TicketC
  * @swagger
  * /v1/tickets/contact/{contactId}/open:
  *   get:
- *     summary: Verificar Tickets Abertos
- *     description: Verifica se contato tem tickets abertos
+ *     summary: Verificar Tickets Abiertos
+ *     description: Verifica si el contacto tiene tickets abiertos
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
@@ -745,7 +745,7 @@ openApiRouter.delete("/tickets/:ticketId", isApiToken('delete:tickets'), TicketC
  *           type: integer
  *     responses:
  *       200:
- *         description: Status dos tickets
+ *         description: Estado de los tickets
  */
 openApiRouter.get("/tickets/contact/:contactId/open", isApiToken('read:tickets'), TicketController.checkOpenTickets);
 
@@ -753,14 +753,14 @@ openApiRouter.get("/tickets/contact/:contactId/open", isApiToken('read:tickets')
  * @swagger
  * /v1/tickets/close-all:
  *   put:
- *     summary: Fechar Todos os Tickets
- *     description: Fecha todos os tickets em lote
+ *     summary: Cerrar Todos los Tickets
+ *     description: Cierra todos los tickets en lote
  *     tags: [Tickets]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Tickets fechados
+ *         description: Tickets cerrados
  */
 openApiRouter.put("/tickets/close-all", isApiToken('update:tickets'), TicketController.closeTickets);
 
@@ -770,14 +770,14 @@ openApiRouter.put("/tickets/close-all", isApiToken('update:tickets'), TicketCont
  * @swagger
  * /v1/whatsapp:
  *   get:
- *     summary: Listar Conexões WhatsApp
- *     description: Retorna lista de todas as conexões WhatsApp
+ *     summary: Listar Conexiones de WhatsApp
+ *     description: Devuelve lista de todas las conexiones de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de conexões
+ *         description: Lista de conexiones
  */
 openApiRouter.get("/whatsapp", isApiToken('read:whatsapp'), WhatsAppController.index);
 
@@ -785,8 +785,8 @@ openApiRouter.get("/whatsapp", isApiToken('read:whatsapp'), WhatsAppController.i
  * @swagger
  * /v1/whatsapp:
  *   post:
- *     summary: Criar Conexão WhatsApp
- *     description: Cria uma nova conexão WhatsApp
+ *     summary: Crear Conexión de WhatsApp
+ *     description: Crea una nueva conexión de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -802,7 +802,7 @@ openApiRouter.get("/whatsapp", isApiToken('read:whatsapp'), WhatsAppController.i
  *                 example: "Atendimento"
  *     responses:
  *       200:
- *         description: Conexão criada
+ *         description: Conexión creada
  */
 openApiRouter.post("/whatsapp", isApiToken('create:whatsapp'), WhatsAppController.store);
 
@@ -810,8 +810,8 @@ openApiRouter.post("/whatsapp", isApiToken('create:whatsapp'), WhatsAppControlle
  * @swagger
  * /v1/whatsapp/{whatsappId}:
  *   get:
- *     summary: Obter Conexão WhatsApp
- *     description: Retorna detalhes de uma conexão
+ *     summary: Obtener Conexión de WhatsApp
+ *     description: Devuelve detalles de una conexión
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -823,7 +823,7 @@ openApiRouter.post("/whatsapp", isApiToken('create:whatsapp'), WhatsAppControlle
  *           type: integer
  *     responses:
  *       200:
- *         description: Conexão encontrada
+ *         description: Conexión encontrada
  */
 openApiRouter.get("/whatsapp/:whatsappId", isApiToken('read:whatsapp'), WhatsAppController.show);
 
@@ -831,8 +831,8 @@ openApiRouter.get("/whatsapp/:whatsappId", isApiToken('read:whatsapp'), WhatsApp
  * @swagger
  * /v1/whatsapp/{whatsappId}:
  *   put:
- *     summary: Atualizar Conexão WhatsApp
- *     description: Atualiza uma conexão WhatsApp
+ *     summary: Actualizar Conexión de WhatsApp
+ *     description: Actualiza una conexión de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -844,7 +844,7 @@ openApiRouter.get("/whatsapp/:whatsappId", isApiToken('read:whatsapp'), WhatsApp
  *           type: integer
  *     responses:
  *       200:
- *         description: Conexão atualizada
+ *         description: Conexión actualizada
  */
 openApiRouter.put("/whatsapp/:whatsappId", isApiToken('update:whatsapp'), WhatsAppController.update);
 
@@ -852,8 +852,8 @@ openApiRouter.put("/whatsapp/:whatsappId", isApiToken('update:whatsapp'), WhatsA
  * @swagger
  * /v1/whatsapp/{whatsappId}:
  *   delete:
- *     summary: Excluir Conexão WhatsApp
- *     description: Remove uma conexão WhatsApp
+ *     summary: Eliminar Conexión de WhatsApp
+ *     description: Elimina una conexión de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -865,7 +865,7 @@ openApiRouter.put("/whatsapp/:whatsappId", isApiToken('update:whatsapp'), WhatsA
  *           type: integer
  *     responses:
  *       200:
- *         description: Conexão excluída
+ *         description: Conexión eliminada
  */
 openApiRouter.delete("/whatsapp/:whatsappId", isApiToken('delete:whatsapp'), WhatsAppController.remove);
 
@@ -873,8 +873,8 @@ openApiRouter.delete("/whatsapp/:whatsappId", isApiToken('delete:whatsapp'), Wha
  * @swagger
  * /v1/whatsapp/{whatsappId}/restart:
  *   post:
- *     summary: Reiniciar Conexão WhatsApp
- *     description: Reinicia uma conexão WhatsApp
+ *     summary: Reiniciar Conexión de WhatsApp
+ *     description: Reinicia una conexión de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -886,7 +886,7 @@ openApiRouter.delete("/whatsapp/:whatsappId", isApiToken('delete:whatsapp'), Wha
  *           type: integer
  *     responses:
  *       200:
- *         description: Conexão reiniciada
+ *         description: Conexión reiniciada
  */
 openApiRouter.post("/whatsapp/:whatsappId/restart", isApiToken('update:whatsapp'), WhatsAppController.restart);
 
@@ -894,8 +894,8 @@ openApiRouter.post("/whatsapp/:whatsappId/restart", isApiToken('update:whatsapp'
  * @swagger
  * /v1/whatsapp/{whatsappId}/shutdown:
  *   post:
- *     summary: Desligar Conexão WhatsApp
- *     description: Desliga uma conexão WhatsApp
+ *     summary: Desactivar Conexión de WhatsApp
+ *     description: Desactiva una conexión de WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -907,7 +907,7 @@ openApiRouter.post("/whatsapp/:whatsappId/restart", isApiToken('update:whatsapp'
  *           type: integer
  *     responses:
  *       200:
- *         description: Conexão desligada
+ *         description: Conexión desactivada
  */
 openApiRouter.post("/whatsapp/:whatsappId/shutdown", isApiToken('update:whatsapp'), WhatsAppController.shutdown);
 
@@ -915,8 +915,8 @@ openApiRouter.post("/whatsapp/:whatsappId/shutdown", isApiToken('update:whatsapp
  * @swagger
  * /v1/whatsapp/{whatsappId}/qrcode:
  *   get:
- *     summary: Obter QR Code
- *     description: Retorna o QR Code para conexão
+ *     summary: Obtener Código QR
+ *     description: Devuelve el código QR para la conexión
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -928,7 +928,7 @@ openApiRouter.post("/whatsapp/:whatsappId/shutdown", isApiToken('update:whatsapp
  *           type: integer
  *     responses:
  *       200:
- *         description: QR Code retornado
+ *         description: Código QR devuelto
  */
 openApiRouter.get("/whatsapp/:whatsappId/qrcode", isApiToken('read:whatsapp'), WhatsAppController.getQrCode);
 
@@ -936,8 +936,8 @@ openApiRouter.get("/whatsapp/:whatsappId/qrcode", isApiToken('read:whatsapp'), W
  * @swagger
  * /v1/whatsapp/check-number:
  *   post:
- *     summary: Verificar Número WhatsApp
- *     description: Verifica se um número está registrado no WhatsApp
+ *     summary: Verificar Número de WhatsApp
+ *     description: Verifica si un número está registrado en WhatsApp
  *     tags: [WhatsApp]
  *     security:
  *       - apiToken: []
@@ -963,8 +963,8 @@ openApiRouter.post("/whatsapp/check-number", isApiToken('read:whatsapp'), WhatsA
  * @swagger
  * /v1/whatsappsession/{whatsappId}:
  *   post:
- *     summary: Criar Sessão WhatsApp
- *     description: Cria uma nova sessão WhatsApp
+ *     summary: Crear Sesión de WhatsApp
+ *     description: Crea una nueva sesión de WhatsApp
  *     tags: [WhatsAppSession]
  *     security:
  *       - apiToken: []
@@ -976,7 +976,7 @@ openApiRouter.post("/whatsapp/check-number", isApiToken('read:whatsapp'), WhatsA
  *           type: integer
  *     responses:
  *       200:
- *         description: Sessão criada
+ *         description: Sesión creada
  */
 openApiRouter.post("/whatsappsession/:whatsappId", isApiToken('create:whatsappsession'), WhatsAppSessionController.store);
 
@@ -984,8 +984,8 @@ openApiRouter.post("/whatsappsession/:whatsappId", isApiToken('create:whatsappse
  * @swagger
  * /v1/whatsappsession/{whatsappId}:
  *   put:
- *     summary: Atualizar Sessão WhatsApp
- *     description: Atualiza uma sessão WhatsApp
+ *     summary: Actualizar Sesión de WhatsApp
+ *     description: Actualiza una sesión de WhatsApp
  *     tags: [WhatsAppSession]
  *     security:
  *       - apiToken: []
@@ -997,7 +997,7 @@ openApiRouter.post("/whatsappsession/:whatsappId", isApiToken('create:whatsappse
  *           type: integer
  *     responses:
  *       200:
- *         description: Sessão atualizada
+ *         description: Sesión actualizada
  */
 openApiRouter.put("/whatsappsession/:whatsappId", isApiToken('update:whatsappsession'), WhatsAppSessionController.update);
 
@@ -1005,8 +1005,8 @@ openApiRouter.put("/whatsappsession/:whatsappId", isApiToken('update:whatsappses
  * @swagger
  * /v1/whatsappsession/{whatsappId}:
  *   delete:
- *     summary: Excluir Sessão WhatsApp
- *     description: Remove uma sessão WhatsApp
+ *     summary: Eliminar Sesión de WhatsApp
+ *     description: Elimina una sesión de WhatsApp
  *     tags: [WhatsAppSession]
  *     security:
  *       - apiToken: []
@@ -1018,7 +1018,7 @@ openApiRouter.put("/whatsappsession/:whatsappId", isApiToken('update:whatsappses
  *           type: integer
  *     responses:
  *       200:
- *         description: Sessão excluída
+ *         description: Sesión eliminada
  */
 openApiRouter.delete("/whatsappsession/:whatsappId", isApiToken('delete:whatsappsession'), WhatsAppSessionController.remove);
 
@@ -1028,8 +1028,8 @@ openApiRouter.delete("/whatsappsession/:whatsappId", isApiToken('delete:whatsapp
  * @swagger
  * /v1/activity-logs:
  *   get:
- *     summary: Listar Logs de Atividade
- *     description: Retorna lista de logs de atividade
+ *     summary: Listar Logs de Actividad
+ *     description: Devuelve lista de logs de actividad
  *     tags: [ActivityLogs]
  *     security:
  *       - apiToken: []
@@ -1043,14 +1043,14 @@ openApiRouter.get("/activity-logs", isApiToken('read:activity-logs'), ActivityLo
  * @swagger
  * /v1/activity-logs/actions:
  *   get:
- *     summary: Listar Ações
- *     description: Retorna lista de ações disponíveis
+ *     summary: Listar Acciones
+ *     description: Devuelve lista de acciones disponibles
  *     tags: [ActivityLogs]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de ações
+ *         description: Lista de acciones
  */
 openApiRouter.get("/activity-logs/actions", isApiToken('read:activity-logs'), ActivityLogController.actions);
 
@@ -1059,7 +1059,7 @@ openApiRouter.get("/activity-logs/actions", isApiToken('read:activity-logs'), Ac
  * /v1/activity-logs/entities:
  *   get:
  *     summary: Listar Entidades
- *     description: Retorna lista de entidades
+ *     description: Devuelve lista de entidades
  *     tags: [ActivityLogs]
  *     security:
  *       - apiToken: []
@@ -1073,8 +1073,8 @@ openApiRouter.get("/activity-logs/entities", isApiToken('read:activity-logs'), A
  * @swagger
  * /v1/activity-logs/{id}/details:
  *   get:
- *     summary: Detalhes do Log
- *     description: Retorna detalhes de um log específico
+ *     summary: Detalles del Log
+ *     description: Devuelve detalles de un log específico
  *     tags: [ActivityLogs]
  *     security:
  *       - apiToken: []
@@ -1086,7 +1086,7 @@ openApiRouter.get("/activity-logs/entities", isApiToken('read:activity-logs'), A
  *           type: integer
  *     responses:
  *       200:
- *         description: Detalhes do log
+ *         description: Detalles del log
  */
 openApiRouter.get("/activity-logs/:id/details", isApiToken('read:activity-logs'), ActivityLogController.show);
 
@@ -1097,7 +1097,7 @@ openApiRouter.get("/activity-logs/:id/details", isApiToken('read:activity-logs')
  * /v1/backups:
  *   get:
  *     summary: Listar Backups
- *     description: Retorna lista de backups disponíveis
+ *     description: Devuelve lista de backups disponibles
  *     tags: [Backups]
  *     security:
  *       - apiToken: []
@@ -1111,14 +1111,14 @@ openApiRouter.get("/backups", isApiToken('read:backups'), BackupController.index
  * @swagger
  * /v1/backups:
  *   post:
- *     summary: Criar Backup
- *     description: Cria um novo backup do sistema
+ *     summary: Crear Backup
+ *     description: Crea un nuevo backup del sistema
  *     tags: [Backups]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Backup criado
+ *         description: Backup creado
  */
 openApiRouter.post("/backups", isApiToken('create:backups'), BackupController.store);
 
@@ -1126,8 +1126,8 @@ openApiRouter.post("/backups", isApiToken('create:backups'), BackupController.st
  * @swagger
  * /v1/backups/{filename}:
  *   get:
- *     summary: Obter Backup
- *     description: Retorna detalhes de um backup
+ *     summary: Obtener Backup
+ *     description: Devuelve detalles de un backup
  *     tags: [Backups]
  *     security:
  *       - apiToken: []
@@ -1148,7 +1148,7 @@ openApiRouter.get("/backups/:filename", isApiToken('read:backups'), BackupContro
  * /v1/backups/{filename}/restore:
  *   post:
  *     summary: Restaurar Backup
- *     description: Restaura o sistema a partir de um backup
+ *     description: Restaura el sistema a partir de un backup
  *     tags: [Backups]
  *     security:
  *       - apiToken: []
@@ -1168,8 +1168,8 @@ openApiRouter.post("/backups/:filename/restore", isApiToken('update:backups'), B
  * @swagger
  * /v1/backups/{filename}:
  *   delete:
- *     summary: Excluir Backup
- *     description: Remove um backup
+ *     summary: Eliminar Backup
+ *     description: Elimina un backup
  *     tags: [Backups]
  *     security:
  *       - apiToken: []
@@ -1181,7 +1181,7 @@ openApiRouter.post("/backups/:filename/restore", isApiToken('update:backups'), B
  *           type: string
  *     responses:
  *       200:
- *         description: Backup excluído
+ *         description: Backup eliminado
  */
 openApiRouter.delete("/backups/:filename", isApiToken('delete:backups'), BackupController.remove);
 
@@ -1191,14 +1191,14 @@ openApiRouter.delete("/backups/:filename", isApiToken('delete:backups'), BackupC
  * @swagger
  * /v1/error-logs:
  *   post:
- *     summary: Criar Log de Erro
- *     description: Registra um novo log de erro
+ *     summary: Crear Log de Error
+ *     description: Registra un nuevo log de error
  *     tags: [ErrorLogs]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Log criado
+ *         description: Log creado
  */
 openApiRouter.post("/error-logs", isApiToken('create:error-logs'), ErrorLogController.store);
 
@@ -1206,8 +1206,8 @@ openApiRouter.post("/error-logs", isApiToken('create:error-logs'), ErrorLogContr
  * @swagger
  * /v1/error-logs:
  *   get:
- *     summary: Listar Logs de Erro
- *     description: Retorna lista de logs de erro
+ *     summary: Listar Logs de Error
+ *     description: Devuelve lista de logs de error
  *     tags: [ErrorLogs]
  *     security:
  *       - apiToken: []
@@ -1221,8 +1221,8 @@ openApiRouter.get("/error-logs", isApiToken('read:error-logs'), ErrorLogControll
  * @swagger
  * /v1/error-logs/{id}:
  *   get:
- *     summary: Obter Log de Erro
- *     description: Retorna detalhes de um log de erro
+ *     summary: Obtener Log de Error
+ *     description: Devuelve detalles de un log de error
  *     tags: [ErrorLogs]
  *     security:
  *       - apiToken: []
@@ -1242,14 +1242,14 @@ openApiRouter.get("/error-logs/:id", isApiToken('read:error-logs'), ErrorLogCont
  * @swagger
  * /v1/error-logs/cleanup:
  *   delete:
- *     summary: Limpar Logs Antigos
- *     description: Remove logs de erro antigos
+ *     summary: Limpiar Logs Antiguos
+ *     description: Elimina logs de error antiguos
  *     tags: [ErrorLogs]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Logs limpos
+ *         description: Logs limpiados
  */
 openApiRouter.delete("/error-logs/cleanup", isApiToken('delete:error-logs'), ErrorLogController.cleanupOldLogs);
 
@@ -1259,14 +1259,14 @@ openApiRouter.delete("/error-logs/cleanup", isApiToken('delete:error-logs'), Err
  * @swagger
  * /v1/network-status:
  *   get:
- *     summary: Status da Rede
- *     description: Retorna status da rede
+ *     summary: Estado de la Red
+ *     description: Devuelve estado de la red
  *     tags: [NetworkMonitor]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Status da rede
+ *         description: Estado de la red
  */
 openApiRouter.get("/network-status", isApiToken('read:network-status'), NetworkMonitorController.index);
 
@@ -1276,14 +1276,14 @@ openApiRouter.get("/network-status", isApiToken('read:network-status'), NetworkM
  * @swagger
  * /v1/queue-monitor:
  *   get:
- *     summary: Monitorar Setores
- *     description: Retorna monitoramento dos setores
+ *     summary: Monitorear Sectores
+ *     description: Devuelve monitoreo de los sectores
  *     tags: [QueueMonitor]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Status dos setores
+ *         description: Estado de los sectores
  */
 openApiRouter.get("/queue-monitor", isApiToken('read:queue-monitor'), QueueMonitorController.index);
 
@@ -1293,14 +1293,14 @@ openApiRouter.get("/queue-monitor", isApiToken('read:queue-monitor'), QueueMonit
  * @swagger
  * /v1/system-update/check:
  *   get:
- *     summary: Verificar Atualizações
- *     description: Verifica se há atualizações disponíveis
+ *     summary: Verificar Actualizaciones
+ *     description: Verifica si hay actualizaciones disponibles
  *     tags: [SystemUpdate]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Status de atualizações
+ *         description: Estado de actualizaciones
  */
 openApiRouter.get("/system-update/check", isApiToken('read:system-update'), SystemUpdateController.checkUpdates);
 
@@ -1308,14 +1308,14 @@ openApiRouter.get("/system-update/check", isApiToken('read:system-update'), Syst
  * @swagger
  * /v1/system-update/install:
  *   post:
- *     summary: Instalar Atualização
- *     description: Instala atualização do sistema
+ *     summary: Instalar Actualización
+ *     description: Instala actualización del sistema
  *     tags: [SystemUpdate]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Atualização instalada
+ *         description: Actualización instalada
  */
 openApiRouter.post("/system-update/install", isApiToken('write:system-update'), SystemUpdateController.installUpdate);
 
@@ -1323,14 +1323,14 @@ openApiRouter.post("/system-update/install", isApiToken('write:system-update'), 
  * @swagger
  * /v1/system-update/status:
  *   get:
- *     summary: Status da Atualização
- *     description: Retorna status da atualização
+ *     summary: Estado de la Actualización
+ *     description: Devuelve estado de la actualización
  *     tags: [SystemUpdate]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Status da atualização
+ *         description: Estado de la actualización
  */
 openApiRouter.get("/system-update/status", isApiToken('read:system-update'), SystemUpdateController.getStatus);
 
@@ -1338,8 +1338,8 @@ openApiRouter.get("/system-update/status", isApiToken('read:system-update'), Sys
  * @swagger
  * /v1/system-update/backups:
  *   get:
- *     summary: Listar Backups de Atualização
- *     description: Retorna backups de atualização
+ *     summary: Listar Backups de Actualización
+ *     description: Devuelve backups de actualización
  *     tags: [SystemUpdate]
  *     security:
  *       - apiToken: []
@@ -1353,8 +1353,8 @@ openApiRouter.get("/system-update/backups", isApiToken('read:system-update'), Sy
  * @swagger
  * /v1/system-update/restore/{backupFileName}:
  *   post:
- *     summary: Restaurar Backup de Atualização
- *     description: Restaura sistema de um backup
+ *     summary: Restaurar Backup de Actualización
+ *     description: Restaura el sistema desde un backup
  *     tags: [SystemUpdate]
  *     security:
  *       - apiToken: []
@@ -1376,14 +1376,14 @@ openApiRouter.post("/system-update/restore/:backupFileName", isApiToken('write:s
  * @swagger
  * /v1/version:
  *   get:
- *     summary: Obter Versão
- *     description: Retorna versão do sistema
+ *     summary: Obtener Versión
+ *     description: Devuelve versión del sistema
  *     tags: [Version]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Versão do sistema
+ *         description: Versión del sistema
  */
 openApiRouter.get("/version", isApiToken('read:version'), VersionController.getVersion);
 
@@ -1391,14 +1391,14 @@ openApiRouter.get("/version", isApiToken('read:version'), VersionController.getV
  * @swagger
  * /v1/whatsapp-lib/update:
  *   post:
- *     summary: Atualizar Biblioteca WhatsApp
- *     description: Atualiza a biblioteca do WhatsApp
+ *     summary: Actualizar Biblioteca WhatsApp
+ *     description: Actualiza la biblioteca de WhatsApp
  *     tags: [WhatsAppLibrary]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Biblioteca atualizada
+ *         description: Biblioteca actualizada
  */
 openApiRouter.post("/whatsapp-lib/update", isApiToken('write:whatsapp-lib'), WhatsappLibController.updateWhatsappLibrary);
 
@@ -1409,7 +1409,7 @@ openApiRouter.post("/whatsapp-lib/update", isApiToken('write:whatsapp-lib'), Wha
  * /v1/restartpm2:
  *   post:
  *     summary: Reiniciar PM2
- *     description: Reinicia o gerenciador de processos PM2
+ *     description: Reinicia el administrador de procesos PM2
  *     tags: [System]
  *     security:
  *       - apiToken: []
@@ -1423,14 +1423,14 @@ openApiRouter.post("/restartpm2", isApiToken('write:system'), SystemController.r
  * @swagger
  * /v1/disk-space:
  *   get:
- *     summary: Espaço em Disco
- *     description: Retorna informações de espaço em disco
+ *     summary: Espacio en Disco
+ *     description: Devuelve información de espacio en disco
  *     tags: [System]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Espaço em disco
+ *         description: Espacio en disco
  */
 openApiRouter.get("/disk-space", isApiToken('read:system-resources'), DiskSpaceController.getDiskSpace);
 
@@ -1438,14 +1438,14 @@ openApiRouter.get("/disk-space", isApiToken('read:system-resources'), DiskSpaceC
  * @swagger
  * /v1/memory-usage:
  *   get:
- *     summary: Uso de Memória
- *     description: Retorna uso de memória do sistema
+ *     summary: Uso de Memoria
+ *     description: Devuelve uso de memoria del sistema
  *     tags: [System]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Uso de memória
+ *         description: Uso de memoria
  */
 openApiRouter.get("/memory-usage", isApiToken('read:system-resources'), MemoryUsageController.getMemoryUsage);
 
@@ -1454,7 +1454,7 @@ openApiRouter.get("/memory-usage", isApiToken('read:system-resources'), MemoryUs
  * /v1/cpu-usage:
  *   get:
  *     summary: Uso de CPU
- *     description: Retorna uso de CPU do sistema
+ *     description: Devuelve uso de CPU del sistema
  *     tags: [System]
  *     security:
  *       - apiToken: []
@@ -1468,14 +1468,14 @@ openApiRouter.get("/cpu-usage", isApiToken('read:system-resources'), CpuUsageCon
  * @swagger
  * /v1/database-status:
  *   get:
- *     summary: Status do Banco de Dados
- *     description: Retorna status do banco de dados
+ *     summary: Estado de la Base de Datos
+ *     description: Devuelve estado de la base de datos
  *     tags: [System]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Status do banco
+ *         description: Estado de la base de datos
  */
 openApiRouter.get("/database-status", isApiToken('read:system-resources'), DatabaseMonitorController.getDatabaseStatus);
 
@@ -1485,14 +1485,14 @@ openApiRouter.get("/database-status", isApiToken('read:system-resources'), Datab
  * @swagger
  * /v1/videos:
  *   get:
- *     summary: Listar Vídeos
- *     description: Retorna lista de vídeos
+ *     summary: Listar Videos
+ *     description: Devuelve lista de videos
  *     tags: [Videos]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de vídeos
+ *         description: Lista de videos
  */
 openApiRouter.get("/videos", isApiToken('read:videos'), VideoController.index);
 
@@ -1500,8 +1500,8 @@ openApiRouter.get("/videos", isApiToken('read:videos'), VideoController.index);
  * @swagger
  * /v1/videos/{id}:
  *   get:
- *     summary: Obter Vídeo
- *     description: Retorna detalhes de um vídeo
+ *     summary: Obtener Video
+ *     description: Devuelve detalles de un video
  *     tags: [Videos]
  *     security:
  *       - apiToken: []
@@ -1513,7 +1513,7 @@ openApiRouter.get("/videos", isApiToken('read:videos'), VideoController.index);
  *           type: integer
  *     responses:
  *       200:
- *         description: Vídeo encontrado
+ *         description: Video encontrado
  */
 openApiRouter.get("/videos/:id", isApiToken('read:videos'), VideoController.show);
 
@@ -1521,14 +1521,14 @@ openApiRouter.get("/videos/:id", isApiToken('read:videos'), VideoController.show
  * @swagger
  * /v1/videos:
  *   post:
- *     summary: Criar Vídeo
- *     description: Adiciona um novo vídeo
+ *     summary: Crear Video
+ *     description: Agrega un nuevo video
  *     tags: [Videos]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Vídeo criado
+ *         description: Video creado
  */
 openApiRouter.post("/videos", isApiToken('write:videos'), VideoController.store);
 
@@ -1536,8 +1536,8 @@ openApiRouter.post("/videos", isApiToken('write:videos'), VideoController.store)
  * @swagger
  * /v1/videos/{id}:
  *   put:
- *     summary: Atualizar Vídeo
- *     description: Atualiza um vídeo
+ *     summary: Actualizar Video
+ *     description: Actualiza un video
  *     tags: [Videos]
  *     security:
  *       - apiToken: []
@@ -1549,7 +1549,7 @@ openApiRouter.post("/videos", isApiToken('write:videos'), VideoController.store)
  *           type: integer
  *     responses:
  *       200:
- *         description: Vídeo atualizado
+ *         description: Video actualizado
  */
 openApiRouter.put("/videos/:id", isApiToken('write:videos'), VideoController.update);
 
@@ -1557,8 +1557,8 @@ openApiRouter.put("/videos/:id", isApiToken('write:videos'), VideoController.upd
  * @swagger
  * /v1/videos/{id}:
  *   delete:
- *     summary: Excluir Vídeo
- *     description: Remove um vídeo
+ *     summary: Eliminar Video
+ *     description: Elimina un video
  *     tags: [Videos]
  *     security:
  *       - apiToken: []
@@ -1570,7 +1570,7 @@ openApiRouter.put("/videos/:id", isApiToken('write:videos'), VideoController.upd
  *           type: integer
  *     responses:
  *       200:
- *         description: Vídeo excluído
+ *         description: Video eliminado
  */
 openApiRouter.delete("/videos/:id", isApiToken('write:videos'), VideoController.remove);
 
@@ -1580,14 +1580,14 @@ openApiRouter.delete("/videos/:id", isApiToken('write:videos'), VideoController.
  * @swagger
  * /v1/users:
  *   get:
- *     summary: Listar Usuários
- *     description: Retorna a lista de todos os usuários do sistema
+ *     summary: Listar Usuarios
+ *     description: Devuelve la lista de todos los usuarios del sistema
  *     tags: [Users]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de usuários retornada com sucesso
+ *         description: Lista de usuarios devuelta con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -1600,20 +1600,20 @@ openApiRouter.delete("/videos/:id", isApiToken('write:videos'), VideoController.
  *                     example: 1
  *                   name:
  *                     type: string
- *                     example: "João Silva"
+ *                     example: "Juan Silva"
  *                   email:
  *                     type: string
- *                     example: "joao@example.com"
+ *                     example: "usuario@example.com"
  *                   profile:
  *                     type: string
  *                     enum: [admin, user]
  *                     example: "user"
  *       401:
- *         description: Token inválido ou não fornecido
+ *         description: Token inválido o no proporcionado
  *       403:
- *         description: Sem permissão read:users
+ *         description: Sin permiso read:users
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.get("/users", isApiToken('read:users'), UserController.index);
 
@@ -1621,8 +1621,8 @@ openApiRouter.get("/users", isApiToken('read:users'), UserController.index);
  * @swagger
  * /v1/users:
  *   post:
- *     summary: Criar Usuário
- *     description: Cria um novo usuário no sistema
+ *     summary: Crear Usuario
+ *     description: Crea un nuevo usuario en el sistema
  *     tags: [Users]
  *     security:
  *       - apiToken: []
@@ -1640,38 +1640,38 @@ openApiRouter.get("/users", isApiToken('read:users'), UserController.index);
  *             properties:
  *               name:
  *                 type: string
- *                 description: Nome completo do usuário
+ *                 description: Nombre completo del usuario
  *                 example: "Maria Santos"
  *               email:
  *                 type: string
- *                 description: Email do usuário (deve ser único)
+ *                 description: Email del usuario (debe ser único)
  *                 example: "maria@example.com"
  *               password:
  *                 type: string
- *                 description: Senha do usuário
+ *                 description: Contraseña del usuario
  *                 example: "senha123"
  *               profile:
  *                 type: string
  *                 enum: [admin, user]
- *                 description: Perfil de acesso do usuário
+ *                 description: Perfil de acceso del usuario
  *                 example: "user"
  *               queueIds:
  *                 type: array
  *                 items:
  *                   type: integer
- *                 description: IDs dos setores associados ao usuário
+ *                 description: IDs de los sectores asociados al usuario
  *                 example: [1, 2, 3]
  *     responses:
  *       200:
- *         description: Usuário criado com sucesso
+ *         description: Usuario creado con éxito
  *       400:
- *         description: Dados inválidos ou email já cadastrado
+ *         description: Datos inválidos o email ya registrado
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão create:users
+ *         description: Sin permiso create:users
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.post("/users", isApiToken('create:users'), UserController.store);
 
@@ -1679,8 +1679,8 @@ openApiRouter.post("/users", isApiToken('create:users'), UserController.store);
  * @swagger
  * /v1/users/{userId}:
  *   get:
- *     summary: Obter Usuário
- *     description: Retorna os detalhes de um usuário específico
+ *     summary: Obtener Usuario
+ *     description: Devuelve los detalles de un usuario específico
  *     tags: [Users]
  *     security:
  *       - apiToken: []
@@ -1690,11 +1690,11 @@ openApiRouter.post("/users", isApiToken('create:users'), UserController.store);
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do usuário
+ *         description: ID del usuario
  *         example: 1
  *     responses:
  *       200:
- *         description: Usuário encontrado
+ *         description: Usuario encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -1705,10 +1705,10 @@ openApiRouter.post("/users", isApiToken('create:users'), UserController.store);
  *                   example: 1
  *                 name:
  *                   type: string
- *                   example: "João Silva"
+ *                   example: "Juan Silva"
  *                 email:
  *                   type: string
- *                   example: "joao@example.com"
+ *                   example: "usuario@example.com"
  *                 profile:
  *                   type: string
  *                   example: "user"
@@ -1724,11 +1724,11 @@ openApiRouter.post("/users", isApiToken('create:users'), UserController.store);
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:users
+ *         description: Sin permiso read:users
  *       404:
- *         description: Usuário não encontrado
+ *         description: Usuario no encontrado
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.get("/users/:userId", isApiToken('read:users'), UserController.show);
 
@@ -1736,8 +1736,8 @@ openApiRouter.get("/users/:userId", isApiToken('read:users'), UserController.sho
  * @swagger
  * /v1/users/{userId}:
  *   put:
- *     summary: Atualizar Usuário
- *     description: Atualiza os dados de um usuário existente
+ *     summary: Actualizar Usuario
+ *     description: Actualiza los datos de un usuario existente
  *     tags: [Users]
  *     security:
  *       - apiToken: []
@@ -1747,7 +1747,7 @@ openApiRouter.get("/users/:userId", isApiToken('read:users'), UserController.sho
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do usuário
+ *         description: ID del usuario
  *         example: 1
  *     requestBody:
  *       required: true
@@ -1758,40 +1758,40 @@ openApiRouter.get("/users/:userId", isApiToken('read:users'), UserController.sho
  *             properties:
  *               name:
  *                 type: string
- *                 description: Nome completo do usuário
- *                 example: "João Silva Atualizado"
+ *                 description: Nombre completo del usuario
+ *                 example: "Juan Silva Actualizado"
  *               email:
  *                 type: string
- *                 description: Email do usuário
- *                 example: "joao.novo@example.com"
+ *                 description: Email del usuario
+ *                 example: "nuevo.usuario@example.com"
  *               password:
  *                 type: string
- *                 description: Nova senha (opcional)
- *                 example: "novaSenha123"
+ *                 description: Nueva contraseña (opcional)
+ *                 example: "nuevaContraseña123"
  *               profile:
  *                 type: string
  *                 enum: [admin, user]
- *                 description: Perfil de acesso
+ *                 description: Perfil de acceso
  *                 example: "admin"
  *               queueIds:
  *                 type: array
  *                 items:
  *                   type: integer
- *                 description: IDs dos setores
+ *                 description: IDs de los sectores
  *                 example: [1, 3, 5]
  *     responses:
  *       200:
- *         description: Usuário atualizado com sucesso
+ *         description: Usuario actualizado con éxito
  *       400:
- *         description: Dados inválidos
+ *         description: Datos inválidos
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão update:users
+ *         description: Sin permiso update:users
  *       404:
- *         description: Usuário não encontrado
+ *         description: Usuario no encontrado
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.put("/users/:userId", isApiToken('update:users'), UserController.update);
 
@@ -1799,8 +1799,8 @@ openApiRouter.put("/users/:userId", isApiToken('update:users'), UserController.u
  * @swagger
  * /v1/users/{userId}:
  *   delete:
- *     summary: Excluir Usuário
- *     description: Remove um usuário do sistema
+ *     summary: Eliminar Usuario
+ *     description: Elimina un usuario del sistema
  *     tags: [Users]
  *     security:
  *       - apiToken: []
@@ -1810,19 +1810,19 @@ openApiRouter.put("/users/:userId", isApiToken('update:users'), UserController.u
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do usuário a ser excluído
+ *         description: ID del usuario a eliminar
  *         example: 1
  *     responses:
  *       200:
- *         description: Usuário excluído com sucesso
+ *         description: Usuario eliminado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão delete:users
+ *         description: Sin permiso delete:users
  *       404:
- *         description: Usuário não encontrado
+ *         description: Usuario no encontrado
  *       500:
- *         description: Erro interno
+ *         description: Error interno
  */
 openApiRouter.delete("/users/:userId", isApiToken('delete:users'), UserController.remove);
 
@@ -1832,14 +1832,14 @@ openApiRouter.delete("/users/:userId", isApiToken('delete:users'), UserControlle
  * @swagger
  * /v1/quickAnswers:
  *   get:
- *     summary: Listar Respostas Rápidas
- *     description: Retorna lista de respostas rápidas
+ *     summary: Listar Respuestas Rápidas
+ *     description: Devuelve lista de respuestas rápidas
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de respostas rápidas
+ *         description: Lista de respuestas rápidas
  */
 openApiRouter.get("/quickAnswers", isApiToken('read:quickAnswers'), QuickAnswerController.index);
 
@@ -1847,8 +1847,8 @@ openApiRouter.get("/quickAnswers", isApiToken('read:quickAnswers'), QuickAnswerC
  * @swagger
  * /v1/quickAnswers:
  *   post:
- *     summary: Criar Resposta Rápida
- *     description: Cria uma nova resposta rápida
+ *     summary: Crear Respuesta Rápida
+ *     description: Crea una nueva respuesta rápida
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
@@ -1861,13 +1861,13 @@ openApiRouter.get("/quickAnswers", isApiToken('read:quickAnswers'), QuickAnswerC
  *             properties:
  *               shortcut:
  *                 type: string
- *                 example: "/ola"
+ *                 example: "/hola"
  *               message:
  *                 type: string
- *                 example: "Olá! Como posso ajudar?"
+ *                 example: "¡Hola! ¿Cómo puedo ayudarte?"
  *     responses:
  *       200:
- *         description: Resposta rápida criada
+ *         description: Respuesta rápida creada
  */
 openApiRouter.post("/quickAnswers", isApiToken('create:quickAnswers'), QuickAnswerController.store);
 
@@ -1875,8 +1875,8 @@ openApiRouter.post("/quickAnswers", isApiToken('create:quickAnswers'), QuickAnsw
  * @swagger
  * /v1/quickAnswers/{quickAnswerId}:
  *   get:
- *     summary: Obter Resposta Rápida
- *     description: Retorna detalhes de uma resposta rápida
+ *     summary: Obtener Respuesta Rápida
+ *     description: Devuelve detalles de una respuesta rápida
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
@@ -1888,7 +1888,7 @@ openApiRouter.post("/quickAnswers", isApiToken('create:quickAnswers'), QuickAnsw
  *           type: integer
  *     responses:
  *       200:
- *         description: Resposta rápida encontrada
+ *         description: Respuesta rápida encontrada
  */
 openApiRouter.get("/quickAnswers/:quickAnswerId", isApiToken('read:quickAnswers'), QuickAnswerController.show);
 
@@ -1896,8 +1896,8 @@ openApiRouter.get("/quickAnswers/:quickAnswerId", isApiToken('read:quickAnswers'
  * @swagger
  * /v1/quickAnswers/{quickAnswerId}:
  *   put:
- *     summary: Atualizar Resposta Rápida
- *     description: Atualiza uma resposta rápida
+ *     summary: Actualizar Respuesta Rápida
+ *     description: Actualiza una respuesta rápida
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
@@ -1909,7 +1909,7 @@ openApiRouter.get("/quickAnswers/:quickAnswerId", isApiToken('read:quickAnswers'
  *           type: integer
  *     responses:
  *       200:
- *         description: Resposta rápida atualizada
+ *         description: Respuesta rápida actualizada
  */
 openApiRouter.put("/quickAnswers/:quickAnswerId", isApiToken('update:quickAnswers'), QuickAnswerController.update);
 
@@ -1917,8 +1917,8 @@ openApiRouter.put("/quickAnswers/:quickAnswerId", isApiToken('update:quickAnswer
  * @swagger
  * /v1/quickAnswers/{quickAnswerId}:
  *   delete:
- *     summary: Excluir Resposta Rápida
- *     description: Remove uma resposta rápida
+ *     summary: Eliminar Respuesta Rápida
+ *     description: Elimina una respuesta rápida
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
@@ -1930,7 +1930,7 @@ openApiRouter.put("/quickAnswers/:quickAnswerId", isApiToken('update:quickAnswer
  *           type: integer
  *     responses:
  *       200:
- *         description: Resposta rápida excluída
+ *         description: Respuesta rápida eliminada
  */
 openApiRouter.delete("/quickAnswers/:quickAnswerId", isApiToken('delete:quickAnswers'), QuickAnswerController.remove);
 
@@ -1938,14 +1938,14 @@ openApiRouter.delete("/quickAnswers/:quickAnswerId", isApiToken('delete:quickAns
  * @swagger
  * /v1/quickAnswers:
  *   delete:
- *     summary: Excluir Todas as Respostas Rápidas
- *     description: Remove todas as respostas rápidas
+ *     summary: Eliminar Todas las Respuestas Rápidas
+ *     description: Elimina todas las respuestas rápidas
  *     tags: [Quick Answers]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Todas as respostas rápidas excluídas
+ *         description: Todas las respuestas rápidas eliminadas
  */
 openApiRouter.delete("/quickAnswers", isApiToken('delete:quickAnswers'), QuickAnswerController.removeAll);
 
@@ -1955,8 +1955,8 @@ openApiRouter.delete("/quickAnswers", isApiToken('delete:quickAnswers'), QuickAn
  * @swagger
  * /v1/groups/{groupId}/participants/add:
  *   post:
- *     summary: Adicionar Participantes ao Grupo
- *     description: Adiciona um ou mais participantes a um grupo do WhatsApp
+ *     summary: Agregar Participantes al Grupo
+ *     description: Agrega uno o más participantes a un grupo de WhatsApp
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -1966,7 +1966,7 @@ openApiRouter.delete("/quickAnswers", isApiToken('delete:quickAnswers'), QuickAn
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do grupo
+ *         description: ID del grupo
  *     requestBody:
  *       required: true
  *       content:
@@ -1981,7 +1981,7 @@ openApiRouter.delete("/quickAnswers", isApiToken('delete:quickAnswers'), QuickAn
  *                 example: ["5511999999999@c.us"]
  *     responses:
  *       200:
- *         description: Participantes adicionados
+ *         description: Participantes agregados
  */
 openApiRouter.post("/groups/:groupId/participants/add", isApiToken('write:groups'), GroupController.addParticipants);
 
@@ -1989,8 +1989,8 @@ openApiRouter.post("/groups/:groupId/participants/add", isApiToken('write:groups
  * @swagger
  * /v1/groups/{groupId}/participants/remove:
  *   post:
- *     summary: Remover Participantes do Grupo
- *     description: Remove um ou mais participantes de um grupo
+ *     summary: Eliminar Participantes del Grupo
+ *     description: Elimina uno o más participantes de un grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2014,7 +2014,7 @@ openApiRouter.post("/groups/:groupId/participants/add", isApiToken('write:groups
  *                 example: ["5511999999999@c.us"]
  *     responses:
  *       200:
- *         description: Participantes removidos
+ *         description: Participantes eliminados
  */
 openApiRouter.post("/groups/:groupId/participants/remove", isApiToken('write:groups'), GroupController.removeParticipants);
 
@@ -2022,8 +2022,8 @@ openApiRouter.post("/groups/:groupId/participants/remove", isApiToken('write:gro
  * @swagger
  * /v1/groups/{groupId}/participants/promote:
  *   post:
- *     summary: Promover Participantes a Admin
- *     description: Promove participantes a administradores do grupo
+ *     summary: Promover Participantes a Administrador
+ *     description: Promueve participantes a administradores del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2055,8 +2055,8 @@ openApiRouter.post("/groups/:groupId/participants/promote", isApiToken('write:gr
  * @swagger
  * /v1/groups/{groupId}/participants/demote:
  *   post:
- *     summary: Rebaixar Admin a Participante
- *     description: Remove privilégios de administrador de participantes
+ *     summary: Degradar Admin a Participante
+ *     description: Elimina privilegios de administrador de participantes
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2080,7 +2080,7 @@ openApiRouter.post("/groups/:groupId/participants/promote", isApiToken('write:gr
  *                 example: ["5511999999999@c.us"]
  *     responses:
  *       200:
- *         description: Participantes rebaixados
+ *         description: Participantes degradados
  */
 openApiRouter.post("/groups/:groupId/participants/demote", isApiToken('write:groups'), GroupController.demoteParticipants);
 
@@ -2088,8 +2088,8 @@ openApiRouter.post("/groups/:groupId/participants/demote", isApiToken('write:gro
  * @swagger
  * /v1/groups/{groupId}/participants:
  *   get:
- *     summary: Listar Participantes do Grupo
- *     description: Retorna lista de participantes de um grupo
+ *     summary: Listar Participantes del Grupo
+ *     description: Devuelve lista de participantes de un grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2111,8 +2111,8 @@ openApiRouter.get("/groups/:groupId/participants", isApiToken('read:groups'), Gr
  * @swagger
  * /v1/groups/{groupId}/invite:
  *   get:
- *     summary: Obter Link de Convite
- *     description: Retorna o link de convite do grupo
+ *     summary: Obtener Enlace de Invitación
+ *     description: Devuelve el enlace de invitación del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2124,7 +2124,7 @@ openApiRouter.get("/groups/:groupId/participants", isApiToken('read:groups'), Gr
  *           type: string
  *     responses:
  *       200:
- *         description: Link de convite
+ *         description: Enlace de invitación
  */
 openApiRouter.get("/groups/:groupId/invite", isApiToken('read:groups'), GroupController.getInvite);
 
@@ -2132,8 +2132,8 @@ openApiRouter.get("/groups/:groupId/invite", isApiToken('read:groups'), GroupCon
  * @swagger
  * /v1/groups/{groupId}/invite/revoke:
  *   post:
- *     summary: Revogar Link de Convite
- *     description: Revoga o link de convite atual e gera um novo
+ *     summary: Revocar Enlace de Invitación
+ *     description: Revoca el enlace de invitación actual y genera uno nuevo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2145,7 +2145,7 @@ openApiRouter.get("/groups/:groupId/invite", isApiToken('read:groups'), GroupCon
  *           type: string
  *     responses:
  *       200:
- *         description: Link revogado
+ *         description: Enlace revocado
  */
 openApiRouter.post("/groups/:groupId/invite/revoke", isApiToken('write:groups'), GroupController.revokeInvite);
 
@@ -2155,8 +2155,8 @@ openApiRouter.post("/groups/:groupId/invite/revoke", isApiToken('write:groups'),
  * @swagger
  * /v1/groups/{groupId}/settings/memberAddMode:
  *   post:
- *     summary: Configurar Modo de Adicionar Membros
- *     description: Define quem pode adicionar membros ao grupo
+ *     summary: Configurar Modo de Agregar Miembros
+ *     description: Define quién puede agregar miembros al grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2179,7 +2179,7 @@ openApiRouter.post("/groups/:groupId/invite/revoke", isApiToken('write:groups'),
  *                 example: "admins_only"
  *     responses:
  *       200:
- *         description: Configuração atualizada
+ *         description: Configuración actualizada
  */
 openApiRouter.post("/groups/:groupId/settings/memberAddMode", isApiToken('write:groups'), GroupController.setMemberAddMode);
 
@@ -2187,8 +2187,8 @@ openApiRouter.post("/groups/:groupId/settings/memberAddMode", isApiToken('write:
  * @swagger
  * /v1/groups/{groupId}/settings/announcement:
  *   post:
- *     summary: Configurar Modo Anúncio
- *     description: Define se apenas admins podem enviar mensagens
+ *     summary: Configurar Modo Anuncio
+ *     description: Define si solo los admins pueden enviar mensajes
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2210,7 +2210,7 @@ openApiRouter.post("/groups/:groupId/settings/memberAddMode", isApiToken('write:
  *                 example: true
  *     responses:
  *       200:
- *         description: Modo anúncio configurado
+ *         description: Modo anuncio configurado
  */
 openApiRouter.post("/groups/:groupId/settings/announcement", isApiToken('write:groups'), GroupController.setAnnouncement);
 
@@ -2218,8 +2218,8 @@ openApiRouter.post("/groups/:groupId/settings/announcement", isApiToken('write:g
  * @swagger
  * /v1/groups/{groupId}/settings/restrict:
  *   post:
- *     summary: Restringir Edição de Info do Grupo
- *     description: Define se apenas admins podem editar informações do grupo
+ *     summary: Restringir Edición de Info del Grupo
+ *     description: Define si solo los admins pueden editar la información del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2241,7 +2241,7 @@ openApiRouter.post("/groups/:groupId/settings/announcement", isApiToken('write:g
  *                 example: true
  *     responses:
  *       200:
- *         description: Restrição configurada
+ *         description: Restricción configurada
  */
 openApiRouter.post("/groups/:groupId/settings/restrict", isApiToken('write:groups'), GroupController.setRestrict);
 
@@ -2251,8 +2251,8 @@ openApiRouter.post("/groups/:groupId/settings/restrict", isApiToken('write:group
  * @swagger
  * /v1/groups/{groupId}/subject:
  *   post:
- *     summary: Alterar Nome do Grupo
- *     description: Altera o nome/assunto do grupo
+ *     summary: Cambiar Nombre del Grupo
+ *     description: Cambia el nombre/asunto del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2271,10 +2271,10 @@ openApiRouter.post("/groups/:groupId/settings/restrict", isApiToken('write:group
  *             properties:
  *               subject:
  *                 type: string
- *                 example: "Novo Nome do Grupo"
+ *                 example: "Nuevo Nombre del Grupo"
  *     responses:
  *       200:
- *         description: Nome alterado
+ *         description: Nombre modificado
  */
 openApiRouter.post("/groups/:groupId/subject", isApiToken('write:groups'), GroupController.setSubject);
 
@@ -2282,8 +2282,8 @@ openApiRouter.post("/groups/:groupId/subject", isApiToken('write:groups'), Group
  * @swagger
  * /v1/groups/{groupId}/description:
  *   post:
- *     summary: Alterar Descrição do Grupo
- *     description: Altera a descrição do grupo
+ *     summary: Cambiar Descripción del Grupo
+ *     description: Cambia la descripción del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2302,10 +2302,10 @@ openApiRouter.post("/groups/:groupId/subject", isApiToken('write:groups'), Group
  *             properties:
  *               description:
  *                 type: string
- *                 example: "Descrição do grupo"
+ *                 example: "Descripción del grupo"
  *     responses:
  *       200:
- *         description: Descrição alterada
+ *         description: Descripción modificada
  */
 openApiRouter.post("/groups/:groupId/description", isApiToken('write:groups'), GroupController.setDescription);
 
@@ -2313,8 +2313,8 @@ openApiRouter.post("/groups/:groupId/description", isApiToken('write:groups'), G
  * @swagger
  * /v1/groups/{groupId}/picture:
  *   post:
- *     summary: Alterar Foto do Grupo
- *     description: Altera a foto do grupo
+ *     summary: Cambiar Foto del Grupo
+ *     description: Cambia la foto del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2336,7 +2336,7 @@ openApiRouter.post("/groups/:groupId/description", isApiToken('write:groups'), G
  *                 format: binary
  *     responses:
  *       200:
- *         description: Foto alterada
+ *         description: Foto cambiada
  */
 openApiRouter.post("/groups/:groupId/picture", isApiToken('write:groups'), GroupController.setPicture);
 
@@ -2344,8 +2344,8 @@ openApiRouter.post("/groups/:groupId/picture", isApiToken('write:groups'), Group
  * @swagger
  * /v1/groups/{groupId}/picture:
  *   delete:
- *     summary: Remover Foto do Grupo
- *     description: Remove a foto do grupo
+ *     summary: Eliminar Foto del Grupo
+ *     description: Elimina la foto del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2357,7 +2357,7 @@ openApiRouter.post("/groups/:groupId/picture", isApiToken('write:groups'), Group
  *           type: string
  *     responses:
  *       200:
- *         description: Foto removida
+ *         description: Foto eliminada
  */
 openApiRouter.delete("/groups/:groupId/picture", isApiToken('write:groups'), GroupController.deletePicture);
 
@@ -2367,8 +2367,8 @@ openApiRouter.delete("/groups/:groupId/picture", isApiToken('write:groups'), Gro
  * @swagger
  * /v1/groups/{groupId}/membership/requests:
  *   get:
- *     summary: Listar Solicitações de Entrada
- *     description: Retorna lista de solicitações pendentes para entrar no grupo
+ *     summary: Listar Solicitudes de Entrada
+ *     description: Devuelve lista de solicitudes pendientes para entrar al grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2380,7 +2380,7 @@ openApiRouter.delete("/groups/:groupId/picture", isApiToken('write:groups'), Gro
  *           type: string
  *     responses:
  *       200:
- *         description: Lista de solicitações
+ *         description: Lista de solicitudes
  */
 openApiRouter.get("/groups/:groupId/membership/requests", isApiToken('read:groups'), GroupController.listMembershipRequests);
 
@@ -2388,8 +2388,8 @@ openApiRouter.get("/groups/:groupId/membership/requests", isApiToken('read:group
  * @swagger
  * /v1/groups/{groupId}/membership/approve:
  *   post:
- *     summary: Aprovar Solicitações de Entrada
- *     description: Aprova solicitações de entrada no grupo
+ *     summary: Aprobar Solicitudes de Entrada
+ *     description: Aprueba solicitudes de entrada al grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2413,7 +2413,7 @@ openApiRouter.get("/groups/:groupId/membership/requests", isApiToken('read:group
  *                 example: ["5511999999999@c.us"]
  *     responses:
  *       200:
- *         description: Solicitações aprovadas
+ *         description: Solicitudes aprobadas
  */
 openApiRouter.post("/groups/:groupId/membership/approve", isApiToken('write:groups'), GroupController.approveMembershipRequests);
 
@@ -2421,8 +2421,8 @@ openApiRouter.post("/groups/:groupId/membership/approve", isApiToken('write:grou
  * @swagger
  * /v1/groups/{groupId}/membership/reject:
  *   post:
- *     summary: Rejeitar Solicitações de Entrada
- *     description: Rejeita solicitações de entrada no grupo
+ *     summary: Rechazar Solicitudes de Entrada
+ *     description: Rechaza solicitudes de entrada al grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2446,7 +2446,7 @@ openApiRouter.post("/groups/:groupId/membership/approve", isApiToken('write:grou
  *                 example: ["5511999999999@c.us"]
  *     responses:
  *       200:
- *         description: Solicitações rejeitadas
+ *         description: Solicitudes rechazadas
  */
 openApiRouter.post("/groups/:groupId/membership/reject", isApiToken('write:groups'), GroupController.rejectMembershipRequests);
 
@@ -2456,8 +2456,8 @@ openApiRouter.post("/groups/:groupId/membership/reject", isApiToken('write:group
  * @swagger
  * /v1/groups/{groupId}/leave:
  *   post:
- *     summary: Sair do Grupo
- *     description: Faz o bot sair do grupo
+ *     summary: Salir del Grupo
+ *     description: Hace que el bot salga del grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -2469,7 +2469,7 @@ openApiRouter.post("/groups/:groupId/membership/reject", isApiToken('write:group
  *           type: string
  *     responses:
  *       200:
- *         description: Saiu do grupo
+ *         description: Salió del grupo
  */
 openApiRouter.post("/groups/:groupId/leave", isApiToken('write:groups'), GroupController.leaveGroup);
 
@@ -2479,14 +2479,14 @@ openApiRouter.post("/groups/:groupId/leave", isApiToken('write:groups'), GroupCo
  * @swagger
  * /v1/client-status:
  *   get:
- *     summary: Listar Status de Clientes
- *     description: Retorna lista de status de clientes
+ *     summary: Listar Estados de Clientes
+ *     description: Devuelve lista de estados de clientes
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Lista de status
+ *         description: Lista de estados
  */
 openApiRouter.get("/client-status", isApiToken('read:client-status'), ClientStatusController.index);
 
@@ -2494,8 +2494,8 @@ openApiRouter.get("/client-status", isApiToken('read:client-status'), ClientStat
  * @swagger
  * /v1/client-status:
  *   post:
- *     summary: Criar Status de Cliente
- *     description: Cria um novo status de cliente
+ *     summary: Crear Estado de Cliente
+ *     description: Crea un nuevo estado de cliente
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
@@ -2514,7 +2514,7 @@ openApiRouter.get("/client-status", isApiToken('read:client-status'), ClientStat
  *                 example: "#00FF00"
  *     responses:
  *       200:
- *         description: Status criado
+ *         description: Estado creado
  */
 openApiRouter.post("/client-status", isApiToken('create:client-status'), ClientStatusController.store);
 
@@ -2522,14 +2522,14 @@ openApiRouter.post("/client-status", isApiToken('create:client-status'), ClientS
  * @swagger
  * /v1/client-status/statistics:
  *   get:
- *     summary: Obter Estatísticas de Status de Clientes
- *     description: Retorna estatísticas completas sobre distribuição de contatos por status
+ *     summary: Obtener Estadísticas de Estado de Clientes
+ *     description: Devuelve estadísticas completas sobre la distribución de contactos por estado
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Estatísticas retornadas com sucesso
+ *         description: Estadísticas devueltas con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -2559,8 +2559,8 @@ openApiRouter.get("/client-status/statistics", isApiToken('read:client-status'),
  * @swagger
  * /v1/client-status/{clientStatusId}:
  *   get:
- *     summary: Obter Status de Cliente
- *     description: Retorna detalhes de um status
+ *     summary: Obtener Estado de Cliente
+ *     description: Devuelve detalles de un estado
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
@@ -2572,7 +2572,7 @@ openApiRouter.get("/client-status/statistics", isApiToken('read:client-status'),
  *           type: integer
  *     responses:
  *       200:
- *         description: Status encontrado
+ *         description: Estado encontrado
  */
 openApiRouter.get("/client-status/:clientStatusId", isApiToken('read:client-status'), ClientStatusController.show);
 
@@ -2580,8 +2580,8 @@ openApiRouter.get("/client-status/:clientStatusId", isApiToken('read:client-stat
  * @swagger
  * /v1/client-status/{clientStatusId}:
  *   put:
- *     summary: Atualizar Status de Cliente
- *     description: Atualiza um status
+ *     summary: Actualizar Estado de Cliente
+ *     description: Actualiza un estado
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
@@ -2593,7 +2593,7 @@ openApiRouter.get("/client-status/:clientStatusId", isApiToken('read:client-stat
  *           type: integer
  *     responses:
  *       200:
- *         description: Status atualizado
+ *         description: Estado actualizado
  */
 openApiRouter.put("/client-status/:clientStatusId", isApiToken('update:client-status'), ClientStatusController.update);
 
@@ -2601,8 +2601,8 @@ openApiRouter.put("/client-status/:clientStatusId", isApiToken('update:client-st
  * @swagger
  * /v1/client-status/{clientStatusId}:
  *   delete:
- *     summary: Excluir Status de Cliente
- *     description: Remove um status
+ *     summary: Eliminar Estado de Cliente
+ *     description: Elimina un estado
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
@@ -2614,7 +2614,7 @@ openApiRouter.put("/client-status/:clientStatusId", isApiToken('update:client-st
  *           type: integer
  *     responses:
  *       200:
- *         description: Status excluído
+ *         description: Estado eliminado
  */
 openApiRouter.delete("/client-status/:clientStatusId", isApiToken('delete:client-status'), ClientStatusController.remove);
 
@@ -2622,14 +2622,14 @@ openApiRouter.delete("/client-status/:clientStatusId", isApiToken('delete:client
  * @swagger
  * /v1/client-status:
  *   delete:
- *     summary: Excluir Todos os Status
- *     description: Remove todos os status de clientes
+ *     summary: Eliminar Todos los Estados
+ *     description: Elimina todos los estados de clientes
  *     tags: [Client Status]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Todos os status excluídos
+ *         description: Todos los estados eliminados
  */
 openApiRouter.delete("/client-status", isApiToken('delete:client-status'), ClientStatusController.removeAll);
 
@@ -2639,8 +2639,8 @@ openApiRouter.delete("/client-status", isApiToken('delete:client-status'), Clien
  * @swagger
  * /v1/presence/typing/{ticketId}:
  *   post:
- *     summary: Enviar Indicador de Digitação
- *     description: Simula indicador "digitando..." no WhatsApp
+ *     summary: Enviar Indicador de Escritura
+ *     description: Simula indicador "escribiendo..." en WhatsApp
  *     tags: [Presence]
  *     security:
  *       - apiToken: []
@@ -2650,7 +2650,7 @@ openApiRouter.delete("/client-status", isApiToken('delete:client-status'), Clien
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do ticket
+ *         description: ID del ticket
  *     requestBody:
  *       content:
  *         application/json:
@@ -2659,11 +2659,11 @@ openApiRouter.delete("/client-status", isApiToken('delete:client-status'), Clien
  *             properties:
  *               duration:
  *                 type: integer
- *                 description: Duração em milissegundos (padrão 3000ms)
+ *                 description: Duración en milisegundos (predeterminado 3000ms)
  *                 example: 5000
  *     responses:
  *       200:
- *         description: Indicador enviado com sucesso
+ *         description: Indicador enviado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -2676,9 +2676,9 @@ openApiRouter.delete("/client-status", isApiToken('delete:client-status'), Clien
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:presence
+ *         description: Sin permiso write:presence
  *       500:
- *         description: Erro ao enviar indicador
+ *         description: Error al enviar el indicador
  */
 openApiRouter.post("/presence/typing/:ticketId", isApiToken('write:presence'), MessageController.sendTypingIndicator);
 
@@ -2686,8 +2686,8 @@ openApiRouter.post("/presence/typing/:ticketId", isApiToken('write:presence'), M
  * @swagger
  * /v1/presence/recording/{ticketId}:
  *   post:
- *     summary: Enviar Indicador de Gravação
- *     description: Simula indicador "gravando áudio..." no WhatsApp
+ *     summary: Enviar Indicador de Grabación
+ *     description: Simula indicador "grabando audio..." en WhatsApp
  *     tags: [Presence]
  *     security:
  *       - apiToken: []
@@ -2697,7 +2697,7 @@ openApiRouter.post("/presence/typing/:ticketId", isApiToken('write:presence'), M
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do ticket
+ *         description: ID del ticket
  *     requestBody:
  *       content:
  *         application/json:
@@ -2706,11 +2706,11 @@ openApiRouter.post("/presence/typing/:ticketId", isApiToken('write:presence'), M
  *             properties:
  *               duration:
  *                 type: integer
- *                 description: Duração em milissegundos (padrão 5000ms)
+ *                 description: Duración en milisegundos (predeterminado 5000ms)
  *                 example: 8000
  *     responses:
  *       200:
- *         description: Indicador enviado com sucesso
+ *         description: Indicador enviado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -2723,9 +2723,9 @@ openApiRouter.post("/presence/typing/:ticketId", isApiToken('write:presence'), M
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:presence
+ *         description: Sin permiso write:presence
  *       500:
- *         description: Erro ao enviar indicador
+ *         description: Error al enviar el indicador
  */
 openApiRouter.post("/presence/recording/:ticketId", isApiToken('write:presence'), MessageController.sendRecordingIndicator);
 
@@ -2733,8 +2733,8 @@ openApiRouter.post("/presence/recording/:ticketId", isApiToken('write:presence')
  * @swagger
  * /v1/presence/available/{ticketId}:
  *   post:
- *     summary: Definir Presença como Disponível
- *     description: Remove indicadores de digitação/gravação
+ *     summary: Definir Presencia como Disponible
+ *     description: Elimina indicadores de escritura/grabación
  *     tags: [Presence]
  *     security:
  *       - apiToken: []
@@ -2744,10 +2744,10 @@ openApiRouter.post("/presence/recording/:ticketId", isApiToken('write:presence')
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do ticket
+ *         description: ID del ticket
  *     responses:
  *       200:
- *         description: Presença definida como disponível
+ *         description: Presencia definida como disponible
  *         content:
  *           application/json:
  *             schema:
@@ -2760,9 +2760,9 @@ openApiRouter.post("/presence/recording/:ticketId", isApiToken('write:presence')
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:presence
+ *         description: Sin permiso write:presence
  *       500:
- *         description: Erro ao definir presença
+ *         description: Error al definir presencia
  */
 openApiRouter.post("/presence/available/:ticketId", isApiToken('write:presence'), MessageController.setAvailablePresence);
 
@@ -2770,8 +2770,8 @@ openApiRouter.post("/presence/available/:ticketId", isApiToken('write:presence')
  * @swagger
  * /v1/messages/{messageId}/edit:
  *   put:
- *     summary: Editar Mensagem
- *     description: Edita o conteúdo de uma mensagem já enviada
+ *     summary: Editar Mensaje
+ *     description: Edita el contenido de un mensaje ya enviado
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2781,7 +2781,7 @@ openApiRouter.post("/presence/available/:ticketId", isApiToken('write:presence')
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da mensagem
+ *         description: ID del mensaje
  *     requestBody:
  *       required: true
  *       content:
@@ -2793,17 +2793,17 @@ openApiRouter.post("/presence/available/:ticketId", isApiToken('write:presence')
  *             properties:
  *               body:
  *                 type: string
- *                 description: Novo conteúdo da mensagem
- *                 example: "Mensagem corrigida"
+ *                 description: Nuevo contenido del mensaje
+ *                 example: "Mensaje corregido"
  *     responses:
  *       200:
- *         description: Mensagem editada com sucesso
+ *         description: Mensaje editado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão update:messages
+ *         description: Sin permiso update:messages
  *       404:
- *         description: Mensagem não encontrada
+ *         description: Mensaje no encontrado
  */
 openApiRouter.put("/messages/:messageId/edit", isApiToken('update:messages'), MessageController.edit);
 
@@ -2811,8 +2811,8 @@ openApiRouter.put("/messages/:messageId/edit", isApiToken('update:messages'), Me
  * @swagger
  * /v1/messages/{messageId}:
  *   delete:
- *     summary: Excluir Mensagem
- *     description: Exclui uma mensagem enviada
+ *     summary: Eliminar Mensaje
+ *     description: Elimina un mensaje enviado
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2822,16 +2822,16 @@ openApiRouter.put("/messages/:messageId/edit", isApiToken('update:messages'), Me
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da mensagem
+ *         description: ID del mensaje
  *     responses:
  *       200:
- *         description: Mensagem excluída com sucesso
+ *         description: Mensaje eliminado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão delete:messages
+ *         description: Sin permiso delete:messages
  *       404:
- *         description: Mensagem não encontrada
+ *         description: Mensaje no encontrado
  */
 openApiRouter.delete("/messages/:messageId", isApiToken('delete:messages'), MessageController.remove);
 
@@ -2839,8 +2839,8 @@ openApiRouter.delete("/messages/:messageId", isApiToken('delete:messages'), Mess
  * @swagger
  * /v1/messages/{messageId}/react:
  *   post:
- *     summary: Reagir a Mensagem
- *     description: Adiciona uma reação (emoji) a uma mensagem
+ *     summary: Reaccionar a Mensaje
+ *     description: Agrega una reacción (emoji) a un mensaje
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2850,7 +2850,7 @@ openApiRouter.delete("/messages/:messageId", isApiToken('delete:messages'), Mess
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da mensagem
+ *         description: ID del mensaje
  *     requestBody:
  *       required: true
  *       content:
@@ -2860,18 +2860,18 @@ openApiRouter.delete("/messages/:messageId", isApiToken('delete:messages'), Mess
  *             properties:
  *               emoji:
  *                 type: string
- *                 description: Emoji para reagir
+ *                 description: Emoji para reaccionar
  *                 example: "👍"
  *               removeEmoji:
  *                 type: string
- *                 description: Emoji para remover (opcional)
+ *                 description: Emoji para eliminar (opcional)
  *     responses:
  *       200:
- *         description: Reação adicionada com sucesso
+ *         description: Reacción agregada con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão create:messages
+ *         description: Sin permiso create:messages
  */
 openApiRouter.post("/messages/:messageId/react", isApiToken('create:messages'), MessageController.reactMessage);
 
@@ -2879,8 +2879,8 @@ openApiRouter.post("/messages/:messageId/react", isApiToken('create:messages'), 
  * @swagger
  * /v1/messages/{messageId}/reactions:
  *   get:
- *     summary: Obter Reações de Mensagem
- *     description: Retorna todas as reações de uma mensagem
+ *     summary: Obtener Reacciones de Mensaje
+ *     description: Devuelve todas las reacciones de un mensaje
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2890,14 +2890,14 @@ openApiRouter.post("/messages/:messageId/react", isApiToken('create:messages'), 
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da mensagem
+ *         description: ID del mensaje
  *     responses:
  *       200:
- *         description: Reações retornadas com sucesso
+ *         description: Reacciones devueltas con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:messages
+ *         description: Sin permiso read:messages
  */
 openApiRouter.get("/messages/:messageId/reactions", isApiToken('read:messages'), MessageController.getReactions);
 
@@ -2905,8 +2905,8 @@ openApiRouter.get("/messages/:messageId/reactions", isApiToken('read:messages'),
  * @swagger
  * /v1/messages/forward:
  *   post:
- *     summary: Encaminhar Mensagens
- *     description: Encaminha uma ou mais mensagens para outros tickets
+ *     summary: Reenviar Mensajes
+ *     description: Reenvía uno o más mensajes a otros tickets
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2924,21 +2924,21 @@ openApiRouter.get("/messages/:messageId/reactions", isApiToken('read:messages'),
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: IDs das mensagens a encaminhar
+ *                 description: IDs de los mensajes a reenviar
  *                 example: ["123", "124"]
  *               targetTicketIds:
  *                 type: array
  *                 items:
  *                   type: integer
- *                 description: IDs dos tickets destino
+ *                 description: IDs de los tickets de destino
  *                 example: [5, 6]
  *     responses:
  *       200:
- *         description: Mensagens encaminhadas com sucesso
+ *         description: Mensajes reenviados con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão create:messages
+ *         description: Sin permiso create:messages
  */
 openApiRouter.post("/messages/forward", isApiToken('create:messages'), MessageController.forwardMessages);
 
@@ -2946,8 +2946,8 @@ openApiRouter.post("/messages/forward", isApiToken('create:messages'), MessageCo
  * @swagger
  * /v1/messages/{ticketId}/poll:
  *   post:
- *     summary: Enviar Enquete
- *     description: Envia uma enquete no ticket
+ *     summary: Enviar Encuesta
+ *     description: Envía una encuesta en el ticket
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -2957,7 +2957,7 @@ openApiRouter.post("/messages/forward", isApiToken('create:messages'), MessageCo
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do ticket
+ *         description: ID del ticket
  *     requestBody:
  *       required: true
  *       content:
@@ -2970,25 +2970,25 @@ openApiRouter.post("/messages/forward", isApiToken('create:messages'), MessageCo
  *             properties:
  *               pollName:
  *                 type: string
- *                 description: Pergunta da enquete
+ *                 description: Pregunta de la encuesta
  *                 example: "Qual sua cor favorita?"
  *               options:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Opções da enquete
+ *                 description: Opciones de la encuesta
  *                 example: ["Azul", "Verde", "Vermelho"]
  *               allowMultipleAnswers:
  *                 type: boolean
- *                 description: Permitir múltiplas respostas
+ *                 description: Permitir múltiples respuestas
  *                 default: false
  *     responses:
  *       200:
- *         description: Enquete enviada com sucesso
+ *         description: Encuesta enviada con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão create:messages
+ *         description: Sin permiso create:messages
  */
 openApiRouter.post("/messages/:ticketId/poll", isApiToken('create:messages'), MessageController.sendPoll);
 
@@ -2996,8 +2996,8 @@ openApiRouter.post("/messages/:ticketId/poll", isApiToken('create:messages'), Me
  * @swagger
  * /v1/messages/{ticketId}/read:
  *   post:
- *     summary: Marcar Mensagens como Lidas
- *     description: Marca todas as mensagens de um ticket como lidas
+ *     summary: Marcar Mensajes como Leídos
+ *     description: Marca todos los mensajes de un ticket como leídos
  *     tags: [Messages]
  *     security:
  *       - apiToken: []
@@ -3007,14 +3007,14 @@ openApiRouter.post("/messages/:ticketId/poll", isApiToken('create:messages'), Me
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do ticket
+ *         description: ID del ticket
  *     responses:
  *       200:
- *         description: Mensagens marcadas como lidas
+ *         description: Mensajes marcados como leídos
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão update:messages
+ *         description: Sin permiso update:messages
  */
 openApiRouter.post("/messages/:ticketId/read", isApiToken('update:messages'), MessageController.markAsRead);
 
@@ -3022,8 +3022,8 @@ openApiRouter.post("/messages/:ticketId/read", isApiToken('update:messages'), Me
  * @swagger
  * /v1/contacts/{contactId}/block:
  *   post:
- *     summary: Bloquear Contato
- *     description: Bloqueia um contato no WhatsApp
+ *     summary: Bloquear Contacto
+ *     description: Bloquea un contacto en WhatsApp
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3033,7 +3033,7 @@ openApiRouter.post("/messages/:ticketId/read", isApiToken('update:messages'), Me
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do contato
+ *         description: ID del contacto
  *     requestBody:
  *       required: true
  *       content:
@@ -3045,17 +3045,17 @@ openApiRouter.post("/messages/:ticketId/read", isApiToken('update:messages'), Me
  *             properties:
  *               whatsappId:
  *                 type: integer
- *                 description: ID da conexão WhatsApp
+ *                 description: ID de la conexión de WhatsApp
  *                 example: 1
  *     responses:
  *       200:
- *         description: Contato bloqueado com sucesso
+ *         description: Contacto bloqueado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão update:contacts
+ *         description: Sin permiso update:contacts
  *       404:
- *         description: Contato não encontrado
+ *         description: Contacto no encontrado
  */
 openApiRouter.post("/contacts/:contactId/block", isApiToken('update:contacts'), ContactController.blockContact);
 
@@ -3063,8 +3063,8 @@ openApiRouter.post("/contacts/:contactId/block", isApiToken('update:contacts'), 
  * @swagger
  * /v1/contacts/{contactId}/unblock:
  *   post:
- *     summary: Desbloquear Contato
- *     description: Desbloqueia um contato no WhatsApp
+ *     summary: Desbloquear Contacto
+ *     description: Desbloquea un contacto en WhatsApp
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3074,7 +3074,7 @@ openApiRouter.post("/contacts/:contactId/block", isApiToken('update:contacts'), 
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do contato
+ *         description: ID del contacto
  *     requestBody:
  *       required: true
  *       content:
@@ -3086,17 +3086,17 @@ openApiRouter.post("/contacts/:contactId/block", isApiToken('update:contacts'), 
  *             properties:
  *               whatsappId:
  *                 type: integer
- *                 description: ID da conexão WhatsApp
+ *                 description: ID de la conexión de WhatsApp
  *                 example: 1
  *     responses:
  *       200:
- *         description: Contato desbloqueado com sucesso
+ *         description: Contacto desbloqueado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão update:contacts
+ *         description: Sin permiso update:contacts
  *       404:
- *         description: Contato não encontrado
+ *         description: Contacto no encontrado
  */
 openApiRouter.post("/contacts/:contactId/unblock", isApiToken('update:contacts'), ContactController.unblockContact);
 
@@ -3104,8 +3104,8 @@ openApiRouter.post("/contacts/:contactId/unblock", isApiToken('update:contacts')
  * @swagger
  * /v1/contacts/{contactId}/block-status:
  *   get:
- *     summary: Verificar Status de Bloqueio
- *     description: Verifica se um contato está bloqueado
+ *     summary: Verificar Estado de Bloqueo
+ *     description: Verifica si un contacto está bloqueado
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3115,16 +3115,16 @@ openApiRouter.post("/contacts/:contactId/unblock", isApiToken('update:contacts')
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do contato
+ *         description: ID del contacto
  *       - in: query
  *         name: whatsappId
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     responses:
  *       200:
- *         description: Status retornado com sucesso
+ *         description: Estado devuelto con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3135,7 +3135,7 @@ openApiRouter.post("/contacts/:contactId/unblock", isApiToken('update:contacts')
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts/:contactId/block-status", isApiToken('read:contacts'), ContactController.getBlockStatus);
 
@@ -3143,8 +3143,8 @@ openApiRouter.get("/contacts/:contactId/block-status", isApiToken('read:contacts
  * @swagger
  * /v1/contacts/blocked:
  *   get:
- *     summary: Listar Contatos Bloqueados
- *     description: Retorna lista de todos os contatos bloqueados de uma conexão
+ *     summary: Listar Contactos Bloqueados
+ *     description: Devuelve lista de todos los contactos bloqueados de una conexión
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3154,14 +3154,14 @@ openApiRouter.get("/contacts/:contactId/block-status", isApiToken('read:contacts
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     responses:
  *       200:
- *         description: Lista de contatos bloqueados
+ *         description: Lista de contactos bloqueados
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts/blocked", isApiToken('read:contacts'), ContactController.listBlockedContacts);
 
@@ -3169,8 +3169,8 @@ openApiRouter.get("/contacts/blocked", isApiToken('read:contacts'), ContactContr
  * @swagger
  * /v1/contacts/{contactId}/about:
  *   get:
- *     summary: Obter "Sobre" do Contato
- *     description: Retorna o texto "sobre" do perfil do contato no WhatsApp
+ *     summary: Obtener "Sobre" del Contacto
+ *     description: Devuelve el texto "sobre" del perfil del contacto en WhatsApp
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3180,16 +3180,16 @@ openApiRouter.get("/contacts/blocked", isApiToken('read:contacts'), ContactContr
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do contato
+ *         description: ID del contacto
  *       - in: query
  *         name: whatsappId
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     responses:
  *       200:
- *         description: Texto "sobre" retornado com sucesso
+ *         description: Texto "sobre" devuelto con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3200,7 +3200,7 @@ openApiRouter.get("/contacts/blocked", isApiToken('read:contacts'), ContactContr
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts/:contactId/about", isApiToken('read:contacts'), ContactController.getAbout);
 
@@ -3208,8 +3208,8 @@ openApiRouter.get("/contacts/:contactId/about", isApiToken('read:contacts'), Con
  * @swagger
  * /v1/contacts/{contactId}/common-groups:
  *   get:
- *     summary: Obter Grupos em Comum
- *     description: Retorna lista de grupos em comum com o contato
+ *     summary: Obtener Grupos en Común
+ *     description: Devuelve lista de grupos en común con el contacto
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
@@ -3219,16 +3219,16 @@ openApiRouter.get("/contacts/:contactId/about", isApiToken('read:contacts'), Con
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID do contato
+ *         description: ID del contacto
  *       - in: query
  *         name: whatsappId
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     responses:
  *       200:
- *         description: Grupos em comum retornados com sucesso
+ *         description: Grupos en común devueltos con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3246,7 +3246,7 @@ openApiRouter.get("/contacts/:contactId/about", isApiToken('read:contacts'), Con
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts/:contactId/common-groups", isApiToken('read:contacts'), ContactController.getCommonGroups);
 
@@ -3254,14 +3254,14 @@ openApiRouter.get("/contacts/:contactId/common-groups", isApiToken('read:contact
  * @swagger
  * /v1/contacts/export:
  *   get:
- *     summary: Exportar Contatos
- *     description: Exporta contatos em formato CSV
+ *     summary: Exportar Contactos
+ *     description: Exporta contactos en formato CSV
  *     tags: [Contacts]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Arquivo CSV gerado com sucesso
+ *         description: Archivo CSV generado con éxito
  *         content:
  *           text/csv:
  *             schema:
@@ -3269,7 +3269,7 @@ openApiRouter.get("/contacts/:contactId/common-groups", isApiToken('read:contact
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:contacts
+ *         description: Sin permiso read:contacts
  */
 openApiRouter.get("/contacts/export", isApiToken('read:contacts'), ContactController.exportContacts);
 
@@ -3277,8 +3277,8 @@ openApiRouter.get("/contacts/export", isApiToken('read:contacts'), ContactContro
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups:
  *   get:
- *     summary: Listar Grupos do Canal
- *     description: Retorna lista de todos os grupos de uma conexão WhatsApp
+ *     summary: Listar Grupos del Canal
+ *     description: Devuelve lista de todos los grupos de una conexión de WhatsApp
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3288,14 +3288,14 @@ openApiRouter.get("/contacts/export", isApiToken('read:contacts'), ContactContro
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     responses:
  *       200:
- *         description: Lista de grupos retornada com sucesso
+ *         description: Lista de grupos devuelta con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:groups
+ *         description: Sin permiso read:groups
  */
 openApiRouter.get("/whatsapp/:whatsappId/groups", isApiToken('read:groups'), GroupManagementController.listGroups);
 
@@ -3303,8 +3303,8 @@ openApiRouter.get("/whatsapp/:whatsappId/groups", isApiToken('read:groups'), Gro
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups:
  *   post:
- *     summary: Criar Grupo
- *     description: Cria um novo grupo no WhatsApp
+ *     summary: Crear Grupo
+ *     description: Crea un nuevo grupo en WhatsApp
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3314,7 +3314,7 @@ openApiRouter.get("/whatsapp/:whatsappId/groups", isApiToken('read:groups'), Gro
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *     requestBody:
  *       required: true
  *       content:
@@ -3327,17 +3327,17 @@ openApiRouter.get("/whatsapp/:whatsappId/groups", isApiToken('read:groups'), Gro
  *             properties:
  *               name:
  *                 type: string
- *                 description: Nome do grupo
+ *                 description: Nombre del grupo
  *                 example: "Grupo de Trabalho"
  *               participants:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Números dos participantes (formato 5511999999999)
+ *                 description: Números de los participantes (formato 5511999999999)
  *                 example: ["5511999999999", "5511888888888"]
  *     responses:
  *       200:
- *         description: Grupo criado com sucesso
+ *         description: Grupo creado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3345,11 +3345,11 @@ openApiRouter.get("/whatsapp/:whatsappId/groups", isApiToken('read:groups'), Gro
  *               properties:
  *                 gid:
  *                   type: string
- *                   description: ID do grupo criado
+ *                   description: ID del grupo creado
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups", isApiToken('write:groups'), GroupManagementController.createGroup);
 
@@ -3357,8 +3357,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups", isApiToken('write:groups'), G
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}:
  *   get:
- *     summary: Obter Informações do Grupo
- *     description: Retorna informações detalhadas de um grupo
+ *     summary: Obtener Información del Grupo
+ *     description: Devuelve información detallada de un grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3368,16 +3368,16 @@ openApiRouter.post("/whatsapp/:whatsappId/groups", isApiToken('write:groups'), G
  *         required: true
  *         schema:
  *           type: integer
- *         description: ID da conexão WhatsApp
+ *         description: ID de la conexión de WhatsApp
  *       - in: path
  *         name: groupId
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do grupo (ex 120363...@g.us)
+ *         description: ID del grupo (ej. 120363...@g.us)
  *     responses:
  *       200:
- *         description: Informações do grupo retornadas com sucesso
+ *         description: Información del grupo devuelta con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3398,7 +3398,7 @@ openApiRouter.post("/whatsapp/:whatsappId/groups", isApiToken('write:groups'), G
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:groups
+ *         description: Sin permiso read:groups
  */
 openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId", isApiToken('read:groups'), GroupManagementController.getGroupInfo);
 
@@ -3406,8 +3406,8 @@ openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId", isApiToken('read:grou
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/name:
  *   put:
- *     summary: Atualizar Nome do Grupo
- *     description: Altera o nome de um grupo
+ *     summary: Actualizar Nombre del Grupo
+ *     description: Cambia el nombre de un grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3433,14 +3433,14 @@ openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId", isApiToken('read:grou
  *             properties:
  *               name:
  *                 type: string
- *                 example: "Novo Nome do Grupo"
+ *                 example: "Nuevo Nombre del Grupo"
  *     responses:
  *       200:
- *         description: Nome atualizado com sucesso
+ *         description: Nombre actualizado con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/name", isApiToken('write:groups'), GroupManagementController.updateGroupName);
 
@@ -3448,8 +3448,8 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/name", isApiToken('writ
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/description:
  *   put:
- *     summary: Atualizar Descrição do Grupo
- *     description: Altera a descrição de um grupo
+ *     summary: Actualizar Descripción del Grupo
+ *     description: Cambia la descripción de un grupo
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3475,14 +3475,14 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/name", isApiToken('writ
  *             properties:
  *               description:
  *                 type: string
- *                 example: "Descrição atualizada do grupo"
+ *                 example: "Descripción actualizada del grupo"
  *     responses:
  *       200:
- *         description: Descrição atualizada com sucesso
+ *         description: Descripción actualizada con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/description", isApiToken('write:groups'), GroupManagementController.updateGroupDescription);
 
@@ -3490,8 +3490,8 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/description", isApiToke
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/participants/add:
  *   post:
- *     summary: Adicionar Participantes ao Grupo (GroupManagement)
- *     description: Adiciona participantes a um grupo via GroupManagementController
+ *     summary: Agregar Participantes al Grupo (GroupManagement)
+ *     description: Agrega participantes a un grupo vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3522,11 +3522,11 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/description", isApiToke
  *                 example: ["5511999999999", "5511888888888"]
  *     responses:
  *       200:
- *         description: Participantes adicionados com sucesso
+ *         description: Participantes agregados con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/add", isApiToken('write:groups'), GroupManagementController.addParticipants);
 
@@ -3534,8 +3534,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/add", isA
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/participants/remove:
  *   post:
- *     summary: Remover Participantes do Grupo (GroupManagement)
- *     description: Remove participantes de um grupo via GroupManagementController
+ *     summary: Eliminar Participantes del Grupo (GroupManagement)
+ *     description: Elimina participantes de un grupo vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3566,11 +3566,11 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/add", isA
  *                 example: ["5511999999999"]
  *     responses:
  *       200:
- *         description: Participantes removidos com sucesso
+ *         description: Participantes eliminados con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/remove", isApiToken('write:groups'), GroupManagementController.removeParticipants);
 
@@ -3578,8 +3578,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/remove", 
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/participants/promote:
  *   post:
- *     summary: Promover Participantes a Admin (GroupManagement)
- *     description: Promove participantes a administradores via GroupManagementController
+ *     summary: Promover Participantes a Administrador (GroupManagement)
+ *     description: Promueve participantes a administradores vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3610,11 +3610,11 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/remove", 
  *                 example: ["5511999999999"]
  *     responses:
  *       200:
- *         description: Participantes promovidos com sucesso
+ *         description: Participantes promovidos con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/promote", isApiToken('write:groups'), GroupManagementController.promoteParticipants);
 
@@ -3622,8 +3622,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/promote",
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/participants/demote:
  *   post:
- *     summary: Rebaixar Admin a Participante (GroupManagement)
- *     description: Remove privilégios de admin via GroupManagementController
+ *     summary: Degradar Admin a Participante (GroupManagement)
+ *     description: Elimina privilegios de admin vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3654,11 +3654,11 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/promote",
  *                 example: ["5511999999999"]
  *     responses:
  *       200:
- *         description: Participantes rebaixados com sucesso
+ *         description: Participantes degradados con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/demote", isApiToken('write:groups'), GroupManagementController.demoteParticipants);
 
@@ -3666,8 +3666,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/demote", 
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/leave:
  *   post:
- *     summary: Sair do Grupo (GroupManagement)
- *     description: Faz o bot sair do grupo via GroupManagementController
+ *     summary: Salir del Grupo (GroupManagement)
+ *     description: Hace que el bot salga del grupo vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3684,11 +3684,11 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/participants/demote", 
  *           type: string
  *     responses:
  *       200:
- *         description: Saiu do grupo com sucesso
+ *         description: Salió del grupo con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/leave", isApiToken('write:groups'), GroupManagementController.leaveGroup);
 
@@ -3696,8 +3696,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/leave", isApiToken('wr
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/invite-link:
  *   get:
- *     summary: Obter Link de Convite (GroupManagement)
- *     description: Retorna o link de convite do grupo via GroupManagementController
+ *     summary: Obtener Enlace de Invitación (GroupManagement)
+ *     description: Devuelve el enlace de invitación del grupo vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3714,7 +3714,7 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/leave", isApiToken('wr
  *           type: string
  *     responses:
  *       200:
- *         description: Link de convite retornado com sucesso
+ *         description: Enlace de invitación devuelto con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3725,7 +3725,7 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/leave", isApiToken('wr
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão read:groups
+ *         description: Sin permiso read:groups
  */
 openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId/invite-link", isApiToken('read:groups'), GroupManagementController.getGroupInviteLink);
 
@@ -3733,8 +3733,8 @@ openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId/invite-link", isApiToke
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/invite-link/revoke:
  *   post:
- *     summary: Revogar Link de Convite (GroupManagement)
- *     description: Revoga o link atual e gera um novo via GroupManagementController
+ *     summary: Revocar Enlace de Invitación (GroupManagement)
+ *     description: Revoca el enlace actual y genera uno nuevo vía GroupManagementController
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3751,7 +3751,7 @@ openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId/invite-link", isApiToke
  *           type: string
  *     responses:
  *       200:
- *         description: Link revogado e novo link gerado
+ *         description: Enlace revocado y nuevo enlace generado
  *         content:
  *           application/json:
  *             schema:
@@ -3762,7 +3762,7 @@ openApiRouter.get("/whatsapp/:whatsappId/groups/:groupId/invite-link", isApiToke
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/invite-link/revoke", isApiToken('write:groups'), GroupManagementController.revokeGroupInviteLink);
 
@@ -3770,8 +3770,8 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/invite-link/revoke", i
  * @swagger
  * /v1/whatsapp/{whatsappId}/groups/{groupId}/settings:
  *   put:
- *     summary: Atualizar Configurações do Grupo
- *     description: Atualiza configurações do grupo (mensagens apenas admin, edição apenas admin)
+ *     summary: Actualizar Configuraciones del Grupo
+ *     description: Actualiza las configuraciones del grupo (mensajes solo admin, edición solo admin)
  *     tags: [WhatsApp Groups]
  *     security:
  *       - apiToken: []
@@ -3795,19 +3795,19 @@ openApiRouter.post("/whatsapp/:whatsappId/groups/:groupId/invite-link/revoke", i
  *             properties:
  *               messagesAdminsOnly:
  *                 type: boolean
- *                 description: Apenas admins podem enviar mensagens
+ *                 description: Solo los admins pueden enviar mensajes
  *                 example: true
  *               editGroupInfoAdminsOnly:
  *                 type: boolean
- *                 description: Apenas admins podem editar informações
+ *                 description: Solo los admins pueden editar la información
  *                 example: true
  *     responses:
  *       200:
- *         description: Configurações atualizadas com sucesso
+ *         description: Configuraciones actualizadas con éxito
  *       401:
  *         description: Token inválido
  *       403:
- *         description: Sem permissão write:groups
+ *         description: Sin permiso write:groups
  */
 openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/settings", isApiToken('write:groups'), GroupManagementController.updateGroupSettings);
 
@@ -3815,8 +3815,8 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/settings", isApiToken('
  * @swagger
  * /v1/auth/login:
  *   post:
- *     summary: Login na API
- *     description: Autentica usuário e retorna token de acesso
+ *     summary: Inicio de sesión en la API
+ *     description: Autentica usuario y devuelve token de acceso
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -3831,16 +3831,16 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/settings", isApiToken('
  *               email:
  *                 type: string
  *                 format: email
- *                 description: Email do usuário
+ *                 description: Email del usuario
  *                 example: "admin@example.com"
  *               password:
  *                 type: string
  *                 format: password
- *                 description: Senha do usuário
+ *                 description: Contraseña del usuario
  *                 example: "senha123"
  *     responses:
  *       200:
- *         description: Login realizado com sucesso
+ *         description: Login realizado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3848,10 +3848,10 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/settings", isApiToken('
  *               properties:
  *                 token:
  *                   type: string
- *                   description: Token JWT de acesso
+ *                   description: Token JWT de acceso
  *                 user:
  *                   type: object
- *                   description: Dados do usuário autenticado
+ *                   description: Datos del usuario autenticado
  *                   properties:
  *                     id:
  *                       type: integer
@@ -3862,9 +3862,9 @@ openApiRouter.put("/whatsapp/:whatsappId/groups/:groupId/settings", isApiToken('
  *                     profile:
  *                       type: string
  *       401:
- *         description: Credenciais inválidas
+ *         description: Credenciales inválidas
  *       404:
- *         description: Usuário não encontrado
+ *         description: Usuario no encontrado
  */
 openApiRouter.post("/auth/login", SessionController.store);
 
@@ -3873,11 +3873,11 @@ openApiRouter.post("/auth/login", SessionController.store);
  * /v1/auth/refresh:
  *   put:
  *     summary: Renovar Token
- *     description: Renova o token de autenticação usando refresh token
+ *     description: Renueva el token de autenticación usando refresh token
  *     tags: [Authentication]
  *     responses:
  *       200:
- *         description: Token renovado com sucesso
+ *         description: Token renovado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3885,12 +3885,12 @@ openApiRouter.post("/auth/login", SessionController.store);
  *               properties:
  *                 token:
  *                   type: string
- *                   description: Novo token JWT
+ *                   description: Nuevo token JWT
  *                 user:
  *                   type: object
- *                   description: Dados do usuário
+ *                   description: Datos del usuario
  *       401:
- *         description: Sessão expirada ou refresh token inválido
+ *         description: Sesión expirada o refresh token inválido
  */
 openApiRouter.put("/auth/refresh", SessionController.update);
 
@@ -3899,15 +3899,15 @@ openApiRouter.put("/auth/refresh", SessionController.update);
  * /v1/auth/logout:
  *   delete:
  *     summary: Logout
- *     description: Realiza logout do usuário e invalida sessão
+ *     description: Realiza logout del usuario e invalida la sesión
  *     tags: [Authentication]
  *     security:
  *       - apiToken: []
  *     responses:
  *       200:
- *         description: Logout realizado com sucesso
+ *         description: Logout realizado con éxito
  *       401:
- *         description: Token inválido ou sessão expirada
+ *         description: Token inválido o sesión expirada
  */
 openApiRouter.delete("/auth/logout", isApiToken('read:profile'), SessionController.remove);
 
@@ -3915,8 +3915,8 @@ openApiRouter.delete("/auth/logout", isApiToken('read:profile'), SessionControll
  * @swagger
  * /v1/auth/forgot-password:
  *   post:
- *     summary: Solicitar Redefinição de Senha
- *     description: Envia email com link para redefinir senha
+ *     summary: Solicitar Restablecimiento de Contraseña
+ *     description: Envía un correo con el enlace para restablecer la contraseña
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -3930,11 +3930,11 @@ openApiRouter.delete("/auth/logout", isApiToken('read:profile'), SessionControll
  *               email:
  *                 type: string
  *                 format: email
- *                 description: Email do usuário
+ *                 description: Email del usuario
  *                 example: "usuario@example.com"
  *     responses:
  *       200:
- *         description: Email enviado com sucesso
+ *         description: Email enviado con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3942,11 +3942,11 @@ openApiRouter.delete("/auth/logout", isApiToken('read:profile'), SessionControll
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "E-mail enviado com sucesso."
+ *                   example: "Correo enviado con éxito."
  *       404:
- *         description: Email não encontrado
+ *         description: Email no encontrado
  *       500:
- *         description: Erro ao enviar email
+ *         description: Error al enviar el correo
  */
 openApiRouter.post("/auth/forgot-password", SessionController.forgotPassword);
 
@@ -3954,8 +3954,8 @@ openApiRouter.post("/auth/forgot-password", SessionController.forgotPassword);
  * @swagger
  * /v1/auth/reset-password:
  *   post:
- *     summary: Redefinir Senha
- *     description: Redefine a senha usando token recebido por email
+ *     summary: Restablecer Contraseña
+ *     description: Restablece la contraseña usando el token recibido por correo
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -3969,16 +3969,16 @@ openApiRouter.post("/auth/forgot-password", SessionController.forgotPassword);
  *             properties:
  *               token:
  *                 type: string
- *                 description: Token recebido por email
+ *                 description: Token recibido por correo
  *                 example: "abc123def456..."
  *               newPassword:
  *                 type: string
  *                 format: password
- *                 description: Nova senha
- *                 example: "novaSenha123"
+ *                 description: Nueva contraseña
+ *                 example: "nuevaContraseña123"
  *     responses:
  *       200:
- *         description: Senha redefinida com sucesso
+ *         description: Contraseña restablecida con éxito
  *         content:
  *           application/json:
  *             schema:
@@ -3986,9 +3986,9 @@ openApiRouter.post("/auth/forgot-password", SessionController.forgotPassword);
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Senha redefinida com sucesso."
+ *                   example: "Contraseña restablecida con éxito."
  *       400:
- *         description: Token inválido ou expirado
+ *         description: Token inválido o expirado
  */
 openApiRouter.post("/auth/reset-password", SessionController.resetPassword);
 

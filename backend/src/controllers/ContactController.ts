@@ -52,13 +52,13 @@ export const getBlockStatus = async (
     sessionId = connected?.id || null;
   }
   if (!sessionId) {
-    return res.status(400).json({ error: "Nenhuma sessão WhatsApp conectada" });
+    return res.status(400).json({ error: "Ninguna sesión de WhatsApp conectada" });
   }
 
   const wbot = getWbot(sessionId);
   const numberId = await wbot.getNumberId(contact.number);
   if (!numberId) {
-    return res.status(404).json({ error: "Número não registrado no WhatsApp" });
+    return res.status(404).json({ error: "Número no registrado en WhatsApp" });
   }
 
   try {
@@ -89,13 +89,13 @@ export const blockContact = async (
     sessionId = connected?.id || null;
   }
   if (!sessionId) {
-    return res.status(400).json({ error: "Nenhuma sessão WhatsApp conectada" });
+    return res.status(400).json({ error: "Ninguna sesión de WhatsApp conectada" });
   }
 
   const wbot = getWbot(sessionId);
   const numberId = await wbot.getNumberId(contact.number);
   if (!numberId) {
-    return res.status(404).json({ error: "Número não registrado no WhatsApp" });
+    return res.status(404).json({ error: "Número no registrado en WhatsApp" });
   }
   
   let result;
@@ -141,13 +141,13 @@ export const unblockContact = async (
     sessionId = connected?.id || null;
   }
   if (!sessionId) {
-    return res.status(400).json({ error: "Nenhuma sessão WhatsApp conectada" });
+    return res.status(400).json({ error: "Ninguna sesión de WhatsApp conectada" });
   }
 
   const wbot = getWbot(sessionId);
   const numberId = await wbot.getNumberId(contact.number);
   if (!numberId) {
-    return res.status(404).json({ error: "Número não registrado no WhatsApp" });
+    return res.status(404).json({ error: "Número no registrado en WhatsApp" });
   }
   
   let result;
@@ -229,7 +229,7 @@ export const getContact = async (
   const { name, number, address, email } = req.body as IndexGetContactQuery;
 
   if (!name && !number && !address && !email) {
-    return res.status(400).json({ error: "Pelo menos um parâmetro de busca deve ser fornecido" });
+    return res.status(400).json({ error: "Se debe proporcionar al menos un parámetro de búsqueda" });
   }
 
   try {
@@ -243,7 +243,7 @@ export const getContact = async (
     return res.status(200).json(contact);
   } catch (error) {
     if (error.message === "CONTACT_NOT_FIND") {
-      return res.status(404).json({ error: "Contato não encontrado" });
+      return res.status(404).json({ error: "Contacto no encontrado" });
     }
     return res.status(500).json({ error: error.message });
   }
@@ -674,7 +674,7 @@ export const refreshGroupProfilePic = async (
 
   try {
     if (!whatsappId) {
-      return res.status(400).json({ error: "whatsappId é obrigatório" });
+      return res.status(400).json({ error: "whatsappId es obligatorio" });
     }
 
     const profilePicUrl = await UpdateGroupProfilePicService({

@@ -7,6 +7,6 @@ export const getVersion = async (req: Request, res: Response): Promise<Response>
     return res.status(200).json(versionInfo);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Erro ao verificar versão do sistema" });
+    return res.status(500).json({ error: "Error al verificar la versión del sistema" });
   }
 };

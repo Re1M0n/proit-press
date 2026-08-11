@@ -11,7 +11,7 @@ const NotifyAdminsService = async ({ whatsappId }: Request): Promise<void> => {
   const whatsapp = await Whatsapp.findByPk(whatsappId);
 
   if (!whatsapp) {
-    throw new AppError("Canal não encontrado", 404);
+    throw new AppError("Canal no encontrado", 404);
   }
 
   if (whatsapp.status === "CONNECTED") {

@@ -402,6 +402,6 @@ export const saveCleanupSettings = async (settings: {
     ]);
   } catch (error) {
     logger.error("Erro ao salvar configurações de limpeza:", error);
-    throw new Error("Não foi possível salvar as configurações de limpeza");
+    throw new Error("No fue posible guardar las configuraciones de limpieza");
   }
 };

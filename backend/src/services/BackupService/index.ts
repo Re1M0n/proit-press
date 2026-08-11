@@ -164,7 +164,7 @@ export const deleteBackup = async (filename: string): Promise<{ success: boolean
     const filePath = path.join(BACKUP_DIR, filename);
     
     if (!fs.existsSync(filePath)) {
-      throw new Error(`Arquivo de backup não encontrado: ${filename}`);
+      throw new Error(`Archivo de backup no encontrado: ${filename}`);
     }
     
     fs.unlinkSync(filePath);

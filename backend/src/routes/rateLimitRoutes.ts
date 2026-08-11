@@ -59,7 +59,7 @@ rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
       reason: "Esta rota (/rate-limit-status) não possui rate limit"
     },
     howToTest: {
-      step1: "Faça múltiplas requisições para /auth/login com credenciais inválidas",
+      step1: "Hacé múltiples solicitudes a /auth/login con credenciales inválidas",
       step2: `Após ${rateLimits.auth} tentativas em 15 minutos, você receberá erro 429`,
       step3: "Aguarde 15 minutos ou reinicie o servidor para resetar",
       example: {

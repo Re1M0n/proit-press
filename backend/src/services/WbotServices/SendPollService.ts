@@ -42,7 +42,7 @@ class SendPollService {
       });
 
       if (!ticket) {
-        throw new AppError("Ticket não encontrado");
+        throw new AppError("Ticket no encontrado");
       }
 
       const wbot = getWbot(ticket.whatsappId);

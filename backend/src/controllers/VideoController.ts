@@ -95,5 +95,5 @@ export const remove = async (
     videoId: +id
   });
 
-  return res.status(200).json({ message: "Vídeo excluído com sucesso!" });
+  return res.status(200).json({ message: "¡Vídeo eliminado con éxito!" });
 };

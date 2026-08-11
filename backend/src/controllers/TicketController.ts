@@ -62,7 +62,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     } 
 
     else {
-      return res.status(401).json({ error: "Não autorizado" });
+      return res.status(401).json({ error: "No autorizado" });
     }
 
     let queueIds: number[] = [];
@@ -91,13 +91,13 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     }
 
     if ((startDate && !endDate) || (!startDate && endDate)) {
-      return res.status(400).json({ error: "Ambas as datas de início e fim devem ser fornecidas" });
+      return res.status(400).json({ error: "Se deben proporcionar las fechas de inicio y fin" });
     }
 
     if (startDate && endDate) {
       const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
       if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
-        return res.status(400).json({ error: "Formato de data inválido. Use YYYY-MM-DD" });
+        return res.status(400).json({ error: "Formato de fecha inválido. Usá YYYY-MM-DD" });
       }
     }
 
@@ -451,7 +451,7 @@ export const closeTickets = async (
     userId = parseInt(req.user.id);
   } 
   else {
-    return res.status(401).json({ error: "Não autorizado" });
+    return res.status(401).json({ error: "No autorizado" });
   }
 
   try {
@@ -488,7 +488,7 @@ export const closeTickets = async (
     if (!tickets || !tickets.length) {
       return res.status(404).json({ 
         error: "ERR_NO_TICKET_FOUND",
-        message: `Nenhum ticket ${status ? `com status ${status}` : ''} encontrado para fechar` 
+        message: `Ningún ticket ${status ? `con estado ${status}` : ''} encontrado para cerrar` 
       });
     }
 

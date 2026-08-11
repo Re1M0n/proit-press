@@ -11,7 +11,7 @@ export const getPublicFolderStats = async (req: Request, res: Response): Promise
     return res.status(200).json(stats);
   } catch (err) {
     console.error('Erro ao obter estatísticas da pasta public:', err);
-    return res.status(500).json({ error: 'Erro ao obter estatísticas da pasta public' });
+    return res.status(500).json({ error: 'Error al obtener estadísticas de la carpeta public' });
   }
 };
 
@@ -20,7 +20,7 @@ export const deleteFiles = async (req: Request, res: Response): Promise<Response
     const { filePaths } = req.body;
 
     if (!filePaths || !Array.isArray(filePaths) || filePaths.length === 0) {
-      return res.status(400).json({ error: 'Lista de arquivos inválida' });
+      return res.status(400).json({ error: 'Lista de archivos inválida' });
     }
 
     const result = await FileManagerService.deleteFiles(filePaths);
@@ -41,14 +41,14 @@ export const downloadFile = async (req: Request, res: Response): Promise<void> =
     const { filePath } = req.query;
 
     if (!filePath || typeof filePath !== 'string') {
-      res.status(400).json({ error: 'Caminho do arquivo inválido' });
+      res.status(400).json({ error: 'Ruta del archivo inválida' });
       return;
     }
 
     const fullPath = FileManagerService.getFilePath(filePath);
 
     if (!fullPath) {
-      res.status(404).json({ error: 'Arquivo não encontrado' });
+      res.status(404).json({ error: 'Archivo no encontrado' });
       return;
     }
 
@@ -65,20 +65,20 @@ export const viewFile = async (req: Request, res: Response): Promise<void> => {
     const { filePath } = req.query;
 
     if (!filePath || typeof filePath !== 'string') {
-      res.status(400).json({ error: 'Caminho do arquivo inválido' });
+      res.status(400).json({ error: 'Ruta del archivo inválida' });
       return;
     }
 
     const fullPath = FileManagerService.getFilePath(filePath);
 
     if (!fullPath) {
-      res.status(404).json({ error: 'Arquivo não encontrado' });
+      res.status(404).json({ error: 'Archivo no encontrado' });
       return;
     }
 
     const fs = require('fs');
     if (!fs.existsSync(fullPath)) {
-      res.status(404).json({ error: 'Arquivo não existe' });
+      res.status(404).json({ error: 'El archivo no existe' });
       return;
     }
 

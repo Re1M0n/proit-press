@@ -203,7 +203,7 @@ export const setDescription = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Erro ao alterar descrição do grupo:", error);
     throw new AppError(
-      "Erro ao alterar descrição. Tente novamente ou reinicie a conexão WhatsApp.",
+      "Error al cambiar la descripción. Intentá de nuevo o reiniciá la conexión de WhatsApp.",
       500
     );
   }

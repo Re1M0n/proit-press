@@ -125,5 +125,5 @@ export const cleanupOldLogs = async (
 
   const count = await DeleteOldErrorLogsService(daysNum);
 
-  return res.status(200).json({ message: `${count} logs removidos com sucesso` });
+  return res.status(200).json({ message: `${count} logs eliminados con éxito` });
 };

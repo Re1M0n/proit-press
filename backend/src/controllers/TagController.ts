@@ -101,7 +101,7 @@ export const update = async (
     const tagData = req.body;
 
     if (!tagData.name && !tagData.color) {
-      throw new AppError("É necessário fornecer pelo menos um campo para atualização (nome ou cor)", 400);
+      throw new AppError("Es necesario proporcionar al menos un campo para actualizar (nombre o color)", 400);
     }
 
     const tag = await UpdateService({ tagData, id: tagId });
@@ -210,7 +210,7 @@ export const syncTags = async (req: Request, res: Response): Promise<Response> =
 
   try {
     if (!data) {
-      return res.status(400).json({ error: "Dados não fornecidos" });
+      return res.status(400).json({ error: "Datos no proporcionados" });
     }
 
     const contact = await SyncTagService(data);

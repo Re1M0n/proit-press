@@ -25,7 +25,7 @@ export const updateWhatsappLibrary = async (req: Request, res: Response): Promis
       return res.status(200).json({
         ...updateResult,
         restartSuccess: false,
-        restartMessage: "Não foi possível reiniciar o servidor automaticamente. Por favor, reinicie o servidor manualmente."
+        restartMessage: "No fue posible reiniciar el servidor automáticamente. Por favor, reiniciá el servidor manualmente."
       });
     }
   } catch (err) {
@@ -61,7 +61,7 @@ export const updateWhatsappLibraryFromGit = async (req: Request, res: Response):
       return res.status(200).json({
         ...updateResult,
         restartSuccess: false,
-        restartMessage: "Não foi possível reiniciar o servidor automaticamente. Por favor, reinicie o servidor manualmente."
+        restartMessage: "No fue posible reiniciar el servidor automáticamente. Por favor, reiniciá el servidor manualmente."
       });
     }
   } catch (err) {

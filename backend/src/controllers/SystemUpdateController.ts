@@ -23,7 +23,7 @@ export const installUpdate = async (req: Request, res: Response): Promise<Respon
     const updateInfo = await checkForUpdates();
     
     if (!updateInfo.needsUpdate) {
-      return res.status(400).json({ error: "O sistema já está na versão mais recente." });
+      return res.status(400).json({ error: "El sistema ya está en la versión más reciente." });
     }
     
     downloadAndInstallUpdate(updateInfo).catch(error => {
@@ -32,7 +32,7 @@ export const installUpdate = async (req: Request, res: Response): Promise<Respon
     
     return res.status(200).json({ 
       success: true, 
-      message: "Processo de atualização completa iniciado com sucesso. A atualização inclui backend, frontend e reinício dos serviços. Acompanhe o progresso pela rota /system-update/status." 
+      message: "Proceso de actualización completa iniciado con éxito. La actualización incluye backend, frontend y reinicio de los servicios. Seguí el progreso por la ruta /system-update/status." 
     });
   } catch (err: any) {
     logger.error(`Erro ao iniciar atualização: ${err.message}`);
@@ -65,13 +65,13 @@ export const restoreFromBackup = async (req: Request, res: Response): Promise<Re
     const { backupFileName } = req.params;
     
     if (!backupFileName) {
-      return res.status(400).json({ error: "Nome do arquivo de backup não fornecido." });
+      return res.status(400).json({ error: "Nombre del archivo de backup no proporcionado." });
     }
     
     const result = await restoreBackup(backupFileName);
     return res.status(200).json({ 
       success: result, 
-      message: "Processo de restauração iniciado com sucesso." 
+      message: "Proceso de restauración iniciado con éxito." 
     });
   } catch (err: any) {
     logger.error(`Erro ao restaurar backup: ${err.message}`);

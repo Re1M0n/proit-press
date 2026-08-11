@@ -10,9 +10,9 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Documentação da API do Press Ticket®',
+      title: 'Documentación de la API de Press Ticket®',
       version: '1.3.0',
-      description: 'Documentação da API para envio de mensagens e gerenciamento de contatos.',
+      description: 'Documentación de la API para el envío de mensajes y la gestión de contactos.',
       contact: {
         email: 'robson.tenorio@gmail.com'
       }
@@ -20,7 +20,7 @@ const options: swaggerJsdoc.Options = {
     servers: [
       {
         url: apiUrl,
-        description: isProduction ? 'API Press Ticket®' : 'Desenvolvimento Local'
+        description: isProduction ? 'API Press Ticket®' : 'Desarrollo local'
       }
     ],
     components: {
@@ -29,34 +29,34 @@ const options: swaggerJsdoc.Options = {
           type: 'apiKey',
           name: 'x-api-token',
           in: 'header',
-          description: 'Token de API para autenticação. Requer permissões específicas para cada rota.'
+          description: 'Token de API para autenticación. Requiere permisos específicos para cada ruta.'
         }
       }
     },
     tags: [
-      { name: 'ActivityLogs', description: 'Logs de atividade do sistema' },
-      { name: 'Authentication', description: 'Autenticação e gerenciamento de sessão' },
-      { name: 'Backups', description: 'Backup e restauração do banco de dados' },
-      { name: 'Client Status', description: 'Status de clientes' },
-      { name: 'Contacts', description: 'Gerenciamento de contatos' },
-      { name: 'ErrorLogs', description: 'Logs de erros do sistema' },
-      { name: 'Messages', description: 'Operações relacionadas a mensagens' },
-      { name: 'NetworkMonitor', description: 'Monitoramento de rede' },
-      { name: 'Presence', description: 'Indicadores de presença (digitando, gravando)' },
-      { name: 'QueueMonitor', description: 'Monitoramento de setores' },
-      { name: 'Quick Answers', description: 'Respostas rápidas' },
-      { name: 'Setores', description: 'Gerenciamento de setores' },
-      { name: 'System', description: 'Recursos e monitoramento do sistema' },
-      { name: 'SystemUpdate', description: 'Atualizações do sistema' },
-      { name: 'Tags', description: 'Gerenciamento de tags' },
-      { name: 'Tickets', description: 'Gerenciamento de tickets' },
-      { name: 'Users', description: 'Gerenciamento de usuários' },
-      { name: 'Version', description: 'Versão do sistema e biblioteca WhatsApp' },
-      { name: 'Videos', description: 'Gerenciamento de vídeos' },
-      { name: 'WhatsApp', description: 'Gerenciamento de conexões WhatsApp' },
-      { name: 'WhatsApp Groups', description: 'Gerenciamento de grupos do WhatsApp' },
-      { name: 'WhatsAppLibrary', description: 'Biblioteca do WhatsApp' },
-      { name: 'WhatsAppSession', description: 'Sessões de WhatsApp' }
+      { name: 'ActivityLogs', description: 'Registro de actividades del sistema' },
+      { name: 'Authentication', description: 'Autenticación y gestión de sesión' },
+      { name: 'Backups', description: 'Copia de seguridad y restauración de la base de datos' },
+      { name: 'Client Status', description: 'Estado de los clientes' },
+      { name: 'Contacts', description: 'Gestión de contactos' },
+      { name: 'ErrorLogs', description: 'Registro de errores del sistema' },
+      { name: 'Messages', description: 'Operaciones relacionadas con los mensajes' },
+      { name: 'NetworkMonitor', description: 'Monitoreo de red' },
+      { name: 'Presence', description: 'Indicadores de presencia (escribiendo, grabando)' },
+      { name: 'QueueMonitor', description: 'Monitoreo de sectores' },
+      { name: 'Quick Answers', description: 'Respuestas rápidas' },
+      { name: 'Setores', description: 'Gestión de sectores' },
+      { name: 'System', description: 'Recursos y monitoreo del sistema' },
+      { name: 'SystemUpdate', description: 'Actualizaciones del sistema' },
+      { name: 'Tags', description: 'Gestión de etiquetas' },
+      { name: 'Tickets', description: 'Gestión de tickets' },
+      { name: 'Users', description: 'Gestión de usuarios' },
+      { name: 'Version', description: 'Versión del sistema y biblioteca de WhatsApp' },
+      { name: 'Videos', description: 'Gestión de videos' },
+      { name: 'WhatsApp', description: 'Gestión de conexiones de WhatsApp' },
+      { name: 'WhatsApp Groups', description: 'Gestión de grupos de WhatsApp' },
+      { name: 'WhatsAppLibrary', description: 'Biblioteca de WhatsApp' },
+      { name: 'WhatsAppSession', description: 'Sesiones de WhatsApp' }
     ]
   },
   apis: [

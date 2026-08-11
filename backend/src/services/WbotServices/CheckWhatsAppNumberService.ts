@@ -17,7 +17,7 @@ const CheckWhatsAppNumberService = async (number: string): Promise<Response> => 
       return {
         exists: false,
         number,
-        message: "Formato de número inválido. Apenas números são permitidos."
+        message: "Formato de número inválido. Solo se permiten números."
       };
     }
 
@@ -32,7 +32,7 @@ const CheckWhatsAppNumberService = async (number: string): Promise<Response> => 
     };
   } catch (error) {
     console.error("Erro ao verificar número no WhatsApp:", error);
-    throw new AppError("Erro ao verificar número no WhatsApp. Verifique se há uma conexão ativa.");
+    throw new AppError("Error al verificar el número en WhatsApp. Verificá que haya una conexión activa.");
   }
 };
 

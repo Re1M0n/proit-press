@@ -211,7 +211,7 @@ class GroupEventsService {
       case "PARTICIPANT_DEMOTED":
         return performedByName
           ? `${performedByName} rebaixou ${participantName}`
-          : `${participantName} não é mais administrador`;
+          : `${participantName} ya no es administrador`;
       
       case "GROUP_NAME_CHANGED":
         return performedByName

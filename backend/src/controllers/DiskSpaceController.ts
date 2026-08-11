@@ -12,7 +12,7 @@ export const getDiskSpace = async (
   } catch (error) {
     logger.error(`Erro ao obter informações de espaço em disco: ${error}`);
     return res.status(500).json({ 
-      error: "Erro ao obter informações de espaço em disco" 
+      error: "Error al obtener la información de espacio en disco" 
     });
   }
 };
@@ -26,7 +26,7 @@ export const getFolderContent = async (
     
     if (!folderPath || typeof folderPath !== 'string') {
       return res.status(400).json({ 
-        error: "Caminho da pasta é obrigatório" 
+        error: "La ruta de la carpeta es obligatoria" 
       });
     }
 
@@ -35,7 +35,7 @@ export const getFolderContent = async (
   } catch (error) {
     logger.error(`Erro ao obter conteúdo da pasta: ${error}`);
     return res.status(500).json({ 
-      error: "Erro ao obter conteúdo da pasta" 
+      error: "Error al obtener el contenido de la carpeta" 
     });
   }
 };

@@ -99,7 +99,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
         logs.push(`Buscando por ID: ${id}`);
         let msg = Store?.Msg?.get?.(id);
         if (msg) {
-          logs.push('Mensagem encontrada via Store.Msg.get');
+          logs.push('Mensaje encontrado vía Store.Msg.get');
           return Promise.resolve(msg);
         }
         const models = Store?.Msg?.models || [];
@@ -121,7 +121,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
                 return sid === id || iid === id || (typeof sid === 'string' && sid.includes(id)) || (typeof id === 'string' && id.includes(iid));
               });
               if (msg) {
-                logs.push(`Mensagem encontrada no chat ${remote}`);
+                logs.push(`Mensaje encontrado en el chat ${remote}`);
                 return Promise.resolve(msg);
               }
             }
@@ -140,7 +140,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
               return sid === id || iid === id || (typeof sid === 'string' && sid.includes(id)) || (typeof id === 'string' && id.includes(iid));
             });
             if (found) {
-              logs.push('Mensagem encontrada em busca global');
+              logs.push('Mensaje encontrado en búsqueda global');
               return Promise.resolve(found);
             }
           }
@@ -161,7 +161,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
             if (found) return found;
             return byAnyId(id).then((m: any) => {
               if (m) {
-                logs.push(`Mensagem encontrada com ID: ${id}`);
+                logs.push(`Mensaje encontrado con ID: ${id}`);
                 return m;
               }
               return null;
@@ -170,7 +170,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
         }
         return promise.then((result: any) => {
           if (!result) {
-            logs.push('Nenhuma mensagem encontrada');
+            logs.push('Ningún mensaje encontrado');
           }
           return result;
         });
@@ -179,7 +179,7 @@ const ReactToWhatsAppMessage = async ({ messageId, emoji }: ReactParams): Promis
       return tryChain()
         .then((msg: any) => {
           if (!msg) {
-            logs.push('Mensagem não encontrada, abortando');
+            logs.push('Mensaje no encontrado, abortando');
             return { success: false, logs };
           }
           logs.push(`Enviando reação: ${reaction}`);

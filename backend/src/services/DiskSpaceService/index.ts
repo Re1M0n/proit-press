@@ -2,6 +2,14 @@ import { exec } from "child_process";
 import path from "path";
 import { logger } from "../../utils/logger";
 
+// La carpeta de la plataforma es la raíz de la propia aplicación.
+// En src y en dist el archivo vive 4 niveles adentro del repo
+// (backend/src/services/DiskSpaceService | backend/dist/services/DiskSpaceService),
+// así que subiendo 4 niveles llegamos a la raíz de la app (p. ej. /home/deploy/Press-Ticket).
+// Antes se usaba /home/deploy/${COMPANY_NAME}, pero ese directorio no existe en esta
+// instalación y el endpoint terminaba en 500.
+const APP_BASE = path.resolve(__dirname, "../../../../");
+
 interface FolderSizeInfo {
   path: string;
   name: string;
@@ -25,14 +33,8 @@ interface DiskSpaceInfo {
 }
 
 export const getFolderContents = async (folderPath: string): Promise<FolderSizeInfo[]> => {
-  const companyName = process.env.COMPANY_NAME || "";
-  
-  if (!companyName) {
-    throw new Error("COMPANY_NAME não definido no arquivo .env");
-  }
+  const basePath = APP_BASE;
 
-  const basePath = path.resolve("/home/deploy", companyName);
-  
   const fullPath = path.resolve(basePath, folderPath);
   if (!fullPath.startsWith(basePath)) {
     throw new Error("Acesso negado: caminho fora da pasta permitida");
@@ -126,13 +128,9 @@ export const getFolderContents = async (folderPath: string): Promise<FolderSizeI
 };
 
 export const getDiskSpaceInfo = async (): Promise<DiskSpaceInfo> => {
-  const companyName = process.env.COMPANY_NAME || "";
-  
-  if (!companyName) {
-    throw new Error("COMPANY_NAME não definido no arquivo .env");
-  }
+  const companyName = process.env.COMPANY_NAME || path.basename(APP_BASE);
 
-  const folderPath = path.resolve("/home/deploy", companyName);
+  const folderPath = APP_BASE;
 
   const getLargestFolders = () => {
     return new Promise<FolderSizeInfo[]>((resolve, reject) => {
@@ -183,7 +181,7 @@ export const getDiskSpaceInfo = async (): Promise<DiskSpaceInfo> => {
               
               const fullPath = path.join(dirPath, fileName);
               const isDirectory = permissions.startsWith('d');
-              const relativeName = path.relative(path.resolve("/home/deploy", companyName), fullPath);
+              const relativeName = path.relative(APP_BASE, fullPath);
               
               const duCommand = isDirectory ? `du -sb "${fullPath}" 2>/dev/null` : `stat -c%s "${fullPath}" 2>/dev/null`;
               

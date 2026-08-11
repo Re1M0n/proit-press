@@ -75,7 +75,7 @@ const getHealthCheckService = async (whatsappId: number): Promise<HealthCheckDat
   const whatsapp = await Whatsapp.findByPk(whatsappId);
   
   if (!whatsapp) {
-    throw new Error("Whatsapp não encontrado");
+    throw new Error("WhatsApp no encontrado");
   }
 
   initializeHealthTracking(whatsappId);

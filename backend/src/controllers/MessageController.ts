@@ -34,7 +34,7 @@ export const reactMessage = async (req: Request, res: Response): Promise<Respons
   const { emoji, removeEmoji } = req.body as { emoji: string, removeEmoji?: string };
 
   if (typeof emoji !== "string") {
-    return res.status(400).json({ error: "Campo 'emoji' é obrigatório" });
+    return res.status(400).json({ error: "El campo 'emoji' es obligatorio" });
   }
 
   try {
@@ -58,7 +58,7 @@ export const reactMessage = async (req: Request, res: Response): Promise<Respons
     return res.status(200).json({ success: true });
   } catch (error: any) {
     console.error("Erro ao reagir à mensagem:", error);
-    return res.status(500).json({ error: "Erro ao reagir à mensagem" });
+    return res.status(500).json({ error: "Error al reaccionar al mensaje" });
   }
 };
 
@@ -68,7 +68,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
   try {
     const message = await Message.findByPk(messageId);
     if (!message) {
-      return res.status(404).json({ error: "Mensagem não encontrada" });
+      return res.status(404).json({ error: "Mensaje no encontrado" });
     }
 
     const reactionsTicket = await ShowTicketService(String(message.ticketId));
@@ -103,7 +103,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
           groupedReactions[reaction.emoji].hasReactionByMe = true;
         }
         
-        let contactName = isMyReaction ? 'Você' : 'Contato';
+        let contactName = isMyReaction ? 'Vos' : 'Contacto';
         let profilePicUrl = null;
         let phoneNumber = null;
         
@@ -114,7 +114,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
               if (contact) {
                 phoneNumber = contact.number || contact.id?.user;
                 if (!isMyReaction) {
-                  contactName = contact.name || contact.pushname || contact.shortName || phoneNumber || 'Contato';
+                  contactName = contact.name || contact.pushname || contact.shortName || phoneNumber || 'Contacto';
                 }
                 
                 try {
@@ -226,7 +226,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
             if (processed.senders && Array.isArray(processed.senders)) {
               processed.senders = processed.senders.map((sender: any) => {
                 const senderId = sender?.id?._serialized || sender?.id?.user || sender?.id;
-                let contactName = 'Contato';
+                let contactName = 'Contacto';
                 
                 if (senderId) {
                   try {
@@ -291,7 +291,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
                     return { reactions: processed, logs };
                   }
                 } else {
-                  logs.push(`Mensagem encontrada mas sem reações`);
+                  logs.push(`Mensaje encontrado pero sin reacciones`);
                 }
               }
             }
@@ -363,7 +363,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
     return res.status(200).json({ reactions: result.reactions });
   } catch (error: any) {
     console.error("Erro ao listar reações:", error);
-    return res.status(500).json({ error: "Erro ao listar reações" });
+    return res.status(500).json({ error: "Error al listar reacciones" });
   }
 };
 
@@ -443,7 +443,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
       await createActivityLog({
         userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
         action: ActivityActions.SEND,
-        description: `Mensagem com ${medias.length} mídia(s) enviada no ticket #${ticketId}`,
+        description: `Mensaje con ${medias.length} archivo(s) multimedia enviado en el ticket #${ticketId}`,
         entityType: EntityTypes.TICKET,
         entityId: ticket.id,
         ip: clientIp,
@@ -619,10 +619,10 @@ export const markAsRead = async (req: Request, res: Response): Promise<Response>
     
     if (ticket.status === "open") {
       await MarkMessagesAsReadService({ ticketId });
-      return res.status(200).json({ message: "Mensagens marcadas como lidas com sucesso" });
+      return res.status(200).json({ message: "Mensajes marcados como leídos con éxito" });
     } else {
       return res.status(400).json({ 
-        error: "Não é possível marcar mensagens como lidas. Ticket deve estar aceito (status 'open')",
+        error: "No es posible marcar mensajes como leídos. El ticket debe estar aceptado (estado 'open')",
         currentStatus: ticket.status
       });
     }
@@ -639,7 +639,7 @@ export const sendContacts = async (req: Request, res: Response): Promise<Respons
   const clientIp = GetClientIp(req);
 
   if (!contacts || !Array.isArray(contacts) || contacts.length === 0) {
-    return res.status(400).json({ error: "Contatos são obrigatórios" });
+    return res.status(400).json({ error: "Los contactos son obligatorios" });
   }
 
   const ticket = await ShowTicketService(ticketId);
@@ -758,7 +758,7 @@ export const forwardMessages = async (
     
     if (error.message === "ERR_NO_DEF_WAPP_FOUND") {
       return res.status(400).json({ 
-        error: "Nenhuma conexão WhatsApp ativa encontrada. Por favor, conecte um WhatsApp antes de encaminhar mensagens." 
+        error: "Ninguna conexión de WhatsApp activa encontrada. Por favor, conectá un WhatsApp antes de reenviar mensajes." 
       });
     }
     
@@ -790,7 +790,7 @@ export const sendPoll = async (req: Request, res: Response): Promise<Response> =
       return res.status(400).json({ error: "Enviar encuestas no está disponible para canales de Telegram." });
     }
     if (!pollName || !options || !Array.isArray(options)) {
-      return res.status(400).json({ error: "Nome da enquete e opções são obrigatórios" });
+      return res.status(400).json({ error: "El nombre de la encuesta y las opciones son obligatorios" });
     }
 
     const message = await SendPollService.execute({
@@ -824,10 +824,10 @@ export const sendTypingIndicator = async (req: Request, res: Response): Promise<
       duration || 3000
     );
 
-    return res.json({ success: true, message: "Indicador de digitação enviado" });
+    return res.json({ success: true, message: "Indicador de escritura enviado" });
   } catch (error: any) {
     console.error("Erro ao enviar indicador de digitação:", error);
-    return res.status(500).json({ error: error.message || "Erro ao enviar indicador de digitação" });
+    return res.status(500).json({ error: error.message || "Error al enviar indicador de escritura" });
   }
 };
 
@@ -848,10 +848,10 @@ export const sendRecordingIndicator = async (req: Request, res: Response): Promi
       duration || 5000
     );
 
-    return res.json({ success: true, message: "Indicador de gravação enviado" });
+    return res.json({ success: true, message: "Indicador de grabación enviado" });
   } catch (error: any) {
     console.error("Erro ao enviar indicador de gravação:", error);
-    return res.status(500).json({ error: error.message || "Erro ao enviar indicador de gravação" });
+    return res.status(500).json({ error: error.message || "Error al enviar indicador de grabación" });
   }
 };
 
@@ -870,9 +870,9 @@ export const setAvailablePresence = async (req: Request, res: Response): Promise
       chatId
     );
 
-    return res.json({ success: true, message: "Presença definida como disponível" });
+    return res.json({ success: true, message: "Presencia definida como disponible" });
   } catch (error: any) {
     console.error("Erro ao definir presença:", error);
-    return res.status(500).json({ error: error.message || "Erro ao definir presença" });
+    return res.status(500).json({ error: error.message || "Error al definir presencia" });
   }
 };

@@ -18,7 +18,7 @@ const ShowVideoService = async ({ id }: Request): Promise<Video> => {
   });
 
   if (!video) {
-    throw new AppError("Vídeo não encontrado", 404);
+    throw new AppError("Vídeo no encontrado", 404);
   }
 
   return video;

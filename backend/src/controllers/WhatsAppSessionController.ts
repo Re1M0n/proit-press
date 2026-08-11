@@ -20,7 +20,7 @@ const store = async (req: Request, res: Response): Promise<Response> => {
     await createActivityLog({
       userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
       action: ActivityActions.START,
-      description: `Sessão do WhatsApp "${whatsapp.name}" iniciada`,
+      description: `Sesión de WhatsApp "${whatsapp.name}" iniciada`,
       entityType: EntityTypes.WHATSAPP,
       entityId: whatsapp.id,
       ip: clientIp,
@@ -53,7 +53,7 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     await createActivityLog({
       userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
       action: ActivityActions.CONNECT,
-      description: `Sessão do WhatsApp "${whatsapp.name}" reconectada`,
+      description: `Sesión de WhatsApp "${whatsapp.name}" reconectada`,
       entityType: EntityTypes.WHATSAPP,
       entityId: whatsapp.id,
       ip: clientIp,
@@ -103,7 +103,7 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
       await createActivityLog({
         userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
         action: ActivityActions.DISCONNECT,
-        description: `Sessão do WhatsApp "${whatsapp.name}" desconectada`,
+        description: `Sesión de WhatsApp "${whatsapp.name}" desconectada`,
         entityType: EntityTypes.WHATSAPP,
         entityId: whatsapp.id,
         ip: clientIp,

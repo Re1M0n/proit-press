@@ -37,7 +37,7 @@ const updateLastActivity = async (
           io.emit("userSessionExpired", {
             userId: user.id,
             expired: true,
-            message: "Sua sessão expirou após 8 horas de inatividade."
+            message: "Tu sesión expiró después de 8 horas de inactividad."
           });
         } else {
           await session.update({

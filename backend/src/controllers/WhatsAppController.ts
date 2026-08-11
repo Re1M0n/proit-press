@@ -78,7 +78,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   await createActivityLog({
     userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
     action: ActivityActions.CREATE,
-    description: `Conexão WhatsApp ${whatsapp.name} criada`,
+    description: `Conexión de WhatsApp ${whatsapp.name} creada`,
     entityType: EntityTypes.WHATSAPP,
     entityId: whatsapp.id,
     additionalData: {
@@ -131,7 +131,7 @@ export const update = async (
   await createActivityLog({
     userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
     action: ActivityActions.UPDATE,
-    description: `Conexão WhatsApp ${whatsapp.name} atualizada`,
+    description: `Conexión de WhatsApp ${whatsapp.name} actualizada`,
     entityType: EntityTypes.WHATSAPP,
     entityId: whatsapp.id,
     additionalData: whatsappData
@@ -172,7 +172,7 @@ export const remove = async (
   await createActivityLog({
     userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
     action: ActivityActions.DELETE,
-    description: `Conexão WhatsApp ${whatsappToDelete.name} excluída`,
+    description: `Conexión de WhatsApp ${whatsappToDelete.name} eliminada`,
     entityType: EntityTypes.WHATSAPP,
     entityId: parseInt(whatsappId),
     additionalData: {

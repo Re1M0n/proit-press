@@ -21,8 +21,8 @@ export const updateWhatsappLib = async (): Promise<WhatsappLibUpdateResult> => {
     if (!fs.existsSync(nodeModulesWhatsappPath)) {
       return {
         success: false,
-        message: 'Biblioteca whatsapp-web.js não encontrada no node_modules',
-        error: 'Arquivo não encontrado'
+        message: 'Biblioteca whatsapp-web.js no encontrada en node_modules',
+        error: 'Archivo no encontrado'
       };
     }
     
@@ -129,7 +129,7 @@ export const updateWhatsappLib = async (): Promise<WhatsappLibUpdateResult> => {
           fs.rmSync(backupDir, { recursive: true, force: true });
         }
       } else {
-        throw new Error('Falha ao instalar a biblioteca: arquivo package.json não encontrado após instalação');
+        throw new Error('Fallo al instalar la biblioteca: archivo package.json no encontrado después de la instalación');
       }
     } catch (installError) {
       console.error('Erro durante a instalação:', installError);

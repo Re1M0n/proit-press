@@ -14,7 +14,7 @@ const upload = multer({
     if (file.originalname.endsWith('.sql') || file.originalname.endsWith('.sql.gz')) {
       cb(null, true);
     } else {
-      cb(new Error('Apenas arquivos .sql ou .sql.gz são permitidos'));
+      cb(new Error('Solo se permiten archivos .sql o .sql.gz'));
     }
   }
 });

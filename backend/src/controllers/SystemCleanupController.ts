@@ -41,7 +41,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
       setting: "cleanup"
     });
     
-    return res.status(200).json({ message: "Configurações de limpeza salvas com sucesso" });
+    return res.status(200).json({ message: "Configuraciones de limpieza guardadas con éxito" });
   } catch (err: any) {
     logger.error(`Erro ao salvar configurações de limpeza: ${err.message}`);
     return res.status(500).json({ error: err.message });

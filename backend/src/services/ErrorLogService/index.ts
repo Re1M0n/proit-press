@@ -80,7 +80,7 @@ class ErrorLogService {
   public async findById(id: number): Promise<ErrorLog> {
     const errorLog = await ErrorLog.findByPk(id);
     if (!errorLog) {
-      throw new Error("Log de erro não encontrado");
+      throw new Error("Log de error no encontrado");
     }
     return errorLog;
   }

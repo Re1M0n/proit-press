@@ -94,7 +94,7 @@ export const checkForUpdates = async (): Promise<UpdateInfo> => {
       currentVersion,
       latestVersion,
       needsUpdate,
-      releaseNotes: latestRelease.body || "Nenhuma nota de lançamento disponível",
+      releaseNotes: latestRelease.body || "Ninguna nota de lanzamiento disponible",
       downloadUrl: latestRelease.zipball_url,
       publishedAt: latestRelease.published_at
     };
@@ -116,7 +116,7 @@ export const checkForUpdates = async (): Promise<UpdateInfo> => {
     updateStatus.progress = 0;
     await saveUpdateStatus();
     
-    throw new Error(`Erro ao verificar atualizações: ${error.message}`);
+    throw new Error(`Error al verificar actualizaciones: ${error.message}`);
   }
 };
 
@@ -262,7 +262,7 @@ export const downloadAndInstallUpdate = async (updateInfo: UpdateInfo): Promise<
     updateStatus.progress = 0;
     await saveUpdateStatus();
     
-    throw new Error(`Erro ao instalar atualização: ${error.message}`);
+    throw new Error(`Error al instalar la actualización: ${error.message}`);
   }
 };
 
@@ -274,7 +274,7 @@ export const restoreBackup = async (backupFileName: string): Promise<boolean> =>
     const backupPath = path.join(BACKUP_DIR, backupFileName);
     
     if (!fs.existsSync(backupPath)) {
-      throw new Error(`Backup não encontrado: ${backupFileName}`);
+      throw new Error(`Backup no encontrado: ${backupFileName}`);
     }
 
     updateStatus.status = "installing";

@@ -15,8 +15,8 @@ export const checkNumber = async (
 
   const schema = Yup.object().shape({
     number: Yup.string()
-      .required("Número é obrigatório")
-      .matches(/^\d+$/, "Formato de número inválido. Apenas números são permitidos.")
+      .required("El número es obligatorio")
+      .matches(/^\d+$/, "Formato de número inválido. Solo se permiten números.")
   });
 
   try {

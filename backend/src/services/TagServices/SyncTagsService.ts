@@ -11,16 +11,16 @@ interface Request {
 const SyncTags = async (data: Request): Promise<Contact | null> => {
   try {
     if (!data.contactId) {
-      throw new AppError("ID do contato não fornecido", 400);
+      throw new AppError("ID del contacto no proporcionado", 400);
     }
 
     const contact = await Contact.findByPk(data.contactId, { include: [Tag] });
     if (!contact) {
-      throw new AppError("Contato não encontrado", 404);
+      throw new AppError("Contacto no encontrado", 404);
     }
 
     if (!data.tags || !Array.isArray(data.tags)) {
-      throw new AppError("Lista de tags inválida", 400);
+      throw new AppError("Lista de etiquetas inválida", 400);
     }
 
     const tagIds = data.tags.map(tag => {
@@ -40,7 +40,7 @@ const SyncTags = async (data: Request): Promise<Contact | null> => {
     });
 
     if (existingTags.length !== tagIds.length) {
-      throw new AppError("Uma ou mais tags não existem", 404);
+      throw new AppError("Una o más etiquetas no existen", 404);
     }
 
     const tagList = tagIds.map(tagId => ({ tagId, contactId: data.contactId }));

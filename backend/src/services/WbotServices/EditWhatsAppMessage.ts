@@ -22,7 +22,7 @@ const EditWhatsAppMessage = async (
   }
 
   if (!newBody || newBody.trim() === "") {
-    throw new AppError("O novo texto da mensagem não pode estar vazio.");
+    throw new AppError("El nuevo texto del mensaje no puede estar vacío.");
   }
 
   // Un mensaje eliminado/revocado no se puede editar: WhatsApp en vez de

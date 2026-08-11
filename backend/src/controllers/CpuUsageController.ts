@@ -9,6 +9,6 @@ export const cpuUsage = async (
     const cpuInfo = await getCpuUsageInfo();
     return res.status(200).json(cpuInfo);
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao obter informações de uso de CPU' });
+    return res.status(500).json({ error: 'Error al obtener la información de uso de CPU' });
   }
 };
