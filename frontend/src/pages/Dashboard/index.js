@@ -7,6 +7,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import ChatIcon from "@mui/icons-material/Chat";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import PeopleIcon from "@mui/icons-material/People";
 import SendIcon from "@mui/icons-material/Send";
@@ -124,6 +125,7 @@ const Dashboard = () => {
 	const [previousCounts, setPreviousCounts] = useState({
 		inAttendance: 0,
 		waiting: 0,
+		closed: 0,
 		users: 0,
 	});
 
@@ -141,21 +143,31 @@ const Dashboard = () => {
 		all: "false"
 	});
 
+	const ticketsClosed = useTickets({
+		status: "closed",
+		withUnreadMessages: "false",
+		queueIds: JSON.stringify(userQueueIds),
+		all: "false"
+	});
+
 	useEffect(() => {
 		if (
 			ticketsInAttendance.count !== previousCounts.inAttendance ||
 			ticketsWaiting.count !== previousCounts.waiting ||
+			ticketsClosed.count !== previousCounts.closed ||
 			usersCount !== previousCounts.users
 		) {
 			setPreviousCounts({
 				inAttendance: ticketsInAttendance.count,
 				waiting: ticketsWaiting.count,
+				closed: ticketsClosed.count,
 				users: usersCount,
 			});
 		}
 	}, [
 		ticketsInAttendance.count,
 		ticketsWaiting.count,
+		ticketsClosed.count,
 		usersCount,
 		previousCounts,
 	]);
@@ -186,7 +198,7 @@ const Dashboard = () => {
 		<StyledContainer maxWidth="lg">
 			<DashboardSection>
 				<Grid container spacing={3}>
-					<Grid item xs={12} sm={6}>
+					<Grid item xs={12} sm={4}>
 						<FixedHeightPaperCard>
 							<CardContent sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
 								<CardIconCircle bgcolor="#6c63ff20">
@@ -206,7 +218,7 @@ const Dashboard = () => {
 						</FixedHeightPaperCard>
 					</Grid>
 
-					<Grid item xs={12} sm={6}>
+					<Grid item xs={12} sm={4}>
 						<FixedHeightPaperCard>
 							<CardContent sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
 								<CardIconCircle bgcolor="#ffd60030">
@@ -226,7 +238,25 @@ const Dashboard = () => {
 						</FixedHeightPaperCard>
 					</Grid>
 
-
+					<Grid item xs={12} sm={4}>
+						<FixedHeightPaperCard>
+							<CardContent sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+								<CardIconCircle bgcolor="#4caf5020">
+									<CheckCircleIcon sx={{ fontSize: 28, color: theme => theme.palette.success.main }} />
+								</CardIconCircle>
+								<CardText component="h1" variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
+									{ticketsClosed.count}
+									{renderChangeIcon(
+										ticketsClosed.count,
+										previousCounts.closed
+									)}
+								</CardText>
+							</CardContent>
+							<CardTitle component="h3" sx={{ color: 'text.primary' }}>
+								{t("dashboard.messages.closed.title")}
+							</CardTitle>
+						</FixedHeightPaperCard>
+					</Grid>
 				</Grid>
 			</DashboardSection>
 			<DashboardSection>
