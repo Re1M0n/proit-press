@@ -196,6 +196,7 @@ const messages = {
       },
       buttons: {
         wwebjs: "Agregar",
+        addChannel: "Agregar canal",
         hub: "Hub",
         shutdown: "Eliminar sesión",
         restart: "Reiniciar",
