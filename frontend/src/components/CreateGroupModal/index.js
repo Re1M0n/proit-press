@@ -71,17 +71,17 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
     const cleanNumber = participantNumber.replace(/\D/g, "");
     
     if (!cleanNumber) {
-      toast.error("Digite um número válido");
+      toast.error("Ingresá un número válido");
       return;
     }
 
     if (cleanNumber.length < 10) {
-      toast.error("Número deve ter pelo menos 10 dígitos");
+      toast.error("El número debe tener al menos 10 dígitos");
       return;
     }
 
     if (participants.includes(cleanNumber)) {
-      toast.error("Participante já adicionado");
+      toast.error("El participante ya fue agregado");
       return;
     }
 
@@ -102,7 +102,7 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
 
   const handleCreateGroup = async () => {
     if (!groupName.trim()) {
-      toast.error("Digite o nome do grupo");
+      toast.error("Ingresá el nombre del grupo");
       return;
     }
 
@@ -118,7 +118,7 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
         participants: participants,
       });
 
-      toast.success("Grupo criado com sucesso!");
+      toast.success("¡Grupo creado con éxito!");
       handleClose();
       onSuccess();
     } catch (err) {
@@ -154,7 +154,7 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
         />
 
         <ParticipantInput
-          label="Número do Participante"
+          label="Número del Participante"
           value={participantNumber}
           onChange={(e) => setParticipantNumber(e.target.value)}
           onKeyPress={handleKeyPress}
@@ -162,7 +162,7 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
           variant="outlined"
           placeholder="5511999999999"
           disabled={loading}
-          helperText="Digite o número com código do país e DDD (ex: 5511999999999)"
+          helperText="Ingresá el número con código de país y DDD (ej: 5491199999999)"
         />
 
         <Button
@@ -172,13 +172,13 @@ const CreateGroupModal = ({ open, onClose, whatsappId, onSuccess }) => {
           disabled={loading}
           fullWidth
         >
-          Adicionar Participante
+          Agregar Participante
         </Button>
 
         <ChipContainer>
           {participants.length === 0 ? (
             <Typography variant="body2" color="textSecondary">
-              Nenhum participante adicionado
+              Ningún participante agregado
             </Typography>
           ) : (
             participants.map((number) => (

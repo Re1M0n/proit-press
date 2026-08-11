@@ -74,14 +74,14 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
       setGroupName(data.name);
       setGroupDescription(data.description);
     } catch (err) {
-      toast.error("Erro ao carregar informações do grupo");
+      toast.error("Error al cargar la información del grupo");
     }
     setLoading(false);
   };
 
   const handleUpdateName = async () => {
     if (!groupName.trim()) {
-      toast.error("Digite o nome do grupo");
+      toast.error("Ingresá el nombre del grupo");
       return;
     }
 
@@ -107,11 +107,11 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
         description: groupDescription,
       });
 
-      toast.success("Descrição atualizada!");
+      toast.success("¡Descripción actualizada!");
       loadGroupInfo();
       onSuccess();
     } catch (err) {
-      toast.error("Erro ao atualizar descrição");
+      toast.error("Error al actualizar la descripción");
     }
     setLoading(false);
   };
@@ -124,17 +124,17 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
         editGroupInfoAdminsOnly,
       });
 
-      toast.success("Configurações atualizadas!");
+      toast.success("¡Configuraciones actualizadas!");
       loadGroupInfo();
       onSuccess();
     } catch (err) {
-      toast.error("Erro ao atualizar configurações");
+      toast.error("Error al actualizar las configuraciones");
     }
     setLoading(false);
   };
 
   const handleRevokeInviteLink = async () => {
-    if (!window.confirm("Deseja revogar o link de convite atual e gerar um novo?")) {
+    if (!window.confirm("¿Deseás revocar el enlace de invitación actual y generar uno nuevo?")) {
       return;
     }
 
@@ -172,7 +172,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
     <StyledDialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <StyledDialogTitle>
         <Typography variant="h6" component="div">
-          Configurações do Grupo
+          Configuraciones del Grupo
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
           {group?.name}
@@ -199,7 +199,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
               onClick={handleUpdateName}
               disabled={loading}
             >
-              Salvar
+              Guardar
             </Button>
           </Box>
         </Section>
@@ -208,7 +208,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
 
         <Section>
           <Typography variant="subtitle2" gutterBottom>
-            Descrição do Grupo
+            Descripción del Grupo
           </Typography>
           <TextField
             value={groupDescription}
@@ -228,7 +228,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
               disabled={loading}
               fullWidth
             >
-              Atualizar Descrição
+              Actualizar Descripción
             </Button>
           </Box>
         </Section>
@@ -237,7 +237,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
 
         <Section>
           <Typography variant="subtitle2" gutterBottom>
-            Permissões
+            Permisos
           </Typography>
           
           <FormControlLabel
@@ -259,7 +259,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
                 disabled={loading}
               />
             }
-            label="Apenas admins podem editar informações do grupo"
+            label="Solo los admins pueden editar la información del grupo"
           />
           
           <Box mt={1}>
@@ -270,7 +270,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
               disabled={loading}
               fullWidth
             >
-              Salvar Permissões
+              Guardar Permisos
             </Button>
           </Box>
         </Section>
@@ -291,7 +291,7 @@ const GroupSettingsModal = ({ open, onClose, whatsappId, group, onSuccess }) => 
             Revogar Link Atual e Gerar Novo
           </Button>
           <Typography variant="caption" color="textSecondary" style={{ marginTop: 8 }}>
-            O link atual será invalidado e um novo será gerado
+            El enlace actual se invalidará y se generará uno nuevo
           </Typography>
         </Section>
       </StyledDialogContent>

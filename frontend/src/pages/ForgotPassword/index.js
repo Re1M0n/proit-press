@@ -204,7 +204,7 @@ const ForgotPassword = () => {
                         </Typography>
                         
                         <Typography variant="body2" color="textSecondary" align="center" sx={{ mb: 3 }}>
-                            {t("forgotPassword.subtitle", "Informe seu e-mail para recuperar sua senha")}
+                            {t("forgotPassword.subtitle", "Ingresá tu e-mail para recuperar tu contraseña")}
                         </Typography>
                         
                         <StyledForm noValidate onSubmit={handleSubmit}>

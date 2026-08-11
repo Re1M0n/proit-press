@@ -239,7 +239,7 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
       limit: limit,
       type: fileType,
       message: fileSizeMB > limit 
-        ? `Arquivo muito grande. Máximo ${limit}MB para ${fileType === 'document' ? 'documentos' : fileType === 'video' ? 'vídeos' : fileType === 'audio' ? 'áudios' : 'imagens'}`
+        ? `Archivo demasiado grande. Máximo ${limit}MB para ${fileType === 'document' ? 'documentos' : fileType === 'video' ? 'videos' : fileType === 'audio' ? 'audios' : 'imágenes'}`
         : 'OK'
     };
   };
@@ -722,10 +722,10 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
             {isCompressing && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" color="primary" sx={{ mb: 1 }}>
-                  {compressionStatus === 'starting' && 'Iniciando compressão do vídeo...'}
-                  {compressionStatus === 'compressing' && `Comprimindo vídeo... ${compressionProgress}%`}
-                  {compressionStatus === 'completed' && 'Compressão concluída!'}
-                  {compressionStatus === 'error' && 'Erro na compressão'}
+                  {compressionStatus === 'starting' && 'Iniciando compresión del video...'}
+                  {compressionStatus === 'compressing' && `Comprimiendo video... ${compressionProgress}%`}
+                  {compressionStatus === 'completed' && '¡Compresión completada!'}
+                  {compressionStatus === 'error' && 'Error en la compresión'}
                 </Typography>
                 <LinearProgress 
                   variant="determinate" 
@@ -763,7 +763,7 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
                         {uploadStatus[index] === 'success' && '✓ Enviado'}
                         {uploadStatus[index] === 'error' && '✗ Erro'}
                         {uploadStatus[index] === 'uploading' && `${uploadProgress[index] || 0}%`}
-                        {uploadStatus[index] === 'pending' && 'Aguardando...'}
+                        {uploadStatus[index] === 'pending' && 'Esperando...'}
                       </Typography>
                     </Box>
                     <LinearProgress 

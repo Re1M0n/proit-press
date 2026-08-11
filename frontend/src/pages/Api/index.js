@@ -287,7 +287,7 @@ const Api = () => {
         const token = manualToken;
 
         if (!token) {
-            toast.error("É necessário fornecer um token de API válido para enviar mensagens.");
+            toast.error("Es necesario proporcionar un token de API válido para enviar mensajes.");
             return;
         }
 
@@ -324,7 +324,7 @@ const Api = () => {
                 }
             });
 
-            toast.success("Mensagem enviada com sucesso!");
+            toast.success("¡Mensaje enviado con éxito!");
             setBody("");
             setMedia(null);
 
@@ -340,34 +340,34 @@ const Api = () => {
                 <Grid item xs={12} md={6}>
                     <InstructionContainer>
                         <InstructionContent>
-                            <SectionTitle variant="h5">Documentação para envio de mensagens</SectionTitle>
+                            <SectionTitle variant="h5">Documentación para envío de mensajes</SectionTitle>
                             <PermissionTag>
-                                <InfoIcon /> Permissão necessária: <code>create:messages</code>
+                                <InfoIcon /> Permiso necesario: <code>create:messages</code>
                             </PermissionTag>
 
-                            <SubTitle variant="h6">Métodos de Envio</SubTitle>
+                            <SubTitle variant="h6">Métodos de Envío</SubTitle>
                             <ListItem>Mensagens de Texto</ListItem>
-                            <ListItem>Mensagens de Mídia</ListItem>
+                            <ListItem>Mensajes Multimedia</ListItem>
 
                             <Divider sx={{ my: 2 }} />
 
-                            <SubTitle variant="h6">Instruções</SubTitle>
+                            <SubTitle variant="h6">Instrucciones</SubTitle>
                             <Typography variant="subtitle2" fontWeight={600} sx={{ mt: 1, mb: 1 }}>
-                                Observações Importantes
+                                Observaciones Importantes
                             </Typography>
                             
                             <ListItem>
                                 <Typography variant="body2">
-                                    Para obter o token da API, acesse a seção <b>API key</b> no menu lateral. Sem este token não será possível enviar mensagens.
+                                    Para obtener el token de la API, accedé a la sección <b>API key</b> en el menú lateral. Sin este token no será posible enviar mensajes.
                                 </Typography>
                             </ListItem>
                             <ListItem>
                                 <Box>
                                     <Typography variant="body2" sx={{ mb: 1 }}>
-                                        O número para envio deve estar no formato internacional, sem caracteres especiais:
+                                        El número para envío debe estar en formato internacional, sin caracteres especiales:
                                     </Typography>
                                     <Box sx={{ pl: 2 }}>
-                                        <Typography variant="body2" sx={{ mb: 0.5 }}>• Código do país - Ex: 55 (Brasil)</Typography>
+                                        <Typography variant="body2" sx={{ mb: 0.5 }}>• Código del país - Ej: 55 (Brasil)</Typography>
                                         <Typography variant="body2" sx={{ mb: 0.5 }}>• DDD - Ex: 22</Typography>
                                         <Typography variant="body2" sx={{ mb: 0.5 }}>• Número - Ex: 999999999</Typography>
                                         <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>• Formato final: 5522999999999</Typography>
@@ -379,7 +379,7 @@ const Api = () => {
 
                             <SubTitle variant="h6">1. Mensagens de Texto</SubTitle>
                             <Typography variant="body2" sx={{ mb: 2 }}>
-                                Informações necessárias para envio de mensagens de texto:
+                                Información necesaria para el envío de mensajes de texto:
                             </Typography>
 
                             <ApiUrl>
@@ -401,7 +401,7 @@ const Api = () => {
                                 </Typography>
                             </ApiHeader>
 
-                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Corpo da requisição (JSON):</Typography>
+                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Cuerpo de la solicitud (JSON):</Typography>
                             <CodeBlock>
 {`{
   "number": "5522999999999",
@@ -412,16 +412,16 @@ const Api = () => {
 }`}
                             </CodeBlock>
 
-                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Parâmetros obrigatórios:</Typography>
+                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Parámetros obligatorios:</Typography>
                             <Box sx={{ mb: 2 }}>
                                 <ListItem>
-                                    <Typography variant="body2"><b>number:</b> Número do destinatário no formato DDI+DDD+NÚMERO</Typography>
+                                    <Typography variant="body2"><b>number:</b> Número del destinatario en formato DDI+DDD+NÚMERO</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>body:</b> Conteúdo da mensagem</Typography>
+                                    <Typography variant="body2"><b>body:</b> Contenido del mensaje</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>userId:</b> ID do usuário que está enviando a mensagem</Typography>
+                                    <Typography variant="body2"><b>userId:</b> ID del usuario que está enviando el mensaje</Typography>
                                 </ListItem>
                                 <ListItem>
                                     <Typography variant="body2"><b>queueId:</b> ID do Setor</Typography>
@@ -433,9 +433,9 @@ const Api = () => {
 
                             <Divider sx={{ my: 2 }} />
 
-                            <SubTitle variant="h6">2. Mensagens de Mídia</SubTitle>
+                            <SubTitle variant="h6">2. Mensajes Multimedia</SubTitle>
                             <Typography variant="body2" sx={{ mb: 2 }}>
-                                Informações necessárias para envio de mensagens com mídia:
+                                Información necesaria para el envío de mensajes con multimedia:
                             </Typography>
 
                             <ApiUrl>
@@ -457,7 +457,7 @@ const Api = () => {
                                 </Typography>
                             </ApiHeader>
 
-                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Corpo da requisição (FormData):</Typography>
+                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Cuerpo de la solicitud (FormData):</Typography>
                             <CodeBlock>
 {`{
   "number": "5522999999999",
@@ -469,19 +469,19 @@ const Api = () => {
 }`}
                             </CodeBlock>
 
-                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Parâmetros obrigatórios:</Typography>
+                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Parámetros obligatorios:</Typography>
                             <Box sx={{ mb: 2 }}>
                                 <ListItem>
-                                    <Typography variant="body2"><b>number:</b> Número do destinatário no formato DDI+DDD+NÚMERO</Typography>
+                                    <Typography variant="body2"><b>number:</b> Número del destinatario en formato DDI+DDD+NÚMERO</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>body:</b> Mensagem que acompanha a mídia</Typography>
+                                    <Typography variant="body2"><b>body:</b> Mensaje que acompaña al multimedia</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>medias:</b> Arquivo de mídia (imagem, vídeo, áudio ou documento)</Typography>
+                                    <Typography variant="body2"><b>medias:</b> Archivo multimedia (imagen, video, audio o documento)</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>userId:</b> ID do usuário que está enviando</Typography>
+                                    <Typography variant="body2"><b>userId:</b> ID del usuario que está enviando</Typography>
                                 </ListItem>
                                 <ListItem>
                                     <Typography variant="body2"><b>queueId:</b> ID do Setor</Typography>
@@ -497,15 +497,15 @@ const Api = () => {
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={200}>200</ResponseCode>
-                                    <Typography variant="body2">Mensagem enviada com sucesso</Typography>
+                                    <Typography variant="body2">Mensaje enviado con éxito</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={401}>401</ResponseCode>
-                                    <Typography variant="body2">Token inválido ou não fornecido</Typography>
+                                    <Typography variant="body2">Token inválido o no proporcionado</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={403}>403</ResponseCode>
-                                    <Typography variant="body2">Token não tem permissão 'create:messages'</Typography>
+                                    <Typography variant="body2">El token no tiene permiso 'create:messages'</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={500}>500</ResponseCode>
@@ -518,7 +518,7 @@ const Api = () => {
                 <Grid item xs={12} md={6}>
                     <FormContainer>
                         <FormContent>
-                            <SectionTitle variant="h5">Envie Mensagens de Texto ou Mídia</SectionTitle>
+                            <SectionTitle variant="h5">Enviá Mensajes de Texto o Multimedia</SectionTitle>
                             <form onSubmit={handleSubmit}>
                                 <StyledInput
                                     label="Token da API"
@@ -528,10 +528,10 @@ const Api = () => {
                                     value={manualToken}
                                     onChange={(e) => setManualToken(e.target.value)}
                                     placeholder="Insira seu token da API aqui (sem 'Bearer')"
-                                    helperText="Usar apenas token com permissão 'create:messages'"
+                                    helperText="Usar solo token con permiso 'create:messages'"
                                 />
                                 <StyledInput
-                                    label="Número de telefone"
+                                    label="Número de teléfono"
                                     variant="outlined"
                                     size="small"
                                     fullWidth
@@ -550,7 +550,7 @@ const Api = () => {
                                     required
                                     multiline
                                     rows={3}
-                                    placeholder="Digite sua mensagem aqui"
+                                    placeholder="Escribí tu mensaje aquí"
                                 />
                                 <GridContainer container spacing={2}>
                                     <Grid item xs={12} sm={4}>
@@ -595,7 +595,7 @@ const Api = () => {
                                     <Grid item xs={12} sm={4}>
                                         <StyledInput
                                         select
-                                        label="Usuário"
+                                        label="Usuario"
                                         variant="outlined"
                                         size="small"
                                         fullWidth
@@ -635,7 +635,7 @@ const Api = () => {
                                         {media ? (
                                             <SelectedFileChip>{media.name}</SelectedFileChip>
                                         ) : (
-                                            "Nenhum arquivo selecionado"
+                                            "Ningún archivo seleccionado"
                                         )}
                                     </Typography>
                                 </FileInputContainer>

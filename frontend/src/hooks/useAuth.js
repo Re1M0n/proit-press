@@ -69,7 +69,7 @@ const useAuth = () => {
                         setUserInactive(true);
                         markUserAsInactive();
 
-                        toast.error(t("backendErrors.ERR_USER_INACTIVE") || "Este atendente está desativado!", {
+                        toast.error(t("backendErrors.ERR_USER_INACTIVE") || "¡Este agente está desactivado!", {
                             autoClose: 10000,
                             onClose: () => {
                                 navigate("/login");

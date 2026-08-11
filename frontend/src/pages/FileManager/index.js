@@ -159,7 +159,7 @@ const FileManager = () => {
       link.click();
       link.remove();
 
-      toast.success('Arquivo baixado com sucesso!');
+      toast.success('¡Archivo descargado con éxito!');
     } catch (err) {
       toastError(err);
     }
@@ -179,7 +179,7 @@ const FileManager = () => {
       });
 
       if (data.deleted.length > 0) {
-        toast.success(`${data.deleted.length} arquivo(s) deletado(s) com sucesso!`);
+        toast.success(`${data.deleted.length} archivo(s) eliminado(s) con éxito!`);
       }
 
       if (data.errors.length > 0) {
@@ -208,7 +208,7 @@ const FileManager = () => {
   return (
     <MainContainer>
       <MainHeader>
-        <Title>Gerenciador de Arquivos - Pasta Public</Title>
+        <Title>Administrador de Archivos - Carpeta Public</Title>
       </MainHeader>
 
       <Paper 
@@ -249,7 +249,7 @@ const FileManager = () => {
                     <Box display="flex" alignItems="center" mb={2}>
                       <StorageIcon sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
                       <Typography variant="h6" fontWeight="600">
-                        Tamanho Total
+                        Tamaño Total
                       </Typography>
                     </Box>
                     <Typography variant="h4" fontWeight="bold" color="primary.main">
@@ -310,14 +310,14 @@ const FileManager = () => {
                     <Box display="flex" alignItems="center" mb={2}>
                       <FolderIcon sx={{ fontSize: 40, color: 'warning.main', mr: 2 }} />
                       <Typography variant="h6" fontWeight="600">
-                        Pastas
+                        Carpetas
                       </Typography>
                     </Box>
                     <Typography variant="h4" fontWeight="bold" color="warning.main">
                       {stats.folderCount}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
-                      total de pastas
+                      total de carpetas
                     </Typography>
                   </CardContent>
                 </Card>
@@ -391,11 +391,11 @@ const FileManager = () => {
                         onChange={handleSelectAll}
                       />
                     </TableCell>
-                    <TableCell>Nome</TableCell>
+                    <TableCell>Nombre</TableCell>
                     <TableCell>Tipo</TableCell>
-                    <TableCell>Tamanho</TableCell>
+                    <TableCell>Tamaño</TableCell>
                     <TableCell>Modificado</TableCell>
-                    <TableCell align="right">Ações</TableCell>
+                    <TableCell align="right">Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -549,7 +549,7 @@ const FileManager = () => {
                 }}
               >
                 <source src={previewFile.blobUrl} />
-                Seu navegador não suporta o elemento de vídeo.
+                Tu navegador no soporta el elemento de video.
               </video>
             </Box>
           )}
@@ -568,10 +568,10 @@ const FileManager = () => {
                 }}
               >
                 <source src={previewFile.blobUrl} />
-                Seu navegador não suporta o elemento de áudio.
+                Tu navegador no soporta el elemento de audio.
               </audio>
               <Typography variant="caption" color="textSecondary" mt={2}>
-                Tamanho: {previewFile.sizeFormatted}
+                Tamaño: {previewFile.sizeFormatted}
               </Typography>
             </Box>
           )}
@@ -584,10 +584,10 @@ const FileManager = () => {
             <Box p={4} textAlign="center">
               <DescriptionIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
               <Typography variant="h6" color="textSecondary">
-                Preview não disponível para este tipo de arquivo
+                Vista previa no disponible para este tipo de archivo
               </Typography>
               <Typography variant="body2" color="textSecondary" mt={1}>
-                Use o botão de download para obter o arquivo
+                Usá el botón de descarga para obtener el archivo
               </Typography>
             </Box>
           )}
@@ -598,9 +598,9 @@ const FileManager = () => {
             color="primary"
             startIcon={<DownloadIcon />}
           >
-            Baixar
+            Descargar
           </Button>
-          <Button onClick={handleClosePreview}>Fechar</Button>
+          <Button onClick={handleClosePreview}>Cerrar</Button>
         </DialogActions>
       </Dialog>
 
@@ -608,13 +608,13 @@ const FileManager = () => {
         open={deleteDialogOpen}
         onClose={() => !deleting && setDeleteDialogOpen(false)}
       >
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
           <Typography>
-            Tem certeza que deseja deletar {selectedFiles.length} arquivo(s)?
+            ¿Estás seguro de que querés eliminar {selectedFiles.length} archivo(s)?
           </Typography>
           <Typography variant="caption" color="error" mt={1}>
-            Esta ação não pode ser desfeita.
+            Esta acción no se puede deshacer.
           </Typography>
         </DialogContent>
         <DialogActions>

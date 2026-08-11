@@ -139,14 +139,14 @@ const DatabaseStatus = () => {
       const { data } = await api.get('/database-status');
       
       if (!data) {
-        throw new Error('Dados do banco de dados não recebidos');
+        throw new Error('Datos de la base de datos no recibidos');
       }
       
       setDbInfo(data);
       setError(null);
     } catch (err) {
       console.error('Erro ao obter dados do banco de dados:', err);
-      setError(err.message || 'Erro ao carregar informações do banco de dados');
+      setError(err.message || 'Error al cargar la información de la base de datos');
       toastError(err, t);
     } finally {
       setLoading(false);
@@ -187,7 +187,7 @@ const DatabaseStatus = () => {
         <Paper sx={{ p: 4, m: 2, borderRadius: 3, textAlign: 'center' }}>
           <CircularProgress size={60} thickness={4} />
           <Typography variant="h6" sx={{ mt: 3, color: 'text.secondary' }}>
-            Carregando informações do banco de dados...
+            Cargando información de la base de datos...
           </Typography>
         </Paper>
       </MainContainer>

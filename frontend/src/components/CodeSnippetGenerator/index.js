@@ -181,7 +181,7 @@ const CodeSnippetGenerator = ({ number, body, userId, queueId, whatsappId, token
                     id="language-select-label"
                     shrink={true}
                 >
-                    Linguagem de Programação
+                    Lenguaje de Programación
                 </InputLabel>
                 <StyledSelect
                     labelId="language-select-label"
@@ -191,16 +191,16 @@ const CodeSnippetGenerator = ({ number, body, userId, queueId, whatsappId, token
                     displayEmpty
                     variant="outlined"
                     notched={true}
-                    label="Linguagem de Programação"
+                    label="Lenguaje de Programación"
                     renderValue={selected => {
                         if (!selected) {
-                            return <Typography color="text.secondary" fontStyle="italic">Selecione uma linguagem</Typography>;
+                            return <Typography color="text.secondary" fontStyle="italic">Seleccioná un lenguaje</Typography>;
                         }
                         return selected;
                     }}
                 >
                     <PlaceholderMenuItem value="" disabled>
-                        Selecione uma linguagem
+                        Seleccioná un lenguaje
                     </PlaceholderMenuItem>
                     {Object.keys(codeSnippets).map((lang) => (
                         <MenuItem key={lang} value={lang}>
@@ -242,7 +242,7 @@ const CodeSnippetGenerator = ({ number, body, userId, queueId, whatsappId, token
                         </CloseButton>
 
                         <ModalTitle variant="h5">
-                            Snippet de código para {selectedLanguage}
+                            Fragmento de código para {selectedLanguage}
                         </ModalTitle>
                         
                         <CodeContainer>
@@ -258,7 +258,7 @@ const CodeSnippetGenerator = ({ number, body, userId, queueId, whatsappId, token
                                 onClick={handleCopy}
                                 startIcon={copied ? <CheckCircleIcon /> : <ContentCopyIcon />}
                             >
-                                {copied ? "Código Copiado!" : "Copiar Código"}
+                                {copied ? "¡Código Copiado!" : "Copiar Código"}
                             </CopyButton>
                         </Box>
                     </ModalContent>

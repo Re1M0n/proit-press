@@ -749,10 +749,10 @@ const SystemUpdate = () => {
           <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
             <Box>
               <Typography variant="h4" fontWeight={700} gutterBottom>
-                🔄 Atualizações do Sistema
+                🔄 Actualizaciones del Sistema
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                Mantenha seu Press-Ticket sempre atualizado com as últimas melhorias e correções
+                Mantené tu Press-Ticket siempre actualizado con las últimas mejoras y correcciones
               </Typography>
             </Box>
             <RefreshButtonStyled
@@ -760,7 +760,7 @@ const SystemUpdate = () => {
               onClick={checkForUpdates}
               disabled={checkingUpdate}
             >
-              {checkingUpdate ? "Verificando..." : t("systemUpdate.checkUpdates") || "Verificar Atualizações"}
+              {checkingUpdate ? "Verificando..." : t("systemUpdate.checkUpdates") || "Verificar Actualizaciones"}
             </RefreshButtonStyled>
           </Box>
         </HeaderSection>
@@ -796,10 +796,10 @@ const SystemUpdate = () => {
               }
               title={
                 <Typography variant="h6" fontWeight={600}>
-                  {t("systemUpdate.updateStatus") || "Status da Atualização"}
+                  {t("systemUpdate.updateStatus") || "Estado de la Actualización"}
                 </Typography>
               }
-              subheader={updateStatus.message || "Acompanhe o progresso da atualização"}
+              subheader={updateStatus.message || "Seguí el progreso de la actualización"}
             />
             <StyledCardContent>
               {renderUpdateStatus()}
@@ -849,10 +849,10 @@ const SystemUpdate = () => {
             }
             title={
               <Typography variant="h6" fontWeight={600}>
-                {t("systemUpdate.versionInfo") || "Informações da Versão"}
+                {t("systemUpdate.versionInfo") || "Información de la Versión"}
               </Typography>
             }
-            subheader="Compare a versão atual com a mais recente disponível"
+            subheader="Compará la versión actual con la más reciente disponible"
           />
           <StyledCardContent>
             <CardWrapper container spacing={4}>
@@ -869,7 +869,7 @@ const SystemUpdate = () => {
                     <Box display="flex" alignItems="center" gap={1} mb={2}>
                       <SecurityIcon color="primary" fontSize="small" />
                       <Typography variant="overline" color="textSecondary" fontWeight={600}>
-                        Versão Atual do Sistema
+                        Versión Actual del Sistema
                       </Typography>
                     </Box>
                     <VersionValue>
@@ -896,7 +896,7 @@ const SystemUpdate = () => {
                     <Box display="flex" alignItems="center" gap={1} mb={2}>
                       <TrendingUpIcon color="primary" fontSize="small" />
                       <Typography variant="overline" color="textSecondary" fontWeight={600}>
-                        Última Versão Disponível
+                        Última Versión Disponible
                       </Typography>
                     </Box>
                     <VersionValue>
@@ -906,14 +906,14 @@ const SystemUpdate = () => {
                       <StatusBadge 
                         statusType="success"
                         icon={<RocketLaunchIcon />}
-                        label="Versão Mais Recente"
+                        label="Versión Más Reciente"
                         size="medium"
                       />
                     </Box>
                     <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block', fontStyle: "italic" }}>
-                      📅 Disponibilizada em: {updateInfo.publishedAt 
-                        ? new Date(updateInfo.publishedAt).toLocaleDateString('pt-BR') + ' às ' + new Date(updateInfo.publishedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-                        : 'Data não disponível'}
+                      📅 Disponible desde: {updateInfo.publishedAt 
+                        ? new Date(updateInfo.publishedAt).toLocaleDateString('es-AR') + ' a las ' + new Date(updateInfo.publishedAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+                        : 'Fecha no disponible'}
                     </Typography>
                   </CardContent>
                 </VersionCard>
@@ -950,17 +950,17 @@ const SystemUpdate = () => {
               <Box flex={1}>
                 <Box display="flex" alignItems="center" gap={2} mb={1}>
                   <Typography variant="h5" fontWeight={700}>
-                    Atualização do Sistema Disponível
+                    Actualización del Sistema Disponible
                   </Typography>
                   <StatusBadge
                     statusType="error"
                     icon={<WarningIcon />}
-                    label="Requer Atenção"
+                    label="Requiere Atención"
                     size="small"
                   />
                 </Box>
                 <Typography variant="body1" paragraph color="textSecondary">
-                  Uma nova versão do Press-Ticket está disponível. Recomendamos atualizar para obter as últimas melhorias e correções.
+                  Una nueva versión de Press-Ticket está disponible. Recomendamos actualizar para obtener las últimas mejoras y correcciones.
                 </Typography>
                 
                 {updateInfo.releaseNotes && (
@@ -989,7 +989,7 @@ const SystemUpdate = () => {
                         Instalando...
                       </>
                     ) : (
-                      t("systemUpdate.installUpdate") || "Instalar Atualização Agora"
+                      t("systemUpdate.installUpdate") || "Instalar Actualización Ahora"
                     )}
                   </ActionButton>
                 </Box>
@@ -1005,7 +1005,7 @@ const SystemUpdate = () => {
                   }}
                 >
                   <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-                    🔗 Links Úteis
+                    🔗 Enlaces Útiles
                   </Typography>
                   <Box display="flex" flexDirection="column" gap={1}>
                     <Link 
@@ -1014,7 +1014,7 @@ const SystemUpdate = () => {
                       rel="noopener noreferrer"
                       sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                     >
-                      📦 Repositório: Press-Ticket no GitHub
+                      📦 Repositorio: Press-Ticket en GitHub
                     </Link>
                     <Link 
                       href="https://github.com/rtenorioh/Press-Ticket/blob/main/docs/INSTALL_AUTOMATICO_VPS.md" 
@@ -1022,7 +1022,7 @@ const SystemUpdate = () => {
                       rel="noopener noreferrer"
                       sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                     >
-                      📚 Documentação: Guia de Atualização
+                      📚 Documentación: Guía de Actualización
                     </Link>
                   </Box>
                 </Box>
@@ -1060,7 +1060,7 @@ const SystemUpdate = () => {
                   />
                 </Box>
                 <Typography variant="body1" color="textSecondary">
-                  🎉 Seu sistema Press-Ticket está executando a versão mais recente disponível. Não é necessário realizar nenhuma ação no momento.
+                  🎉 Tu sistema Press-Ticket está ejecutando la versión más reciente disponible. No es necesario realizar ninguna acción por el momento.
                 </Typography>
               </Box>
             </Box>
@@ -1099,7 +1099,7 @@ const SystemUpdate = () => {
                 )}
               </Box>
             }
-            subheader="Histórico de backups realizados automaticamente"
+            subheader="Historial de backups realizados automáticamente"
           />
           <StyledCardContent>
             {loadingBackups ? (
@@ -1130,7 +1130,7 @@ const SystemUpdate = () => {
                         <ListItemText
                           primary={
                             <Typography variant="subtitle1" fontWeight={600}>
-                              Versão {version}
+                              Versión {version}
                             </Typography>
                           }
                           secondary={
@@ -1204,7 +1204,7 @@ const SystemUpdate = () => {
               variant="contained"
               startIcon={<RestoreIcon />}
             >
-              {t("systemUpdate.confirm") || "Confirmar Restauração"}
+              {t("systemUpdate.confirm") || "Confirmar Restauración"}
             </ActionButton>
           </DialogActions>
         </Dialog>
@@ -1233,7 +1233,7 @@ const SystemUpdate = () => {
               disabled={installingUpdate}
               startIcon={installingUpdate ? <CircularProgress size={18} color="inherit" /> : <SystemUpdateIcon />}
             >
-              {installingUpdate ? "Instalando..." : (t("systemUpdate.confirm") || "Confirmar Atualização")}
+              {installingUpdate ? "Instalando..." : (t("systemUpdate.confirm") || "Confirmar Actualización")}
             </ActionButton>
           </DialogActions>
         </Dialog>

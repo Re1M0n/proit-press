@@ -910,7 +910,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
     return (
       <span
         onClick={() => { setReactionsMessageId(message.id); setReactionsModalOpen(true); }}
-        title={t("messageReactions.open", { defaultValue: "Ver reações" })}
+        title={t("messageReactions.open", { defaultValue: "Ver reacciones" })}
         style={{ display: 'inline-flex', gap: 6, alignItems: 'center', marginRight: 6, cursor: 'pointer' }}
       >
         {entries.map(([emoji, count]) => (
@@ -1008,7 +1008,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
         description: parts.length > 2 ? parts[2] : null
       };
       
-      processedMessage.body = "[Localização]";
+      processedMessage.body = "[Ubicación]";
       
       return processedMessage;
     } catch (error) {
@@ -1079,7 +1079,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
         return <VcardPreview contact={contact} numbers={numbers} />
       } catch (error) {
         console.error("Error processing vcard in MessagesList:", error);
-        return <VcardPreview contact="Contato" numbers={["Número não disponível"]} />
+        return <VcardPreview contact="Contacto" numbers={["Número no disponible"]} />
       }
     }
     else if (message.mediaType === "multi_vcard") {
@@ -1212,7 +1212,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
   };
 
   const formatFileSize = (bytes) => {
-    if (!bytes || bytes === 0) return "Tamanho desconhecido";
+    if (!bytes || bytes === 0) return "Tamaño desconocido";
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + " MB";
@@ -1454,7 +1454,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
         ></div>
         <QuotedMsgStyled>
           <MessageContactNameStyled style={{ fontWeight: 'bold', color: message.quotedMsg?.fromMe ? '#35cd96' : '#6bcbef' }}>
-            {!message.quotedMsg?.fromMe ? message.quotedMsg?.contact?.name : 'Você'}
+            {!message.quotedMsg?.fromMe ? message.quotedMsg?.contact?.name : 'Vos'}
           </MessageContactNameStyled>
           {message.quotedMsg.mediaType === "audio" && (
             <DownloadMedia>

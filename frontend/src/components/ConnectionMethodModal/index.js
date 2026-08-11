@@ -27,16 +27,16 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 
 	const validatePhoneNumber = (phone) => {
 		if (!phone) {
-			return "Número de telefone é obrigatório";
+			return "El número de teléfono es obligatorio";
 		}
 		if (phone.length < 10) {
-			return "Número muito curto";
+			return "Número demasiado corto";
 		}
 		if (phone.length > 15) {
-			return "Número muito longo";
+			return "Número demasiado largo";
 		}
 		if (phone.length === 11 && !phone.startsWith("55")) {
-			return "Para números brasileiros, use o formato: 5511999999999";
+			return "Para números, usá el formato: 5491199999999";
 		}
 		return "";
 	};
@@ -93,10 +93,10 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 		>
 			<DialogTitle sx={{ textAlign: "center", pb: 1 }}>
 				<Typography variant="h6" component="div" fontWeight={600}>
-					Escolha o Método de Conexão
+					Elegí el Método de Conexión
 				</Typography>
 				<Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-					Selecione como deseja conectar seu WhatsApp
+					Elegí cómo querés conectar tu WhatsApp
 				</Typography>
 			</DialogTitle>
 
@@ -126,7 +126,7 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 								QR Code
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
-								Escaneie o código QR com seu celular
+								Escaneá el código QR con tu celular
 							</Typography>
 						</Box>
 					</Button>
@@ -141,20 +141,20 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 				<Box>
 					<Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
 						<Phone sx={{ mr: 1, verticalAlign: "middle" }} />
-						Código de Pareamento
+						Código de Vinculación
 					</Typography>
 					<Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-						Informe seu número de telefone para receber um código de pareamento
+						Ingresá tu número de teléfono para recibir un código de vinculación
 					</Typography>
 					
 					<TextField
 						fullWidth
-						label="Número de Telefone"
+						label="Número de Teléfono"
 						placeholder="5511999999999"
 						value={phoneNumber}
 						onChange={handlePhoneChange}
 						error={!!phoneError}
-						helperText={phoneError || "Formato: código do país + DDD + número (ex: 5511999999999)"}
+						helperText={phoneError || "Formato: código del país + DDD + número (ej: 5491199999999)"}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
@@ -168,7 +168,7 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 					{phoneNumber && !phoneError && (
 						<Box sx={{ p: 2, backgroundColor: "grey.50", borderRadius: 1, mb: 2 }}>
 							<Typography variant="body2" color="text.secondary">
-								Número formatado: <strong>{formatPhoneDisplay(phoneNumber)}</strong>
+								Número formateado: <strong>{formatPhoneDisplay(phoneNumber)}</strong>
 							</Typography>
 						</Box>
 					)}
@@ -187,7 +187,7 @@ const ConnectionMethodModal = ({ open, onClose, onSelectMethod, whatsAppId }) =>
 							fontWeight: 500
 						}}
 					>
-						Gerar Código de Pareamento
+						Generar Código de Vinculación
 					</Button>
 				</Box>
 			</DialogContent>

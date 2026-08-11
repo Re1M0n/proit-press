@@ -131,7 +131,7 @@ const MultiVcardPreview = ({ contacts }) => {
           .map(contact => ({
             id: contact.id || 0,
             name: contact.name || "Contato",
-            number: contact.number || "Número não disponível"
+            number: contact.number || "Número no disponible"
           }));
         
         return validContacts;
@@ -174,7 +174,7 @@ const MultiVcardPreview = ({ contacts }) => {
               <Box key={index}>
                 <VcardPreview 
                   contact={contact.name || "Contato"} 
-                  numbers={contact.number || "Número não disponível"} 
+                  numbers={contact.number || "Número no disponible"} 
                 />
               </Box>
             ))}

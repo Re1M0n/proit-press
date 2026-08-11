@@ -225,7 +225,7 @@ const DiskSpace = () => {
         setDiskSpace(data);
         setError(null);
       } catch (err) {
-        setError(err.message || 'Erro ao carregar informações de espaço em disco');
+        setError(err.message || 'Error al cargar la información de espacio en disco');
         toastError(err, t);
       } finally {
         setLoading(false);
@@ -382,7 +382,7 @@ const DiskSpace = () => {
           >
             <CircularProgress size={60} thickness={4} />
             <Typography variant="body1" color="textSecondary">
-              Carregando informações de disco...
+              Cargando información del disco...
             </Typography>
           </Box>
         ) : error ? (
@@ -434,7 +434,7 @@ const DiskSpace = () => {
                 <Box display="flex" alignItems="center">
                   <StorageIcon className={classes.infoIcon} />
                   <Typography variant="h5" fontWeight="600">
-                    {t('diskSpace.systemDisk', 'Disco do Sistema')}
+                    {t('diskSpace.systemDisk', 'Disco del sistema')}
                   </Typography>
                 </Box>
                 <Box 
@@ -632,7 +632,7 @@ const DiskSpace = () => {
                       color={diskSpace.usedPercentage > 90 ? 'error.dark' : 'warning.dark'}
                       mb={0.5}
                     >
-                      {diskSpace.usedPercentage > 90 ? 'Alerta Crítico!' : 'Atenção!'}
+                      {diskSpace.usedPercentage > 90 ? '¡Alerta crítica!' : '¡Atención!'}
                     </Typography>
                     <Typography variant="body1">
                       {diskSpace.usedPercentage > 90 
@@ -678,8 +678,8 @@ const DiskSpace = () => {
                     fontWeight: 'bold',
                     color: 'text.secondary'
                   }}>
-                    <Typography variant="subtitle2" sx={{ flex: 1 }}>Estrutura de Pastas</Typography>
-                    <Typography variant="subtitle2" sx={{ width: '80px', textAlign: 'right', mr: 2 }}>Tamanho</Typography>
+                    <Typography variant="subtitle2" sx={{ flex: 1 }}>Estructura de carpetas</Typography>
+                    <Typography variant="subtitle2" sx={{ width: '80px', textAlign: 'right', mr: 2 }}>Tamaño</Typography>
                     <Typography variant="subtitle2" sx={{ width: '130px', textAlign: 'center' }}>Uso (%)</Typography>
                   </Box>
                   
@@ -699,7 +699,7 @@ const DiskSpace = () => {
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <FolderOpenIcon sx={{ mr: 1, fontSize: 24 }} />
                         <Typography variant="h6" fontWeight="bold">
-                          📁 dev/
+                          📁 {(diskSpace.folderPath || '').split('/').pop() || 'app'}/
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -794,7 +794,7 @@ const DiskSpace = () => {
                                 </Typography>
                                 
                                 {isFolder && fileName.toLowerCase() === 'public' && item.name.includes('backend') && (
-                                  <Tooltip title="Gerenciar Arquivos">
+                                  <Tooltip title="Gestionar archivos">
                                     <IconButton
                                       size="small"
                                       sx={{ 
@@ -823,7 +823,7 @@ const DiskSpace = () => {
                                       fontStyle: 'italic'
                                     }}
                                   >
-                                    arquivo
+                                    archivo
                                   </Typography>
                                 )}
                               </Box>
@@ -880,7 +880,7 @@ const DiskSpace = () => {
                 </Box>
               ) : (
                 <Typography variant="body2" color="textSecondary">
-                  {t('diskSpace.noFoldersFound', 'Nenhuma pasta encontrada')}
+                  {t('diskSpace.noFoldersFound', 'No se encontraron carpetas')}
                 </Typography>
               )}
             </Paper>

@@ -33,7 +33,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
 
   const handleAddOption = () => {
     if (options.length >= 12) {
-      toast.warning("Máximo de 12 opções permitidas");
+      toast.warning("Máximo de 12 opciones permitidas");
       return;
     }
     setOptions([...options, { name: "" }]);
@@ -41,7 +41,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
 
   const handleRemoveOption = (index) => {
     if (options.length <= 2) {
-      toast.warning("Mínimo de 2 opções necessárias");
+      toast.warning("Mínimo de 2 opciones necesarias");
       return;
     }
     const newOptions = options.filter((_, i) => i !== index);
@@ -56,14 +56,14 @@ const PollCreator = ({ open, onClose, ticketId }) => {
 
   const handleSendPoll = async () => {
     if (!pollName.trim()) {
-      toast.error("Digite o nome da enquete");
+      toast.error("Ingresá el nombre de la encuesta");
       return;
     }
 
     const validOptions = options.filter(opt => opt.name.trim() !== "");
     
     if (validOptions.length < 2) {
-      toast.error("A enquete deve ter no mínimo 2 opções");
+      toast.error("La encuesta debe tener como mínimo 2 opciones");
       return;
     }
 
@@ -76,7 +76,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
         allowMultipleAnswers
       });
 
-      toast.success("Enquete enviada com sucesso!");
+      toast.success("¡Encuesta enviada con éxito!");
       handleClose();
     } catch (error) {
       console.error("Erro ao enviar enquete:", error);
@@ -103,18 +103,18 @@ const PollCreator = ({ open, onClose, ticketId }) => {
       <DialogTitle>
         <Box display="flex" alignItems="center">
           <PollIcon style={{ marginRight: 8 }} />
-          Criar Enquete
+          Crear Encuesta
         </Box>
       </DialogTitle>
 
       <DialogContent>
         <Box mb={3}>
           <TextField
-            label="Pergunta da Enquete"
+            label="Pregunta de la Encuesta"
             fullWidth
             value={pollName}
             onChange={(e) => setPollName(e.target.value)}
-            placeholder="Ex: Qual o melhor horário para você?"
+            placeholder="Ej: ¿Cuál es el mejor horario para vos?"
             variant="outlined"
             autoFocus
             inputProps={{ maxLength: 255 }}
@@ -122,7 +122,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
         </Box>
 
         <Typography variant="subtitle2" gutterBottom>
-          Opções ({options.length}/12)
+          Opciones ({options.length}/12)
         </Typography>
 
         <Paper variant="outlined" style={{ maxHeight: 300, overflow: "auto", marginBottom: 16 }}>
@@ -134,7 +134,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
                   size="small"
                   value={option.name}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
-                  placeholder={`Opção ${index + 1}`}
+                  placeholder={`Opción ${index + 1}`}
                   variant="outlined"
                   inputProps={{ maxLength: 100 }}
                 />
@@ -160,7 +160,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
           variant="outlined"
           fullWidth
         >
-          Adicionar Opção
+          Agregar Opción
         </Button>
 
         <Box mt={2}>
@@ -172,7 +172,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
                 color="primary"
               />
             }
-            label="Permitir múltiplas respostas"
+            label="Permitir múltiples respuestas"
           />
         </Box>
       </DialogContent>
@@ -188,7 +188,7 @@ const PollCreator = ({ open, onClose, ticketId }) => {
           disabled={loading}
           startIcon={<PollIcon />}
         >
-          {loading ? "Enviando..." : "Enviar Enquete"}
+          {loading ? "Enviando..." : "Enviar Encuesta"}
         </Button>
       </DialogActions>
     </Dialog>

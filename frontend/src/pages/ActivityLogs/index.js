@@ -395,7 +395,7 @@ const ActivityLogs = () => {
 
   const handleExportCSV = () => {
     try {
-      const headers = ["Usuário", "Ação", "Descrição", "IP", "Entidade", "Data/Hora"];
+      const headers = ["Usuario", "Acción", "Descripción", "IP", "Entidad", "Fecha/Hora"];
       const csvContent = [
         headers.join(","),
         ...logs.map(log =>
@@ -420,7 +420,7 @@ const ActivityLogs = () => {
       link.click();
       document.body.removeChild(link);
       
-      toast.success("Logs exportados com sucesso!");
+      toast.success("¡Logs exportados con éxito!");
     } catch (err) {
       toast.error("Erro ao exportar logs");
       console.error(err);
@@ -501,14 +501,14 @@ const ActivityLogs = () => {
           <Card className={`${classes.statsCard} ${classes.statsCardGreen}`}>
             <People className={classes.statsIcon} />
             <Typography className={classes.statsNumber}>{stats.uniqueUsers}</Typography>
-            <Typography className={classes.statsLabel}>Usuários Ativos</Typography>
+            <Typography className={classes.statsLabel}>Usuarios Activos</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Card className={`${classes.statsCard} ${classes.statsCardOrange}`}>
             <TrendingUp className={classes.statsIcon} />
             <Typography className={classes.statsNumber}>{stats.todayLogs}</Typography>
-            <Typography className={classes.statsLabel}>Logs Hoje</Typography>
+            <Typography className={classes.statsLabel}>Logs de Hoy</Typography>
           </Card>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -517,7 +517,7 @@ const ActivityLogs = () => {
             <Typography className={classes.statsNumber} style={{ fontSize: 20 }}>
               {stats.topAction || "N/A"}
             </Typography>
-            <Typography className={classes.statsLabel}>Ação Mais Comum</Typography>
+            <Typography className={classes.statsLabel}>Acción Más Común</Typography>
           </Card>
         </Grid>
       </Grid>
@@ -528,7 +528,7 @@ const ActivityLogs = () => {
           className={classes.searchField}
           fullWidth
           variant="outlined"
-          placeholder="Buscar em logs (descrição, usuário, IP...)"
+          placeholder="Buscar en logs (descripción, usuario, IP...)"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -716,7 +716,7 @@ const ActivityLogs = () => {
                   onChange={(e) => handleFilterChange("entityType", e.target.value)}
                   label="Tipo de Entidade"
                 >
-                  <MenuItem value="">Todos os Tipos</MenuItem>
+                  <MenuItem value="">Todos los Tipos</MenuItem>
                   {entityTypes.map((type) => (
                     <MenuItem key={type} value={type}>
                       {type}

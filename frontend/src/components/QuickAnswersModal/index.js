@@ -321,10 +321,10 @@ const QuickAnswersModal = ({
                   <Collapse in={showHelp}>
                     <InfoBox>
                       <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: theme.palette.primary.main }}>
-                        💡 Divisão Automática de Mensagens
+                        💡 División Automática de Mensajes
                       </Typography>
                       <Typography variant="body2" sx={{ mb: 1.5, lineHeight: 1.6 }}>
-                        Use <strong>|q</strong> para dividir sua mensagem em partes que serão enviadas com delay automático.
+                        Usá <strong>|q</strong> para dividir tu mensaje en partes que se enviarán con delay automático.
                       </Typography>
                       
                       <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
@@ -341,14 +341,14 @@ const QuickAnswersModal = ({
                         📝 Exemplo:
                       </Typography>
                       <ExampleBox>
-                        Olá, tudo bem? |q
-                        Seu pedido foi processado com sucesso! ||q
-                        O código de rastreamento é: ABC123 |||q
-                        Obrigado pela preferência!
+                        Hola, ¿todo bien? |q
+                        ¡Tu pedido fue procesado con éxito! ||q
+                        El código de seguimiento es: ABC123 |||q
+                        ¡Gracias por tu preferencia!
                       </ExampleBox>
                       
                       <Typography variant="caption" sx={{ display: 'block', mt: 1.5, fontStyle: 'italic', color: theme.palette.text.secondary }}>
-                        ✅ Resultado: 1ª mensagem enviada imediatamente, 2ª após 4s, 3ª após 8s e 4ª após 12s
+                        ✅ Resultado: 1er mensaje enviado inmediatamente, 2º tras 4s, 3º tras 8s y 4º tras 12s
                       </Typography>
                     </InfoBox>
                   </Collapse>

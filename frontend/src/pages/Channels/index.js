@@ -423,9 +423,9 @@ const Channels = () => {
 	const handleStartWhatsAppSession = async whatsAppId => {
 		try {
 			setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'startSession' }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Iniciando sessão...' }));
+			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Iniciando sesión...' }));
 			
-			const startSessionToastId = toast.info('Iniciando sessão do WhatsApp...', {
+			const startSessionToastId = toast.info('Iniciando sesión de WhatsApp...', {
 				autoClose: false,
 				closeButton: false,
 				draggable: false,
@@ -434,7 +434,7 @@ const Channels = () => {
 			await api.post(`/whatsappsession/${whatsAppId}`);
 			
 			toast.update(startSessionToastId, {
-				render: 'Sessão iniciada com sucesso! Aguarde...',
+				render: '¡Sesión iniciada con éxito! Esperá...',
 				type: toast.TYPE.SUCCESS,
 			});
 			
@@ -444,7 +444,7 @@ const Channels = () => {
 				
 				toast.dismiss(startSessionToastId);
 				
-				toast.success('Sessão iniciada com sucesso!');
+				toast.success('¡Sesión iniciada con éxito!');
 				
 				fetchWhatsApps();
 			}, 3000);
@@ -469,7 +469,7 @@ const Channels = () => {
 			await api.put(`/whatsappsession/${whatsAppId}`);
 			
 			toast.update(qrCodeToastId, {
-				render: 'Novo QR code gerado com sucesso! Aguarde...',
+				render: '¡Nuevo código QR generado con éxito! Esperá...',
 				type: toast.TYPE.SUCCESS,
 			});
 			
@@ -479,7 +479,7 @@ const Channels = () => {
 				
 				toast.dismiss(qrCodeToastId);
 				
-				toast.success('Novo QR code gerado com sucesso!');
+				toast.success('¡Nuevo código QR generado con éxito!');
 				
 				fetchWhatsApps();
 			}, 3000);
@@ -555,16 +555,16 @@ const Channels = () => {
 		if (confirmModalInfo.action === "disconnect") {
 			try {
 				setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'disconnect' }));
-				setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Desconectando sessão...' }));
+				setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Desconectando sesión...' }));
 				
-				ToastManager.info('Desconectando sessão do WhatsApp...', `disconnect-${whatsAppId}`, { autoClose: false });
+				ToastManager.info('Desconectando sesión de WhatsApp...', `disconnect-${whatsAppId}`, { autoClose: false });
 			
 				await api.delete(`/whatsappsession/${whatsAppId}`);
 				
 				setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
 				setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
 			
-				ToastManager.success('Sessão desconectada com sucesso!', `disconnect-success-${whatsAppId}`);
+				ToastManager.success('¡Sesión desconectada con éxito!', `disconnect-success-${whatsAppId}`);
 			
 				setTimeout(() => {
 					fetchWhatsApps();
@@ -579,16 +579,16 @@ const Channels = () => {
 		if (confirmModalInfo.action === "delete") {
 			try {
 				setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'delete' }));
-				setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Excluindo canal...' }));
+				setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Eliminando canal...' }));
 				
-				ToastManager.info('Excluindo canal do WhatsApp...', `delete-${whatsAppId}`, { autoClose: false });
+				ToastManager.info('Eliminando canal de WhatsApp...', `delete-${whatsAppId}`, { autoClose: false });
 				
 				await api.delete(`/whatsapp/${whatsAppId}`);
 				
 				setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
 				setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
 				
-				ToastManager.success('Canal excluído com sucesso!', `delete-success-${whatsAppId}`);
+				ToastManager.success('¡Canal eliminado con éxito!', `delete-success-${whatsAppId}`);
 				
 				setTimeout(() => {
 					fetchWhatsApps();
@@ -604,9 +604,9 @@ const Channels = () => {
 	const handleRestartSession = async (whatsAppId) => {
 		try {
 			setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'restart' }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Reiniciando sessão...' }));
+			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Reiniciando sesión...' }));
 			
-			const initialToastId = toast.info('Reiniciando sessão do WhatsApp...', {
+			const initialToastId = toast.info('Reiniciando sesión de WhatsApp...', {
 				autoClose: false,
 				position: "top-right"
 			});
@@ -615,7 +615,7 @@ const Channels = () => {
 			
 			toast.dismiss(initialToastId);
 			
-			toast.success('Sessão reiniciada com sucesso!', {
+			toast.success('¡Sesión reiniciada con éxito!', {
 				position: "top-right"
 			});
 			
@@ -626,8 +626,8 @@ const Channels = () => {
 			
 			const countdown = createCountdownToast(
 				1,
-				'Atualizando a página em',
-				'Página atualizada!',
+				'Actualizando la página en',
+				'¡Página actualizada!',
 				null,
 				true
 			);
@@ -643,9 +643,9 @@ const Channels = () => {
 	const handleStartSession = async (whatsAppId) => {
 		try {
 			setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'start' }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Iniciando sessão...' }));
+			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Iniciando sesión...' }));
 			
-			const startToastId = toast.info('Iniciando sessão do WhatsApp...', {
+			const startToastId = toast.info('Iniciando sesión de WhatsApp...', {
 				autoClose: false,
 				closeButton: false,
 				draggable: false,
@@ -657,8 +657,8 @@ const Channels = () => {
 			
 			const countdownToast = createCountdownToast(
 				3,
-				'Sessão iniciada com sucesso! Aguarde',
-				'Sessão iniciada com sucesso!',
+				'¡Sesión iniciada con éxito! Esperá',
+				'¡Sesión iniciada con éxito!',
 				() => {
 					setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
 					setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
@@ -677,9 +677,9 @@ const Channels = () => {
 	const handleShutdownSession = async (whatsAppId) => {
 		try {
 			setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'shutdown' }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Desligando sessão...' }));
+			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Apagando sesión...' }));
 			
-			const shutdownToastId = toast.info('Desligando sessão do WhatsApp...', {
+			const shutdownToastId = toast.info('Apagando sesión de WhatsApp...', {
 				autoClose: false,
 				closeButton: false,
 				draggable: false,
@@ -691,8 +691,8 @@ const Channels = () => {
 			
 			const countdownToast = createCountdownToast(
 				5,
-				'Sessão desligada com sucesso! Atualizando em',
-				'Sessão desligada com sucesso!',
+				'¡Sesión apagada con éxito! Actualizando en',
+				'¡Sesión apagada con éxito!',
 				() => {
 					setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
 					setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
@@ -868,7 +868,7 @@ const Channels = () => {
 			const countdownToast = createCountdownToast(
 				15,
 				'Reiniciando o sistema em',
-				'Sistema reiniciado com sucesso!',
+				'¡Sistema reiniciado con éxito!',
 				null,
 				true
 			);
@@ -960,7 +960,7 @@ const Channels = () => {
 
 										{whatsApp.isDefault && (
 											<DetailRow>
-												<DetailLabel>Padrão:</DetailLabel>
+												<DetailLabel>Predeterminado:</DetailLabel>
 												<CheckCircle sx={{ color: green[500] }} />
 											</DetailRow>
 										)}
@@ -1032,13 +1032,13 @@ const Channels = () => {
 						size="small"
 						sx={{ mr: 2 }}
 					>
-						<ToggleButton value="list" aria-label="visualização em lista">
-							<Tooltip title="Visualização em Lista">
+						<ToggleButton value="list" aria-label="vista en lista">
+							<Tooltip title="Vista en Lista">
 								<TableRows />
 							</Tooltip>
 						</ToggleButton>
-						<ToggleButton value="grid" aria-label="visualização em grade">
-							<Tooltip title="Visualização em Grade">
+						<ToggleButton value="grid" aria-label="vista en cuadrícula">
+							<Tooltip title="Vista en Cuadrícula">
 								<GridView />
 							</Tooltip>
 						</ToggleButton>

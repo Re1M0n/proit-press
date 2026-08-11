@@ -120,16 +120,16 @@ const CameraModal = ({ open, onClose, onCapture }) => {
       }
     } catch (err) {
       console.error('Erro ao acessar câmera:', err);
-      let errorMessage = 'Não foi possível acessar a câmera.';
+      let errorMessage = 'No fue posible acceder a la cámara.';
       
       if (err.name === 'NotAllowedError') {
-        errorMessage = 'Permissão da câmera negada. Permita o acesso para continuar.';
+        errorMessage = 'Permiso de cámara denegado. Permití el acceso para continuar.';
       } else if (err.name === 'NotFoundError') {
-        errorMessage = 'Nenhuma câmera encontrada no dispositivo.';
+        errorMessage = 'No se encontró ninguna cámara en el dispositivo.';
       } else if (err.name === 'NotReadableError') {
-        errorMessage = 'Câmera está sendo usada por outro aplicativo.';
+        errorMessage = 'La cámara está siendo usada por otra aplicación.';
       } else if (err.name === 'OverconstrainedError') {
-        errorMessage = 'Configurações da câmera não suportadas pelo dispositivo.';
+        errorMessage = 'Configuraciones de cámara no soportadas por el dispositivo.';
       }
       
       setError(errorMessage);
@@ -189,7 +189,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
     }
 
     if (!selectedMimeType) {
-      setError('Formato de vídeo não suportado pelo navegador.');
+      setError('Formato de video no soportado por el navegador.');
       return;
     }
 
@@ -222,7 +222,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
         
         const maxSizeBytes = 20 * 1024 * 1024; 
         if (blob.size > maxSizeBytes) {
-          setError(`Vídeo muito grande (${(blob.size / 1024 / 1024).toFixed(1)}MB). Máximo permitido: 20MB. Tente gravar um vídeo mais curto.`);
+          setError(`Video demasiado grande (${(blob.size / 1024 / 1024).toFixed(1)}MB). Máximo permitido: 20MB. Intentá grabar un video más corto.`);
           return;
         }
         
@@ -245,7 +245,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
       console.log('Gravação iniciada com MIME type:', selectedMimeType);
     } catch (err) {
       console.error('Erro ao iniciar gravação:', err);
-      setError('Não foi possível iniciar a gravação.');
+      setError('No fue posible iniciar la grabación.');
     }
   };
 
@@ -291,14 +291,14 @@ const CameraModal = ({ open, onClose, onCapture }) => {
       }
     } catch (err) {
       console.error('Erro ao acessar câmera:', err);
-      let errorMessage = 'Não foi possível acessar a câmera.';
+      let errorMessage = 'No fue posible acceder a la cámara.';
       
       if (err.name === 'NotAllowedError') {
-        errorMessage = 'Permissão da câmera negada. Permita o acesso para continuar.';
+        errorMessage = 'Permiso de cámara denegado. Permití el acceso para continuar.';
       } else if (err.name === 'NotFoundError') {
-        errorMessage = 'Nenhuma câmera encontrada no dispositivo.';
+        errorMessage = 'No se encontró ninguna cámara en el dispositivo.';
       } else if (err.name === 'NotReadableError') {
-        errorMessage = 'Câmera está sendo usada por outro aplicativo.';
+        errorMessage = 'La cámara está siendo usada por otra aplicación.';
       }
       
       setError(errorMessage);
@@ -337,7 +337,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
       >
         <Typography variant="h6" sx={{ fontWeight: 500 }}>
           <CameraAlt sx={{ mr: 1, verticalAlign: 'middle' }} />
-          Câmera
+          Cámara
         </Typography>
         <IconButton 
           edge="end" 
@@ -354,7 +354,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
           {isLoading && (
             <Box sx={{ textAlign: 'center', color: 'white' }}>
               <CircularProgress color="inherit" sx={{ mb: 2 }} />
-              <Typography>Iniciando câmera...</Typography>
+              <Typography>Iniciando cámara...</Typography>
             </Box>
           )}
           
@@ -423,7 +423,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
         backgroundColor: (theme) => theme.palette.grey[50]
       }}>
         <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
-          Clique no botão para tirar foto • Clique no ícone de vídeo para gravar • Duplo clique no botão central para gravar
+          Clic en el botón para sacar foto • Clic en el ícono de video para grabar • Doble clic en el botón central para grabar
         </Typography>
       </DialogActions>
     </Dialog>

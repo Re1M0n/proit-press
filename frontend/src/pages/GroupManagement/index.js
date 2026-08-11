@@ -157,13 +157,13 @@ const GroupManagement = () => {
   };
 
   const handleLeaveGroup = async (group) => {
-    if (!window.confirm(`Deseja realmente sair do grupo "${group.name}"?`)) {
+    if (!window.confirm(`¿Deseás realmente salir del grupo "${group.name}"?`)) {
       return;
     }
 
     try {
       await api.post(`/whatsapp/${selectedWhatsappId}/groups/${group.id}/leave`);
-      toast.success("Saiu do grupo com sucesso");
+      toast.success("Saliste del grupo con éxito");
       loadGroups();
     } catch (err) {
       toast.error("Erro ao sair do grupo");
@@ -197,7 +197,7 @@ const GroupManagement = () => {
             }}
             style={{ marginRight: 16, minWidth: 200 }}
           >
-            <option value="">Selecione um canal</option>
+            <option value="">Seleccioná un canal</option>
             {whatsapps.map((whatsapp) => (
               <option key={whatsapp.id} value={whatsapp.id}>
                 {whatsapp.name}
@@ -245,12 +245,12 @@ const GroupManagement = () => {
           <EmptyState>
             <PeopleIcon style={{ fontSize: 64, marginBottom: 16 }} />
             <Typography variant="h6">
-              {searchParam ? "Nenhum grupo encontrado" : "Nenhum grupo disponível"}
+              {searchParam ? "Ningún grupo encontrado" : "Ningún grupo disponible"}
             </Typography>
             <Typography variant="body2">
               {!selectedWhatsappId
-                ? "Selecione um canal para visualizar os grupos"
-                : "Crie um novo grupo para começar"}
+                ? "Seleccioná un canal para ver los grupos"
+                : "Creá un nuevo grupo para comenzar"}
             </Typography>
           </EmptyState>
         ) : (
@@ -259,8 +259,8 @@ const GroupManagement = () => {
               <TableRow>
                 <HeaderCell>Nome do Grupo</HeaderCell>
                 <HeaderCell align="center">Participantes</HeaderCell>
-                <HeaderCell align="center">Não Lidas</HeaderCell>
-                <HeaderCell align="right">Ações</HeaderCell>
+                <HeaderCell align="center">No Leídos</HeaderCell>
+                <HeaderCell align="right">Acciones</HeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -284,7 +284,7 @@ const GroupManagement = () => {
                     )}
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Gerenciar Participantes">
+                    <Tooltip title="Gestionar Participantes">
                       <ActionButton
                         size="small"
                         onClick={() => handleManageParticipants(group)}
@@ -293,7 +293,7 @@ const GroupManagement = () => {
                       </ActionButton>
                     </Tooltip>
                     
-                    <Tooltip title="Configurações">
+                    <Tooltip title="Configuraciones">
                       <ActionButton
                         size="small"
                         onClick={() => handleGroupSettings(group)}

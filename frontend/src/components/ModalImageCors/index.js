@@ -366,7 +366,7 @@ const ModalImageCors = ({ imageUrl, allImages = [], currentIndex = 0, isDeleted 
   
   const applyCrop = () => {
     if (!cropMode || cropArea.width < 10 || cropArea.height < 10) {
-      setSnackbarMessage("Selecione uma área válida para recorte");
+      setSnackbarMessage("Seleccioná un área válida para recortar");
       setSnackbarOpen(true);
       return;
     }

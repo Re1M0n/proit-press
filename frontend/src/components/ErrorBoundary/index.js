@@ -16,7 +16,7 @@ class ErrorBoundary extends React.Component {
         
         try {
             ErrorLogService.logError({
-                message: error.message || "Erro não identificado",
+                message: error.message || "Error no identificado",
                 stack: error.stack,
                 component: this.props.componentName || "ErrorBoundary",
                 severity: "error"
@@ -39,9 +39,9 @@ class ErrorBoundary extends React.Component {
                     borderRadius: "4px",
                     margin: "20px"
                 }}>
-                    <h2>Ops! Algo deu errado.</h2>
+                    <h2>¡Ups! Algo salió mal.</h2>
                     <p>Ocorreu um erro inesperado. Este erro foi registrado automaticamente.</p>
-                    <p>Por favor, tente recarregar a página ou voltar para a página inicial.</p>
+                    <p>Por favor, intentá recargar la página o volver a la página inicial.</p>
                     <button 
                         onClick={() => window.location.reload()} 
                         style={{
@@ -54,7 +54,7 @@ class ErrorBoundary extends React.Component {
                             marginRight: "10px"
                         }}
                     >
-                        Recarregar Página
+                        Recargar Página
                     </button>
                     <button 
                         onClick={() => window.location.href = "/"} 
@@ -67,7 +67,7 @@ class ErrorBoundary extends React.Component {
                             cursor: "pointer"
                         }}
                     >
-                        Voltar para o Início
+                        Volver al Inicio
                     </button>
                 </div>
             );

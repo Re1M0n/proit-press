@@ -159,7 +159,7 @@ const ContactSelectionModal = ({ open, onClose, onSendContacts }) => {
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <ContactPhone />
-          <Typography variant="h6">Enviar contatos</Typography>
+          <Typography variant="h6">Enviar contactos</Typography>
         </Box>
         <IconButton 
           edge="end" 
@@ -174,7 +174,7 @@ const ContactSelectionModal = ({ open, onClose, onSendContacts }) => {
       <DialogContent sx={{ p: 3 }}>
         <SearchField
           fullWidth
-          placeholder="Pesquisar nome ou número"
+          placeholder="Buscar nombre o número"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -220,7 +220,7 @@ const ContactSelectionModal = ({ open, onClose, onSendContacts }) => {
             {filteredContacts.length === 0 ? (
               <Box sx={{ textAlign: 'center', p: 3 }}>
                 <Typography color="textSecondary">
-                  {searchTerm ? 'Nenhum contato encontrado' : 'Nenhum contato disponível'}
+                  {searchTerm ? 'Ningún contacto encontrado' : 'Ningún contacto disponible'}
                 </Typography>
               </Box>
             ) : (
@@ -245,7 +245,7 @@ const ContactSelectionModal = ({ open, onClose, onSendContacts }) => {
                         </Typography>
                         {contact.isWhatsappValid && (
                           <Typography variant="caption" color="success.main">
-                            Disponível
+                            Disponible
                           </Typography>
                         )}
                       </Box>

@@ -137,7 +137,7 @@ const CpuUsage = () => {
         setCpuInfo(data);
         setError(null);
       } catch (err) {
-        setError('Erro ao carregar informações de uso de CPU');
+        setError('Error al cargar la información de uso de CPU');
       } finally {
         setLoading(false);
       }
@@ -175,7 +175,7 @@ const CpuUsage = () => {
         >
           <CircularProgress size={60} thickness={4} />
           <Typography variant="body1" color="textSecondary">
-            Carregando informações de CPU...
+            Cargando información de CPU...
           </Typography>
         </Box>
       ) : error ? (
@@ -241,7 +241,7 @@ const CpuUsage = () => {
                   fontWeight="bold"
                   fontSize="0.95rem"
                 >
-                  {cpuInfo.cpuUsage < 70 ? 'Saudável' : cpuInfo.cpuUsage < 90 ? 'Alerta' : 'Crítico'}
+                  {cpuInfo.cpuUsage < 70 ? 'Saludable' : cpuInfo.cpuUsage < 90 ? 'Alerta' : 'Crítico'}
                 </Typography>
               </Box>
             </Box>

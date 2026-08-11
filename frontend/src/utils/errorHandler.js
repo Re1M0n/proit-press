@@ -5,7 +5,7 @@ export const setupGlobalErrorHandlers = () => {
     const error = event.reason;
     
     ErrorLogService.logError({
-      message: error.message || "Promessa rejeitada não tratada",
+      message: error.message || "Promesa rechazada no manejada",
       stack: error.stack,
       component: "unhandledrejection",
       severity: "error"
@@ -18,7 +18,7 @@ export const setupGlobalErrorHandlers = () => {
     }
     
     ErrorLogService.logError({
-      message: event.message || "Erro global não tratado",
+      message: event.message || "Error global no manejado",
       stack: event.error ? event.error.stack : "",
       component: event.filename || "window.onerror",
       severity: "error"
@@ -80,7 +80,7 @@ export const withErrorHandling = (fn, componentName, fallback = null) => {
     return fn();
   } catch (error) {
     ErrorLogService.logError({
-      message: error.message || "Erro não identificado",
+      message: error.message || "Error no identificado",
       stack: error.stack,
       component: componentName,
       severity: "error"

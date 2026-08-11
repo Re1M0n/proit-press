@@ -346,7 +346,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                 });
 
                 toast.dismiss("uploadingLogo");
-                toast.success("Imagem atualizada com sucesso!");
+                toast.success("¡Imagen actualizada con éxito!");
             }
         } catch (error) {
             console.error("Erro ao fazer upload da imagem:", error);
@@ -384,7 +384,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
             });
 
             toast.dismiss("deletingLogo");
-            toast.success("Logo removida com sucesso!");
+            toast.success("¡Logo eliminada con éxito!");
         } catch (error) {
             console.error("Erro ao remover logo:", error);
             toast.dismiss("deletingLogo");
@@ -419,7 +419,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
             const response = await api.put(`/personalizations/${theme}/colors`, payload);
 
             if (response.status === 200) {
-                toast.success(`Cores do tema ${theme} salvas com sucesso!`);
+                toast.success(`¡Colores del tema ${theme} guardados con éxito!`);
                 if (typeof onThemeConfigUpdate === 'function') {
                     onThemeConfigUpdate(theme, colorsToSave);
                 }
@@ -540,7 +540,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                                         )}
                                     </StyledCard>
                                     <CardDescription>
-                                        Ícone pequeno exibido na aba do navegador (16x16 ou 32x32 pixels)
+                                        Ícono pequeño que se muestra en la pestaña del navegador (16x16 o 32x32 píxeles)
                                     </CardDescription>
                                     {logos.themeLight.favico && (
                                         <ImagePreview>
@@ -755,7 +755,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                                         )}
                                     </StyledCard>
                                     <CardDescription>
-                                        Ícone pequeno exibido na aba do navegador (16x16 ou 32x32 pixels)
+                                        Ícono pequeño que se muestra en la pestaña del navegador (16x16 o 32x32 píxeles)
                                     </CardDescription>
                                     {logos.themeDark.favico && (
                                         <ImagePreview>

@@ -416,7 +416,7 @@ const GroupActionsPanel = ({ groupId }) => {
       }}>
         <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
           <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.875rem' }} noWrap>
-            Ações do Grupo
+            Acciones del Grupo
           </Typography>
           {isAdmin && (
             <Chip 
@@ -447,7 +447,7 @@ const GroupActionsPanel = ({ groupId }) => {
               }} 
             />
           </Badge>
-          <Tooltip title="Atualizar">
+          <Tooltip title="Actualizar">
             <IconButton 
               size="small" 
               onClick={loadParticipants} 
@@ -572,7 +572,7 @@ const GroupActionsPanel = ({ groupId }) => {
 
             <Divider sx={{ my: 1.5 }} />
             
-            <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, display: 'block', textTransform: 'uppercase', color: 'text.secondary' }}>Ações</Typography>
+            <Typography variant="caption" sx={{ mb: 1, fontWeight: 600, display: 'block', textTransform: 'uppercase', color: 'text.secondary' }}>Acciones</Typography>
             <Stack spacing={0.75}>
               <Button 
                 fullWidth
@@ -597,7 +597,7 @@ const GroupActionsPanel = ({ groupId }) => {
                   disabled={loading}
                   sx={{ fontSize: '0.75rem', py: 0.5 }}
                 >
-                  Adicionar
+                  Agregar
                 </Button>
               )}
             </Stack>
@@ -611,7 +611,7 @@ const GroupActionsPanel = ({ groupId }) => {
                 expandIcon={<ExpandMoreIcon fontSize="small" />}
                 sx={{ minHeight: 40, '& .MuiAccordionSummary-content': { my: 0.75 } }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Gerenciar Membros</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Gestionar Miembros</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
                 <Stack spacing={0.75}>
@@ -679,7 +679,7 @@ const GroupActionsPanel = ({ groupId }) => {
                 expandIcon={<ExpandMoreIcon fontSize="small" />}
                 sx={{ minHeight: 40, '& .MuiAccordionSummary-content': { my: 0.75 } }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Configurações</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Configuraciones</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
                 <List dense sx={{ p: 0 }}>
@@ -736,7 +736,7 @@ const GroupActionsPanel = ({ groupId }) => {
                 expandIcon={<ExpandMoreIcon fontSize="small" />}
                 sx={{ minHeight: 40, '& .MuiAccordionSummary-content': { my: 0.75 } }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Solicitações</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Solicitudes</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
                 <Stack spacing={0.75}>
@@ -811,7 +811,7 @@ const GroupActionsPanel = ({ groupId }) => {
                 expandIcon={<ExpandMoreIcon fontSize="small" />}
                 sx={{ minHeight: 40, '& .MuiAccordionSummary-content': { my: 0.75 } }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Informações</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.813rem' }}>Información</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
                 <Stack spacing={0.75}>
@@ -837,7 +837,7 @@ const GroupActionsPanel = ({ groupId }) => {
                         disabled={loading || infoLoading}
                         sx={{ fontSize: '0.75rem', py: 0.5 }}
                       >
-                        Alterar Descrição
+                        Cambiar Descripción
                       </Button>
                     </>
                   )}

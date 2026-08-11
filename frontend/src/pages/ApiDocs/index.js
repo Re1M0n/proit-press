@@ -24,7 +24,7 @@ const ApiDocs = () => {
 	return (
 		<Root>
 			<StyledIframe 
-				title="Documentação da API" 
+				title="Documentación de la API" 
 				src={urlapi}
 				allow="fullscreen"
 			/>

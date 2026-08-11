@@ -67,7 +67,7 @@ const ChartPerConnection = ({ searchParam, pageNumber, status, showAll, queueIds
 
     useEffect(() => {
         const connectionData = tickets.reduce((acc, ticket) => {
-            const connectionName = ticket.whatsapp?.name || "Sem Conexão";
+            const connectionName = ticket.whatsapp?.name || "Sin Conexión";
             const connectionColor = ticket.whatsapp?.color || "#5C59A0";
 
             if (!acc[connectionName]) {

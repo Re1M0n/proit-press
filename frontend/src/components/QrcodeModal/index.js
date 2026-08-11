@@ -42,7 +42,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 				setStatus(data.status);
 				
 				if (data.status === "CONNECTED") {
-					toast.success("Canal conectado com sucesso!", {
+					toast.success("¡Canal conectado con éxito!", {
 						position: "top-right",
 						autoClose: 2000
 					});
@@ -72,7 +72,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 				
 				if (data.session.status === "CONNECTED") {
 					setIsConnecting(false);
-					toast.success("WhatsApp conectado com sucesso!", {
+					toast.success("¡WhatsApp conectado con éxito!", {
 						position: "top-right",
 						autoClose: 3000
 					});
@@ -94,7 +94,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 				
 				if (data.whatsapp.status === "CONNECTED") {
 					setIsConnecting(false);
-					toast.success("WhatsApp conectado com sucesso!", {
+					toast.success("¡WhatsApp conectado con éxito!", {
 						position: "top-right",
 						autoClose: 3000
 					});
@@ -112,7 +112,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 				if (data.status === "CONNECTED") {
 					setStatus("CONNECTED");
 					setIsConnecting(false);
-					toast.success("WhatsApp conectado com sucesso!", {
+					toast.success("¡WhatsApp conectado con éxito!", {
 						position: "top-right",
 						autoClose: 3000
 					});
@@ -135,15 +135,15 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 	const getStatusMessage = () => {
 		switch (status) {
 			case "OPENING":
-				return "Iniciando sessão...";
+				return "Iniciando sesión...";
 			case "PAIRING":
 				return "Conectando...";
 			case "CONNECTED":
-				return "Conectado com sucesso!";
+				return "¡Conectado con éxito!";
 			case "qrcode":
-				return "Escaneie o QR Code com seu WhatsApp";
+				return "Escaneá el código QR con tu WhatsApp";
 			default:
-				return "Aguardando QR Code...";
+				return "Esperando el código QR...";
 		}
 	};
 
@@ -186,7 +186,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 				}}
 			>
 				<Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-					Conexão WhatsApp
+					Conexión WhatsApp
 				</Typography>
 				<IconButton 
 					onClick={onClose} 
@@ -233,7 +233,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 							<Box sx={{ textAlign: 'center' }}>
 								<CheckCircle sx={{ color: 'success.main', fontSize: 64, mb: 2 }} />
 								<Typography variant="h6" color="success.main">
-									Conectado!
+									¡Conectado!
 								</Typography>
 							</Box>
 						) : qrCode ? (
@@ -251,7 +251,7 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 									color="text.secondary" 
 									sx={{ mt: 1 }}
 								>
-									Abra o WhatsApp no seu celular e escaneie este código
+									Abrí WhatsApp en tu celular y escaneá este código
 								</Typography>
 							</Box>
 						) : (
@@ -270,10 +270,10 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 								Como conectar:
 							</Typography>
 							<Typography variant="body2" color="text.secondary" component="div" sx={{ fontSize: '0.8rem' }}>
-								1. Abra o WhatsApp no seu celular<br/>
-								2. Toque em Mais opções (⋮) e Aparelhos conectados<br/>
-								3. Toque em Conectar um aparelho<br/>
-								4. Aponte seu celular para esta tela para capturar o código
+								1. Abrí WhatsApp en tu celular<br/>
+								2. Tocá en Más opciones (⋮) y Dispositivos vinculados<br/>
+								3. Tocá en Vincular un dispositivo<br/>
+								4. Apuntá tu celular a esta pantalla para capturar el código
 							</Typography>
 						</Box>
 					)}

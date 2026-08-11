@@ -88,7 +88,7 @@ const useTickets = ({
                     setNewContactsByDay(contactsPerDay);
 
                     const ticketsCountByConnection = data.tickets.reduce((acc, ticket) => {
-                        const connectionName = ticket.whatsapp?.name || "Conexão desconhecida";
+                        const connectionName = ticket.whatsapp?.name || "Conexión desconocida";
                         const createdDate = formatDateToDDMMYYYY(ticket.createdAt);
 
                         if (!acc[connectionName]) {

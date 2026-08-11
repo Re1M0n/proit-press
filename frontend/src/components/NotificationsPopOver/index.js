@@ -241,7 +241,7 @@ const NotificationsPopOver = () => {
 				link.href = getImageUrl(faviconUrl);
 			} catch (err) {
 				toastError(err, t);
-				document.title = "Erro ao carregar título";
+				document.title = "Error al cargar el título";
 			}
 		};
 

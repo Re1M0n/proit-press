@@ -87,7 +87,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
       const { data } = await api.get(`/whatsapp/${whatsappId}/groups/${group.id}`);
       setGroupInfo(data);
     } catch (err) {
-      toast.error("Erro ao carregar informações do grupo");
+      toast.error("Error al cargar la información del grupo");
     }
     setLoading(false);
   };
@@ -96,7 +96,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
     const cleanNumber = newParticipant.replace(/\D/g, "");
     
     if (!cleanNumber || cleanNumber.length < 10) {
-      toast.error("Digite um número válido");
+      toast.error("Ingresá un número válido");
       return;
     }
 
@@ -117,7 +117,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
   };
 
   const handleRemoveParticipant = async (participantId) => {
-    if (!window.confirm("Deseja remover este participante?")) {
+    if (!window.confirm("¿Deseás eliminar este participante?")) {
       return;
     }
 
@@ -198,7 +198,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
     <StyledDialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <StyledDialogTitle>
         <Typography variant="h6" component="div">
-          Gerenciar Participantes
+          Gestionar Participantes
         </Typography>
         <Typography variant="body2" sx={{ mt: 0.5, opacity: 0.9 }}>
           {group?.name} • {groupInfo.size} participantes
@@ -206,7 +206,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
       </StyledDialogTitle>
       
       <Tabs value={tab} onChange={(e, newValue) => setTab(newValue)}>
-        <Tab label="Adicionar" />
+        <Tab label="Agregar" />
         <Tab label={`Participantes (${groupInfo.size})`} />
       </Tabs>
 
@@ -214,7 +214,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
         {tab === 0 && (
           <Box>
             <ParticipantInput
-              label="Número do Participante"
+              label="Número del Participante"
               value={newParticipant}
               onChange={(e) => setNewParticipant(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleAddParticipant()}
@@ -222,7 +222,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
               variant="outlined"
               placeholder="5511999999999"
               disabled={loading}
-              helperText="Digite o número com código do país e DDD"
+              helperText="Ingresá el número con código de país y DDD"
             />
 
             <Button
@@ -233,7 +233,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
               disabled={loading}
               fullWidth
             >
-              Adicionar Participante
+              Agregar Participante
             </Button>
           </Box>
         )}

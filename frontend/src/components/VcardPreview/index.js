@@ -132,7 +132,7 @@ const VcardPreview = ({ contact, numbers }) => {
         number: typeof numbers === 'string' ? numbers : 
                Array.isArray(numbers) ? numbers[0] : 
                typeof numbers === 'object' && numbers.number ? numbers.number : 
-               "Número não disponível",
+               "Número no disponible",
         profilePicUrl: "",
         id: null,
         allNumbers: Array.isArray(numbers) ? numbers : 
@@ -268,7 +268,7 @@ const VcardPreview = ({ contact, numbers }) => {
             console.error("Erro ao processar números:", error);
             setContact({
                 name: contact || "Contato",
-                number: typeof numbers === 'string' ? numbers : "Número não disponível",
+                number: typeof numbers === 'string' ? numbers : "Número no disponible",
                 profilePicUrl: "",
                 id: null,
                 allNumbers: [],
@@ -480,7 +480,7 @@ const VcardPreview = ({ contact, numbers }) => {
                 fullWidth
             >
                 <DialogTitle id="number-selection-dialog-title" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    {t("vcardPreview.selectNumberTitle", "Selecione um número para conversar")}
+                    {t("vcardPreview.selectNumberTitle", "Seleccioná un número para conversar")}
                     <IconButton
                         aria-label="close"
                         onClick={() => setNumberSelectionModalOpen(false)}
@@ -510,7 +510,7 @@ const VcardPreview = ({ contact, numbers }) => {
                                         </ListItemAvatar>
                                         <ListItemText 
                                             primary={formattedNumber} 
-                                            secondary={isWhatsapp ? t("vcardPreview.whatsappNumber", "Número com WhatsApp") : t("vcardPreview.phoneNumber", "Número de telefone")}
+                                            secondary={isWhatsapp ? t("vcardPreview.whatsappNumber", "Número con WhatsApp") : t("vcardPreview.phoneNumber", "Número de teléfono")}
                                         />
                                     </ListItemButton>
                                 </ListItem>

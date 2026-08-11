@@ -113,7 +113,7 @@ const NewTicketModal = ({ modalOpen, onClose }) => {
 
 	const handleSaveTicket = async (contactId) => {
 		if (!contactId || !selectedWhatsapp || !selectedQueue) {
-			toast.error("É necessário selecionar um contato, um canal e um setor");
+			toast.error("Es necesario seleccionar un contacto, un canal y un sector");
 			return;
 		}
 

@@ -177,13 +177,13 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 				setFieldValue("neighborhood", data.bairro || "");
 				setFieldValue("city", data.localidade || "");
 				setFieldValue("state", data.uf || "");
-				toast.success("Endereço encontrado!");
+				toast.success("¡Dirección encontrada!");
 			} else {
-				toast.error("CEP não encontrado!");
+				toast.error("¡Código postal no encontrado!");
 			}
 		} catch (error) {
 			console.error("Erro ao buscar o endereço no ViaCEP:", error);
-			toast.error("Erro ao buscar o endereço.");
+			toast.error("Error al buscar la dirección.");
 		} finally {
 			setLoadingCep(false);
 		}
@@ -279,7 +279,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 			console.error("Erro ao salvar contato:", err.response?.data);
 			if (err.response && err.response.status === 400 &&
 				(err.response.data.error?.includes("number") || err.response.data.message?.includes("number"))) {
-				toast.error(t("contactModal.numberError") || "Número de WhatsApp inválido. Verifique e tente novamente.");
+				toast.error(t("contactModal.numberError") || "Número de WhatsApp inválido. Verificá e intentá nuevamente.");
 			} else {
 				toastError(err, t);
 			}
@@ -349,27 +349,27 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 												<Field as={StyledTextField} name="birthdate" type="date" InputLabelProps={{ shrink: true }} fullWidth variant="outlined" />
 											</FieldContainer>
 											<FieldContainer>
-												<FieldLabel>{t("contacts.fields.gender", { defaultValue: "Gênero" })}</FieldLabel>
+												<FieldLabel>{t("contacts.fields.gender", { defaultValue: "Género" })}</FieldLabel>
 													<Field as={Select} name="gender" fullWidth variant="outlined" displayEmpty>
-														<MenuItem value="">{t("common.select", { defaultValue: "Selecione" })}</MenuItem>
+														<MenuItem value="">{t("common.select", { defaultValue: "Seleccioná" })}</MenuItem>
 														<MenuItem value="Masculino">Masculino</MenuItem>
 														<MenuItem value="Feminino">Feminino</MenuItem>
-														<MenuItem value="Não-binário">Não-binário</MenuItem>
-														<MenuItem value="Prefiro não informar">Prefiro não informar</MenuItem>
+														<MenuItem value="No binario">No binario</MenuItem>
+														<MenuItem value="Prefiero no informar">Prefiero no informar</MenuItem>
 														<MenuItem value="Outro">Outro</MenuItem>
 													</Field>
 												</FieldContainer>
 
 												{values.gender === "Outro" && (
 													<FieldContainer>
-														<FieldLabel>{t("contactModal.form.otherGender", { defaultValue: "Informe o gênero" })}</FieldLabel>
+														<FieldLabel>{t("contactModal.form.otherGender", { defaultValue: "Informá el género" })}</FieldLabel>
 														<Field as={StyledTextField} name="otherGender" variant="outlined" fullWidth />
 													</FieldContainer>
 												)}
 												<FieldContainer>
 												<FieldLabel>{t("contacts.fields.status", { defaultValue: "Status" })}</FieldLabel>
 												<Field as={Select} name="status" fullWidth variant="outlined" displayEmpty>
-													<MenuItem value="">{t("common.select", { defaultValue: "Selecione" })}</MenuItem>
+													<MenuItem value="">{t("common.select", { defaultValue: "Seleccioná" })}</MenuItem>
 													{clientStatusList.map((status) => (
 														<MenuItem key={status.id} value={status.name}>{status.name}</MenuItem>
 													))}
@@ -398,7 +398,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 												/>
 											</FieldContainer>
 											<FieldContainer>
-												<FieldLabel>{t("contacts.fields.lastContactAt", { defaultValue: "Último contato" })}</FieldLabel>
+												<FieldLabel>{t("contacts.fields.lastContactAt", { defaultValue: "Último contacto" })}</FieldLabel>
 												<TextField 
 													value={values.lastContactAt ? new Date(values.lastContactAt).toLocaleString('pt-BR', { 
 														day: '2-digit', 

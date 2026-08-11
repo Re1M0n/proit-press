@@ -229,11 +229,11 @@ const ComponentSettings = ({ settings, getSettingValue, handleChangeBooleanSetti
             </Grid>
 
             <Grid item xs={12}>
-                <SectionTitle variant="h6">Configurações de Email</SectionTitle>
+                <SectionTitle variant="h6">Configuraciones de Email</SectionTitle>
                 <SettingCard>
                     <SettingItem>
                         <Box sx={{ width: '100%' }}>
-                            <Tooltip title="Endereço de email usado para envio de notificações" placement="top-start">
+                            <Tooltip title="Dirección de email usada para envío de notificaciones" placement="top-start">
                                 <Typography variant="body1" sx={{ mb: 1 }}>
                                     Email do Remetente
                                 </Typography>
@@ -252,7 +252,7 @@ const ComponentSettings = ({ settings, getSettingValue, handleChangeBooleanSetti
                     </SettingItem>
                     <SettingItem>
                         <Box sx={{ width: '100%' }}>
-                            <Tooltip title="Senha de aplicativo do Gmail (não use sua senha normal)" placement="top-start">
+                            <Tooltip title="Contraseña de aplicación de Gmail (no uses tu contraseña normal)" placement="top-start">
                                 <Typography variant="body1" sx={{ mb: 1 }}>
                                     Senha de Aplicativo
                                 </Typography>
@@ -271,7 +271,7 @@ const ComponentSettings = ({ settings, getSettingValue, handleChangeBooleanSetti
                     </SettingItem>
                     <SettingItem>
                         <Box sx={{ width: '100%' }}>
-                            <Tooltip title="Servidor SMTP (padrão: smtp.gmail.com)" placement="top-start">
+                            <Tooltip title="Servidor SMTP (predeterminado: smtp.gmail.com)" placement="top-start">
                                 <Typography variant="body1" sx={{ mb: 1 }}>
                                     Servidor SMTP
                                 </Typography>
@@ -289,7 +289,7 @@ const ComponentSettings = ({ settings, getSettingValue, handleChangeBooleanSetti
                     </SettingItem>
                     <SettingItem>
                         <Box sx={{ width: '100%' }}>
-                            <Tooltip title="Porta do servidor SMTP (padrão: 587)" placement="top-start">
+                            <Tooltip title="Puerto del servidor SMTP (predeterminado: 587)" placement="top-start">
                                 <Typography variant="body1" sx={{ mb: 1 }}>
                                     Porta SMTP
                                 </Typography>

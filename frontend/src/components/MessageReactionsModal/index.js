@@ -75,7 +75,7 @@ const MessageReactionsModal = ({ open, onClose, messageId, t }) => {
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle sx={{ display: "flex", alignItems: "center", pr: 6 }}>
-        {t ? t("messageReactions.title", { defaultValue: "Reações" }) : "Reações"}
+        {t ? t("messageReactions.title", { defaultValue: "Reacciones" }) : "Reacciones"}
         <IconButton onClick={onClose} sx={{ ml: "auto" }} size="small" aria-label="close">
           <CloseIcon />
         </IconButton>
@@ -96,7 +96,7 @@ const MessageReactionsModal = ({ open, onClose, messageId, t }) => {
 
             {youReaction && (
               <Box sx={{ p: 1, borderRadius: 1, bgcolor: (theme) => theme.palette.action.hover, mb: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Typography variant="body2">{t ? t("messageReactions.youReacted", { defaultValue: "Você reagiu" }) : "Você reagiu"}: <span style={{ fontSize: 18 }}>{youReaction.aggregateEmoji || youReaction.id}</span></Typography>
+                <Typography variant="body2">{t ? t("messageReactions.youReacted", { defaultValue: "Reaccionaste" }) : "Reaccionaste"}: <span style={{ fontSize: 18 }}>{youReaction.aggregateEmoji || youReaction.id}</span></Typography>
                 <Button variant="text" size="small" onClick={() => handleRemoveMine(youReaction.aggregateEmoji || youReaction.id)}>
                   {t ? t("messageReactions.remove", { defaultValue: "Remover" }) : "Remover"}
                 </Button>
@@ -118,14 +118,14 @@ const MessageReactionsModal = ({ open, onClose, messageId, t }) => {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={s.isMe || s.fromMe || s.me || s.isSenderMe ? (t ? t("messageReactions.you", { defaultValue: "Você" }) : "Você") : (s?.contactName || s?.id?._serialized || s?.id?.user || "Contato")}
+                    primary={s.isMe || s.fromMe || s.me || s.isSenderMe ? (t ? t("messageReactions.you", { defaultValue: "Vos" }) : "Vos") : (s?.contactName || s?.id?._serialized || s?.id?.user || "Contacto")}
                     secondary={<span style={{ fontSize: 18 }}>{s._emoji}</span>}
                   />
                 </ListItem>
               ))}
               {filteredSenders.length === 0 && (
                 <Typography variant="body2" color="text.secondary" sx={{ py: 2, textAlign: "center" }}>
-                  {t ? t("messageReactions.empty", { defaultValue: "Sem reações" }) : "Sem reações"}
+                  {t ? t("messageReactions.empty", { defaultValue: "Sin reacciones" }) : "Sin reacciones"}
                 </Typography>
               )}
             </List>

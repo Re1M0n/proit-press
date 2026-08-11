@@ -81,7 +81,7 @@ const QueueMenuItems = ({
                 backgroundColor: theme.palette.action.hover
               }
             }}
-            title="Limpar seleção"
+            title="Limpiar selección"
           >
             <ClearAll fontSize="small" />
           </IconButton>

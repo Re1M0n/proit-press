@@ -223,7 +223,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
 
         } catch (err) {
           if (err.response && err.response.status === 403) {
-            toastError("Acesso negado. Você não tem permissão para acessar esta configuração.");
+            toastError("Acceso denegado. No tenés permiso para acceder a esta configuración.");
           } else {
             setDrawerOpen(true);
             toastError(err);

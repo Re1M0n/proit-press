@@ -74,7 +74,7 @@ const ContactAdvancedInfoModal = ({ open, onClose, contactId, whatsappId }) => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        Informações Avançadas do Contato
+        Información Avanzada del Contacto
       </DialogTitle>
       <DialogContent dividers>
         <Tabs value={tabValue} onChange={handleTabChange} sx={{ mb: 2 }}>
@@ -118,12 +118,12 @@ const ContactAdvancedInfoModal = ({ open, onClose, contactId, whatsappId }) => {
                         color: aboutInfo.about ? 'text.primary' : 'text.secondary'
                       }}
                     >
-                      {aboutInfo.about || "Este contato não configurou um status"}
+                      {aboutInfo.about || "Este contacto no configuró un estado"}
                     </Typography>
                   </>
                 ) : (
                   <Typography color="textSecondary">
-                    Nenhuma informação disponível
+                    Ninguna información disponible
                   </Typography>
                 )}
               </Box>
@@ -158,7 +158,7 @@ const ContactAdvancedInfoModal = ({ open, onClose, contactId, whatsappId }) => {
                   </>
                 ) : (
                   <Typography color="textSecondary">
-                    Nenhum grupo em comum
+                    Ningún grupo en común
                   </Typography>
                 )}
               </Box>

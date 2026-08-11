@@ -1,22 +1,22 @@
 export const defaultMessageVariables = [
     {
-        name: "Nome do Contato",
+        name: "Nombre del Contacto",
         value: "{{name}} "
     },
     {
-        name: "Usuário",
+        name: "Usuario",
         value: "{{user.name}} "
     },
     {
-        name: "Saudação",
+        name: "Saludo",
         value: "{{ms}} "
     },
     {
-        name: "Número do Protocolo",
+        name: "Número de Protocolo",
         value: "{{protocol}} "
     },
     {
-        name: "Data",
+        name: "Fecha",
         value: "{{date}} "
     },
     {
@@ -24,15 +24,15 @@ export const defaultMessageVariables = [
         value: "{{hour}} "
     },
     {
-        name: "ID do Ticket",
+        name: "ID del Ticket",
         value: "{{ticket_id}} "
     },
     {
-        name: "Fila",
+        name: "Sector",
         value: "{{queue}} "
     },
     {
-        name: "Conexão",
+        name: "Conexión",
         value: "{{connection}} "
     }
 ];

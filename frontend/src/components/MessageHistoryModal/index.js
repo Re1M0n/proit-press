@@ -115,7 +115,7 @@ const MessageHistoryModal = ({ open, onClose, oldMessages }) => {
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
           <CloseButton
             onClick={() => onClose(false)}
-            aria-label="Fechar histórico de mensagens"
+            aria-label="Cerrar historial de mensajes"
           >
             {t("messageHistoryModal.close")}
           </CloseButton>

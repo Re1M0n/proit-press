@@ -217,7 +217,7 @@ const AttachmentMenu = ({
             <Poll />
           </ListItemIcon>
           <ListItemText 
-            primary="Enquete" 
+            primary="Encuesta" 
             secondary="Criar enquete"
           />
         </MenuItemStyled>

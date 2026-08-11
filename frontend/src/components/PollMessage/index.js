@@ -177,7 +177,7 @@ const PollMessage = ({ message }) => {
               lineHeight: 1.4
             }}
           >
-            💡 <strong>Para votar:</strong> Abra o WhatsApp no seu celular e selecione as opções desejadas. Os votos serão atualizados automaticamente aqui.
+            💡 <strong>Para votar:</strong> Abrí WhatsApp en tu celular y seleccioná las opciones deseadas. Los votos se actualizarán automáticamente aquí.
           </Typography>
         </Box>
 
@@ -326,7 +326,7 @@ const PollMessage = ({ message }) => {
                       </ListItemAvatar>
                       <ListItemText
                         primary={voter.name}
-                        secondary={`Hoje às ${format(new Date(voter.timestamp), 'HH:mm')}`}
+                        secondary={`Hoy a las ${format(new Date(voter.timestamp), 'HH:mm')}`}
                       />
                     </ListItem>
                   ))}

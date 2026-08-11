@@ -112,7 +112,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 const ClientStatusSchema = Yup.object().shape({
     name: Yup.string()
         .min(3, "Mensagem muito curta")
-        .required("Obrigatório")
+        .required("Obligatorio")
 });
 
 const ClientStatusModal = ({ open, onClose, clientStatusId, reload }) => {

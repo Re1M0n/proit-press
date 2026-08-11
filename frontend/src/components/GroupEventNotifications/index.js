@@ -121,7 +121,7 @@ const GroupEventNotifications = ({ whatsappId }) => {
         {events.length === 0 ? (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              Nenhum evento recente
+              Sin eventos recientes
             </Typography>
           </Box>
         ) : (

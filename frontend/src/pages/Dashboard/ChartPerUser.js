@@ -92,7 +92,7 @@ const ChartPerUser = ({ searchParam, pageNumber, status, showAll, queueIds, with
         }
 
         const userData = Object.entries(ticketsByUser).map(([userId, datesObj]) => {
-            const userName = users[String(userId)] || "Sem Usuário";
+            const userName = users[String(userId)] || "Sin Usuario";
 
             let count = 0;
             for (const [dateKey, dateCount] of Object.entries(datesObj)) {

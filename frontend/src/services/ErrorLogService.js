@@ -99,7 +99,7 @@ const ErrorLogService = {
       return response.data;
     } catch (error) {
       console.error("Erro ao limpar logs antigos:", error);
-      return { message: "Não foi possível limpar os logs antigos" };
+      return { message: "No fue posible limpiar los logs antiguos" };
     }
   },
 
@@ -118,7 +118,7 @@ const ErrorLogService = {
       const { data } = await api.get("/error-logs", { params });
       
       if (!data || !data.logs || !data.logs.length) {
-        throw new Error("Nenhum log encontrado para download");
+        throw new Error("Ningún log encontrado para descargar");
       }
       
       const textContent = this.generateTextFile(data.logs);
@@ -133,7 +133,7 @@ const ErrorLogService = {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      return { success: true, message: "Logs baixados com sucesso" };
+      return { success: true, message: "Logs descargados con éxito" };
     } catch (error) {
       console.error("Erro ao baixar logs:", error);
       throw error;
@@ -153,7 +153,7 @@ const ErrorLogService = {
 
   generateTextFile(logs) {
     if (!logs || !logs.length) {
-      return "Nenhum log encontrado.";
+      return "Ningún log encontrado.";
     }
 
     let content = "LOGS DE ERRO - PRESS-TICKET®\n\n";
@@ -163,7 +163,7 @@ const ErrorLogService = {
       content += `Data: ${new Date(log.createdAt).toLocaleString()}\n`;
       content += `Origem: ${log.source}\n`;
       content += `Severidade: ${log.severity}\n`;
-      content += `Usuário: ${log.username || "Não identificado"} (ID: ${log.userId || "N/A"})\n`;
+      content += `Usuario: ${log.username || "No identificado"} (ID: ${log.userId || "N/A"})\n`;
       content += `URL: ${log.url || "N/A"}\n`;
       content += `Componente: ${log.component || "N/A"}\n`;
       content += `Navegador: ${log.userAgent || "N/A"}\n`;

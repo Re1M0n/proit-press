@@ -353,7 +353,7 @@ const SystemHealth = () => {
           />
           <StyledCardContent>
             <SectionDescription>
-              Esta seção mostra o status das conexões do WhatsApp. Sessões desconectadas podem indicar problemas com o serviço ou com os dispositivos.
+              Esta sección muestra el estado de las conexiones de WhatsApp. Las sesiones desconectadas pueden indicar problemas con el servicio o con los dispositivos.
             </SectionDescription>
             
             <Grid container spacing={2}>
@@ -417,7 +417,7 @@ const SystemHealth = () => {
                   </Button>
                 }
               >
-                Há {healthData.whatsapp.disconnected} conexões desconectadas. Verifique a página de Conexões para mais detalhes.
+                Hay {healthData.whatsapp.disconnected} conexiones desconectadas. Revisá la página de Canales para más detalles.
               </Alert>
             )}
           </StyledCardContent>
@@ -431,7 +431,7 @@ const SystemHealth = () => {
           />
           <StyledCardContent>
             <SectionDescription>
-              Esta seção mostra o status do banco de dados. O tempo de resposta e número de conexões ativas são indicadores importantes do desempenho.
+              Esta sección muestra el estado de la base de datos. El tiempo de respuesta y la cantidad de conexiones activas son indicadores importantes del rendimiento.
             </SectionDescription>
             
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
@@ -497,13 +497,13 @@ const SystemHealth = () => {
             
             {healthData.database.status === "critical" && (
               <Alert severity="error" sx={{ mt: 2 }}>
-                Problemas críticos detectados no banco de dados. Verifique os logs do sistema.
+                Problemas críticos detectados en la base de datos. Revisá los logs del sistema.
               </Alert>
             )}
             
             {healthData.database.status === "warning" && (
               <Alert severity="warning" sx={{ mt: 2 }}>
-                O banco de dados está apresentando lentidão. Monitore o tempo de resposta.
+                La base de datos está presentando lentitud. Monitoreá el tiempo de respuesta.
               </Alert>
             )}
           </StyledCardContent>
@@ -516,7 +516,7 @@ const SystemHealth = () => {
           />
           <StyledCardContent>
             <SectionDescription>
-              Esta seção mostra o status geral do sistema, incluindo tempo de atividade, usuários conectados e atividade recente.
+              Esta sección muestra el estado general del sistema, incluyendo tiempo de actividad, usuarios conectados y actividad reciente.
             </SectionDescription>
             
             <Grid container spacing={3}>
@@ -602,7 +602,7 @@ const SystemHealth = () => {
               />
               <StyledCardContent>
                 <SectionDescription>
-                  Uso da CPU e informações do processador. Um uso elevado por longos períodos pode indicar necessidade de otimização.
+                  Uso de la CPU e información del procesador. Un uso elevado durante períodos largos puede indicar necesidad de optimización.
                 </SectionDescription>
                 
                 {renderProgressBar(healthData.cpu.usage, t("systemHealth.usage"), 
@@ -651,7 +651,7 @@ const SystemHealth = () => {
                       }>
                         {healthData.cpu.loadAvg.join(", ")}
                       </InfoValue>
-                      <Tooltip title="Carga média nos últimos 1, 5 e 15 minutos">
+                      <Tooltip title="Carga promedio en los últimos 1, 5 y 15 minutos">
                         <IconButton size="small">
                           <HelpOutlineIcon fontSize="small" />
                         </IconButton>
@@ -688,7 +688,7 @@ const SystemHealth = () => {
               />
               <StyledCardContent>
                 <SectionDescription>
-                  Uso da memória RAM do servidor. Um uso elevado pode causar lentidão no sistema e afetar o desempenho.
+                  Uso de la memoria RAM del servidor. Un uso elevado puede causar lentitud en el sistema y afectar el rendimiento.
                 </SectionDescription>
                 
                 {renderProgressBar(healthData.memory.percentUsed, t("systemHealth.usage"),
@@ -745,7 +745,7 @@ const SystemHealth = () => {
                 
                 {healthData.memory.percentUsed > 80 && (
                   <Alert severity="warning" sx={{ mt: 2 }}>
-                    Memória com uso elevado! Considere fechar aplicações não utilizadas ou aumentar a memória RAM.
+                    ¡Memoria con uso elevado! Considerá cerrar aplicaciones no utilizadas o aumentar la memoria RAM.
                   </Alert>
                 )}
               </StyledCardContent>
@@ -771,7 +771,7 @@ const SystemHealth = () => {
               />
               <StyledCardContent>
                 <SectionDescription>
-                  Uso do espaço em disco. Um uso elevado pode afetar o armazenamento de mensagens e mídias do WhatsApp.
+                  Uso del espacio en disco. Un uso elevado puede afectar el almacenamiento de mensajes y multimedia de WhatsApp.
                 </SectionDescription>
                 
                 {renderProgressBar(healthData.disk.percentUsed, t("systemHealth.usage"),
@@ -828,13 +828,13 @@ const SystemHealth = () => {
                 
                 {healthData.disk.percentUsed > 85 && (
                   <Alert severity="error" sx={{ mt: 2 }}>
-                    Espaço em disco crítico! Libere espaço ou adicione mais armazenamento.
+                    ¡Espacio en disco crítico! Liberá espacio o agregá más almacenamiento.
                   </Alert>
                 )}
                 
                 {healthData.disk.percentUsed > 70 && healthData.disk.percentUsed <= 85 && (
                   <Alert severity="warning" sx={{ mt: 2 }}>
-                    Espaço em disco limitado. Considere limpar arquivos temporários ou mídias antigas.
+                    Espacio en disco limitado. Considerá limpiar archivos temporales o multimedia antiguos.
                   </Alert>
                 )}
               </StyledCardContent>
@@ -953,7 +953,7 @@ const SystemHealth = () => {
                       </Button>
                     }
                   >
-                    Há {healthData.whatsapp.disconnected} conexões desconectadas.
+                    Hay {healthData.whatsapp.disconnected} conexiones desconectadas.
                   </Alert>
                 )}
               </StyledCardContent>

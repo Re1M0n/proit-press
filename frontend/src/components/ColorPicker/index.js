@@ -77,7 +77,7 @@ const ColorPicker = ({ onChange, currentColor, handleClose, open, theme }) => {
                 theme?.palette?.primary?.main || "#4caf50";
             }}
           >
-            Salvar
+            Guardar
           </button>
         </div>
       </div>

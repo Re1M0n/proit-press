@@ -45,8 +45,8 @@ export function TagsContainer({ contact }) {
             const { data: responseData } = await api.post(`/tags/sync`, payload);
             return responseData;
         } catch (err) {
-            if (err.response?.data?.error === "Nenhuma tag válida fornecida") {
-                return { message: "Tags removidas com sucesso" };
+            if (err.response?.data?.error === "Lista de etiquetas inválida") {
+                return { message: "Etiquetas eliminadas con éxito" };
             } else {
                 toastError(err, t);
             }

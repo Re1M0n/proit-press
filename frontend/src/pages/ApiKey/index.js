@@ -1323,7 +1323,7 @@ const ApiKey = () => {
             </StyledDialog>
 
             <ConfirmationModal
-                title="Excluir Token"
+                title="Eliminar Token"
                 open={confirmModalOpen}
                 onClose={() => setConfirmModalOpen(false)}
                 onConfirm={handleDeleteToken}

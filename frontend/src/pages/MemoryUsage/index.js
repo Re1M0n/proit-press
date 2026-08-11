@@ -144,7 +144,7 @@ const MemoryUsage = () => {
         const { data } = await api.get('/memory-usage');
         
         if (!data) {
-          throw new Error('Dados de memória não recebidos');
+          throw new Error('Datos de memoria no recibidos');
         }
         
         const safeData = {
@@ -172,7 +172,7 @@ const MemoryUsage = () => {
         setError(null);
       } catch (err) {
         console.error('Erro ao obter dados de memória:', err);
-        setError(err.message || 'Erro ao carregar informações de uso de memória');
+        setError(err.message || 'Error al cargar la información de uso de memoria');
         toastError(err, t);
         
         const fallbackData = {
@@ -261,7 +261,7 @@ const MemoryUsage = () => {
           >
             <CircularProgress size={60} thickness={4} />
             <Typography variant="body1" color="textSecondary">
-              Carregando informações de memória...
+              Cargando información de memoria...
             </Typography>
           </Box>
         ) : error ? (

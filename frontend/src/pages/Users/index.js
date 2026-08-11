@@ -229,7 +229,7 @@ const Users = () => {
     socket.on("userSessionExpired", (data) => {
       if (data.userId === user?.id) {
         localStorage.removeItem("token");
-        toast.error(data.message || "Sua sessão foi encerrada.");
+        toast.error(data.message || "Tu sesión fue cerrada.");
         setTimeout(() => {
           navigate("/login");
         }, 1000);

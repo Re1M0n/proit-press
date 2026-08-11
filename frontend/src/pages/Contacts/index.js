@@ -485,7 +485,7 @@ const Contacts = () => {
 
   const handleToggleBlock = async (contact) => {
     if (contact?.isGroup) {
-      toast.error(t("contacts.toasts.groupNotSupported") || "Bloqueio não suportado para grupos");
+      toast.error(t("contacts.toasts.groupNotSupported") || "Bloqueo no soportado para grupos");
       return;
     }
     try {
@@ -576,9 +576,9 @@ const Contacts = () => {
         email: { label: 'Email', getValue: (c) => escapeCSV(c.email) },
         cpf: { label: 'CPF', getValue: (c) => formatNumber(c.cpf) },
         birthdate: { label: 'Data Nascimento', getValue: (c) => c.birthdate },
-        gender: { label: 'Gênero', getValue: (c) => escapeCSV(c.gender) },
+        gender: { label: 'Género', getValue: (c) => escapeCSV(c.gender) },
         status: { label: 'Status', getValue: (c) => escapeCSV(c.status) },
-        address: { label: 'Endereço', getValue: (c) => escapeCSV(c.address) },
+        address: { label: 'Dirección', getValue: (c) => escapeCSV(c.address) },
         addressNumber: { label: 'Número', getValue: (c) => c.addressNumber },
         addressComplement: { label: 'Complemento', getValue: (c) => escapeCSV(c.addressComplement) },
         neighborhood: { label: 'Bairro', getValue: (c) => escapeCSV(c.neighborhood) },
@@ -586,13 +586,13 @@ const Contacts = () => {
         state: { label: 'Estado', getValue: (c) => escapeCSV(c.state) },
         zip: { label: 'CEP', getValue: (c) => formatNumber(c.zip) },
         country: { label: 'País', getValue: (c) => escapeCSV(c.country) },
-        isGroup: { label: 'É Grupo', getValue: (c) => c.isGroup },
+        isGroup: { label: 'Es Grupo', getValue: (c) => c.isGroup },
         profilePicUrl: { label: 'Foto Perfil', getValue: (c) => c.profilePicUrl },
-        extraInfo: { label: 'Informações Extras', getValue: (c) => escapeCSV(c.extraInfo) },
+        extraInfo: { label: 'Información Extra', getValue: (c) => escapeCSV(c.extraInfo) },
         tags: { label: 'Tags', getValue: (c) => escapeCSV(c.tags) },
-        createdAt: { label: 'Data Criação', getValue: (c) => c.createdAt },
-        updatedAt: { label: 'Data Atualização', getValue: (c) => c.updatedAt },
-        lastContactAt: { label: 'Último Contato', getValue: (c) => c.lastContactAt }
+        createdAt: { label: 'Fecha de Creación', getValue: (c) => c.createdAt },
+        updatedAt: { label: 'Fecha de Actualización', getValue: (c) => c.updatedAt },
+        lastContactAt: { label: 'Último Contacto', getValue: (c) => c.lastContactAt }
       };
 
       const headers = selectedFields.map(fieldId => fieldMapping[fieldId]?.label || fieldId).join(';');
@@ -944,7 +944,7 @@ const Contacts = () => {
                           </IconButton>
                         )}
                         {contact.number && !contact.isGroup && (
-                          <Tooltip title="Informações Avançadas">
+                          <Tooltip title="Información Avanzada">
                             <IconButton
                               size="small"
                               onClick={() => {
@@ -1014,8 +1014,8 @@ const Contacts = () => {
           <Tabs value={dataTab} onChange={(e, v) => setDataTab(v)} variant="scrollable" allowScrollButtonsMobile sx={{ mb: 2 }}>
             <Tab label={t('contactModal.form.mainInfo', { defaultValue: 'DADOS DO CONTATO' })} />
             <Tab label={t('contactModal.form.contact', { defaultValue: 'CONTATO' })} />
-            <Tab label={t('contactModal.form.address', { defaultValue: 'ENDEREÇO' })} />
-            <Tab label={t('contactModal.form.extraInfo', { defaultValue: 'INFORMAÇÕES ADICIONAIS' })} />
+            <Tab label={t('contactModal.form.address', { defaultValue: 'DIRECCIÓN' })} />
+            <Tab label={t('contactModal.form.extraInfo', { defaultValue: 'INFORMACIÓN ADICIONAL' })} />
           </Tabs>
 
           {dataTab === 0 && (
@@ -1040,7 +1040,7 @@ const Contacts = () => {
                   <Typography variant="body2">{formatDate(selectedDataContact?.birthdate)}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.gender', { defaultValue: 'Gênero' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.gender', { defaultValue: 'Género' })}</Typography>
                   <Typography variant="body2">{selectedDataContact?.gender || "—"}</Typography>
                 </Box>
               </Box>
@@ -1059,12 +1059,12 @@ const Contacts = () => {
                   <Typography variant="body2">{formatDate(selectedDataContact?.createdAt)}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.lastContactAt', { defaultValue: 'Último contato' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.lastContactAt', { defaultValue: 'Último contacto' })}</Typography>
                   <Typography variant="body2">{formatDate(selectedDataContact?.lastContactAt)}</Typography>
                 </Box>
               </Box>
               <Box>
-                <Typography variant="subtitle2" color="primary">{t('contactModal.form.number', { defaultValue: 'Número do WhatsApp' })}</Typography>
+                <Typography variant="subtitle2" color="primary">{t('contactModal.form.number', { defaultValue: 'Número de WhatsApp' })}</Typography>
                 <Typography variant="body2">
                   {selectedDataContact?.number 
                     ? (user?.isTricked === "enabled" 
@@ -1092,7 +1092,7 @@ const Contacts = () => {
                   <Typography variant="body2">{selectedDataContact?.zip || selectedDataContact?.cep || "—"}</Typography>
                 </Box>
                 <Box sx={{ flex: 2 }}>
-                  <Typography variant="subtitle2" color="primary">{t("contacts.table.address", { defaultValue: "Endereço" })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t("contacts.table.address", { defaultValue: "Dirección" })}</Typography>
                   <Typography variant="body2">{selectedDataContact?.address || "—"}</Typography>
                 </Box>
               </Box>
@@ -1135,7 +1135,7 @@ const Contacts = () => {
                   ))}
                 </Box>
               ) : (
-                <Typography variant="body2" color="text.secondary">{t('contacts.fields.noAdditional', { defaultValue: 'Sem informações adicionais' })}</Typography>
+                <Typography variant="body2" color="text.secondary">{t('contacts.fields.noAdditional', { defaultValue: 'Sin información adicional' })}</Typography>
               )}
             </Box>
           )}
@@ -1225,7 +1225,7 @@ const Contacts = () => {
               </Box>
             </Box>
             <Typography variant="body2" color="text.secondary" align="center">
-              {exportProgress < 20 && t("contacts.exportProgress.preparing", { defaultValue: "Preparando exportação..." })}
+              {exportProgress < 20 && t("contacts.exportProgress.preparing", { defaultValue: "Preparando exportación..." })}
               {exportProgress >= 20 && exportProgress < 40 && t("contacts.exportProgress.fetching", { defaultValue: "Buscando contatos..." })}
               {exportProgress >= 40 && exportProgress < 95 && t("contacts.exportProgress.processing", { defaultValue: "Processando dados..." })}
               {exportProgress >= 95 && t("contacts.exportProgress.finishing", { defaultValue: "Finalizando..." })}

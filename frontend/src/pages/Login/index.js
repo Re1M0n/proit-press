@@ -218,7 +218,7 @@ const Login = () => {
             </Typography>
             
             <Typography variant="body2" color="textSecondary" align="center" sx={{ mb: 3 }}>
-              {t("login.subtitle", "Faça o seu login para acessar o sistema")}
+              {t("login.subtitle", "Iniciá sesión para acceder al sistema")}
             </Typography>
             
             <StyledForm noValidate onSubmit={handlSubmit}>

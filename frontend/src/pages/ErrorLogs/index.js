@@ -397,7 +397,7 @@ function ErrorLogs() {
           }
         } else {
           setLogs(currentLogs);
-          toast.error('Resposta inválida ao carregar mais logs');
+          toast.error('Respuesta inválida al cargar más logs');
           setHasMore(false);
         }
       })
@@ -567,7 +567,7 @@ function ErrorLogs() {
       }
       
       await ErrorLogService.deleteOldLogs();
-      toast.success(t("errorLogs.deleteSuccess", "Logs antigos excluídos com sucesso"));
+      toast.success(t("errorLogs.deleteSuccess", "Logs antiguos eliminados con éxito"));
       fetchLogs();
     } catch (error) {
       console.error("Erro ao excluir logs antigos:", error);
@@ -634,7 +634,7 @@ Data: ${selectedLog.createdAt ? format(parseISO(selectedLog.createdAt), "dd/MM/y
 Origem: ${selectedLog.source || "-"}
 Severidade: ${selectedLog.severity || "error"}
 Componente: ${selectedLog.component || "-"}
-Usuário: ${selectedLog.user || "-"}
+Usuario: ${selectedLog.user || "-"}
 URL: ${selectedLog.url || "-"}
 User Agent: ${selectedLog.userAgent || "-"}
 Mensagem: ${selectedLog.message || "-"}
@@ -644,11 +644,11 @@ ${selectedLog.stack || "-"}
 
     navigator.clipboard.writeText(logDetails)
       .then(() => {
-        toast.success("Informações do log copiadas para a área de transferência");
+        toast.success("Información del log copiada al portapapeles");
       })
       .catch((error) => {
         console.error("Erro ao copiar:", error);
-        toast.error("Erro ao copiar informações do log");
+        toast.error("Error al copiar la información del log");
       });
   };
 
@@ -661,7 +661,7 @@ ${selectedLog.stack || "-"}
       }
       
       if (!logs || logs.length === 0) {
-        toast.info(t("errorLogs.noLogsToDownload", "Não há logs para baixar"));
+        toast.info(t("errorLogs.noLogsToDownload", "No hay logs para descargar"));
         return;
       }
       
@@ -669,7 +669,7 @@ ${selectedLog.stack || "-"}
         searchTerm,
         ...filters
       });
-      toast.success(t("errorLogs.downloadSuccess", "Logs baixados com sucesso"));
+      toast.success(t("errorLogs.downloadSuccess", "Logs descargados con éxito"));
     } catch (error) {
       console.error("Erro ao baixar logs:", error);
       toast.error(t("errorLogs.downloadError", "Erro ao baixar logs"));
@@ -764,7 +764,7 @@ ${selectedLog.stack || "-"}
                 🐛 Log de Erros do Sistema
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                Monitore e analise erros em tempo real para manter o sistema saudável
+                Monitoreá y analizá errores en tiempo real para mantener el sistema saludable
               </Typography>
             </Box>
             <Box display="flex" gap={1}>
@@ -830,7 +830,7 @@ ${selectedLog.stack || "-"}
                 <TableCell sx={{ width: 130, minWidth: 130 }}>{t("errorLogs.table.source", "Fonte")}</TableCell>
                 <TableCell sx={{ width: 150, minWidth: 150 }}>{t("errorLogs.table.severity", "Severidade")}</TableCell>
                 <TableCell sx={{ minWidth: 350 }}>{t("errorLogs.table.message", "Mensagem")}</TableCell>
-                <TableCell align="center" sx={{ width: 100, minWidth: 100 }}>{t("errorLogs.table.actions", "Ações")}</TableCell>
+                <TableCell align="center" sx={{ width: 100, minWidth: 100 }}>{t("errorLogs.table.actions", "Acciones")}</TableCell>
               </TableRow>
             </StyledTableHead>
             <TableBody>
@@ -917,7 +917,7 @@ ${selectedLog.stack || "-"}
                     <Box sx={{ py: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                       <CheckCircleIcon color="success" fontSize="small" />
                       <Typography variant="body2" color="success.main" fontWeight={500}>
-                        ✅ Todos os {totalCount} logs foram carregados
+                        ✅ Todos los {totalCount} logs fueron cargados
                       </Typography>
                     </Box>
                   ) : null}
@@ -972,7 +972,7 @@ ${selectedLog.stack || "-"}
             onClick={resetAndFetchLogs}
             disabled={loading}
           >
-            {loading ? "Atualizando..." : "Atualizar Lista"}
+            {loading ? "Actualizando..." : "Actualizar Lista"}
           </ActionButton>
         </Box>
 
@@ -1061,10 +1061,10 @@ ${selectedLog.stack || "-"}
       </Dialog>
 
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>{t("errorLogs.delete.title", "Excluir Logs Antigos")}</DialogTitle>
+        <DialogTitle>{t("errorLogs.delete.title", "Eliminar Logs Antiguos")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {t("errorLogs.delete.confirmation", "Tem certeza que deseja excluir logs com mais de 30 dias? Esta ação não pode ser desfeita.")}
+            {t("errorLogs.delete.confirmation", "¿Seguro que querés eliminar logs con más de 30 días? Esta acción no se puede deshacer.")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -1072,7 +1072,7 @@ ${selectedLog.stack || "-"}
             {t("errorLogs.delete.cancel", "Cancelar")}
           </Button>
           <Button onClick={handleDeleteOldLogs} color="secondary" variant="contained">
-            {t("errorLogs.delete.confirm", "Excluir")}
+            {t("errorLogs.delete.confirm", "Eliminar")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1085,7 +1085,7 @@ ${selectedLog.stack || "-"}
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {t("errorLogs.detail.title", "Detalhes do Log")}
-          <Tooltip title="Copiar todas as informações">
+          <Tooltip title="Copiar toda la información">
             <IconButton
               onClick={handleCopyLogDetails}
               color="primary"
@@ -1134,7 +1134,7 @@ ${selectedLog.stack || "-"}
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle2" gutterBottom>
-                  {t("errorLogs.detail.user", "Usuário")}:
+                  {t("errorLogs.detail.user", "Usuario")}:
                 </Typography>
                 <Typography variant="body2">{selectedLog.user || "-"}</Typography>
               </Grid>

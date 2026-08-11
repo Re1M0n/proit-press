@@ -254,8 +254,8 @@ const VersionCheck = () => {
     if (countdown > 0) {
       countdownController = createCountdownToast(
         countdown,
-        "A página será recarregada em",
-        "Recarregando página agora...",
+        "La página se recargará en",
+        "Recargando la página ahora...",
         null,
         true
       );
@@ -275,7 +275,7 @@ const VersionCheck = () => {
       setUpdatingLib(true);
       toast.dismiss();
       
-      const prepToastId = toast.info('Preparando para atualizar a biblioteca WhatsApp...', {
+      const prepToastId = toast.info('Preparando para actualizar la biblioteca de WhatsApp...', {
         autoClose: false,
         position: "top-right",
         closeButton: false
@@ -284,7 +284,7 @@ const VersionCheck = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast.update(prepToastId, {
-        render: 'Iniciando atualização da biblioteca WhatsApp...',
+        render: 'Iniciando actualización de la biblioteca de WhatsApp...',
         type: 'info',
         autoClose: false,
         position: "top-right",
@@ -297,7 +297,7 @@ const VersionCheck = () => {
         toast.dismiss(prepToastId);
         
         if (result.success) {
-          toast.success(`Biblioteca WhatsApp atualizada com sucesso para a versão v${result.newVersion || 'mais recente'}. O servidor está sendo reiniciado para aplicar as mudanças.`, {
+          toast.success(`Biblioteca de WhatsApp actualizada con éxito a la versión v${result.newVersion || 'más reciente'}. El servidor se está reiniciando para aplicar los cambios.`, {
             autoClose: 5000,
             position: "top-right",
             toastId: 'update-success'
@@ -316,7 +316,7 @@ const VersionCheck = () => {
             console.error('Erro ao obter informações de versão após atualização:', versionError);
           }
         } else {
-          toast.error(`Erro ao atualizar biblioteca: ${result.error || 'Erro desconhecido'}`, {
+          toast.error(`Error al actualizar la biblioteca: ${result.error || 'Error desconocido'}`, {
             autoClose: false,
             position: "top-right"
           });
@@ -327,7 +327,7 @@ const VersionCheck = () => {
         console.error('Erro na chamada da API:', apiError);
         
         if (apiError.message && apiError.message.includes('Network Error')) {
-          toast.info('O servidor está sendo reiniciado após a atualização da biblioteca...', {
+          toast.info('El servidor se está reiniciando después de la actualización de la biblioteca...', {
             autoClose: 5000,
             position: "top-right"
           });
@@ -336,7 +336,7 @@ const VersionCheck = () => {
             setCountdown(30);
           }, 1000);
         } else {
-          toast.error('Erro de conexão ao tentar atualizar a biblioteca. A atualização pode ter sido iniciada, mas não foi possível confirmar. Por favor, atualize a página em alguns segundos para verificar o status.', {
+          toast.error('Error de conexión al intentar actualizar la biblioteca. La actualización puede haberse iniciado, pero no fue posible confirmarlo. Por favor, actualizá la página en unos segundos para verificar el estado.', {
             autoClose: false,
             position: "top-right"
           });
@@ -358,7 +358,7 @@ const VersionCheck = () => {
       setUpdatingLibFromGit(true);
       toast.dismiss();
       
-      const prepToastId = toast.info('Preparando para atualizar a biblioteca WhatsApp do GitHub...', {
+      const prepToastId = toast.info('Preparando para actualizar la biblioteca de WhatsApp desde GitHub...', {
         autoClose: false,
         position: "top-right",
         closeButton: false
@@ -367,7 +367,7 @@ const VersionCheck = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast.update(prepToastId, {
-        render: 'Instalando versão mais recente do GitHub (branch main)...',
+        render: 'Instalando la versión más reciente de GitHub (rama main)...',
         type: 'info',
         autoClose: false,
         position: "top-right",
@@ -380,7 +380,7 @@ const VersionCheck = () => {
         toast.dismiss(prepToastId);
         
         if (result.success) {
-          toast.success(`Biblioteca WhatsApp atualizada do GitHub com sucesso para a versão v${result.newVersion || 'mais recente'}. O servidor está sendo reiniciado para aplicar as mudanças.`, {
+          toast.success(`Biblioteca de WhatsApp actualizada desde GitHub con éxito a la versión v${result.newVersion || 'más reciente'}. El servidor se está reiniciando para aplicar los cambios.`, {
             autoClose: 5000,
             position: "top-right",
             toastId: 'update-git-success'
@@ -399,7 +399,7 @@ const VersionCheck = () => {
             console.error('Erro ao obter informações de versão após atualização:', versionError);
           }
         } else {
-          toast.error(`Erro ao atualizar biblioteca do GitHub: ${result.error || 'Erro desconhecido'}`, {
+          toast.error(`Error al actualizar la biblioteca desde GitHub: ${result.error || 'Error desconocido'}`, {
             autoClose: false,
             position: "top-right"
           });
@@ -410,7 +410,7 @@ const VersionCheck = () => {
         console.error('Erro na chamada da API:', apiError);
         
         if (apiError.message && apiError.message.includes('Network Error')) {
-          toast.info('O servidor está sendo reiniciado após a atualização da biblioteca...', {
+          toast.info('El servidor se está reiniciando después de la actualización de la biblioteca...', {
             autoClose: 5000,
             position: "top-right"
           });
@@ -419,7 +419,7 @@ const VersionCheck = () => {
             setCountdown(30);
           }, 1000);
         } else {
-          toast.error('Erro de conexão ao tentar atualizar a biblioteca do GitHub. A atualização pode ter sido iniciada, mas não foi possível confirmar. Por favor, atualize a página em alguns segundos para verificar o status.', {
+          toast.error('Error de conexión al intentar actualizar la biblioteca desde GitHub. La actualización puede haberse iniciado, pero no fue posible confirmarlo. Por favor, actualizá la página en unos segundos para verificar el estado.', {
             autoClose: false,
             position: "top-right"
           });
@@ -507,7 +507,7 @@ const VersionCheck = () => {
                       </Typography>
                       {versionInfo.whatsappLibLatestReleaseDate && (
                         <Typography variant="body2" color="textSecondary" sx={{ mt: 1, fontStyle: "italic" }}>
-                          Disponibilizada em: {new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleDateString('pt-BR')} às {new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                          Disponible desde: {new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleDateString('es-AR')} a las {new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                         </Typography>
                       )}
                     </CardContent>
@@ -521,20 +521,20 @@ const VersionCheck = () => {
                     <VersionCard status="latest">
                       <CardContent>
                         <Typography variant="h6" color="textSecondary" gutterBottom>
-                          📋 Detalhes da Release
+                          📋 Detalles de la Release
                         </Typography>
                         <Box sx={{ mt: 2 }}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
                             v{versionInfo.whatsappLibLatestVersion || "N/A"}
                           </Typography>
                           <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-                            🗓️ Data de lançamento: {versionInfo.whatsappLibLatestReleaseDate ? new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleDateString('pt-BR') : 'N/A'}
+                            🗓️ Fecha de lanzamiento: {versionInfo.whatsappLibLatestReleaseDate ? new Date(versionInfo.whatsappLibLatestReleaseDate).toLocaleDateString('es-AR') : 'N/A'}
                           </Typography>
                           {loadingReleaseNotes ? (
                             <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
                               <CircularProgress size={16} sx={{ mr: 1 }} />
                               <Typography variant="body2" color="textSecondary">
-                                Carregando mudanças da release...
+                                Cargando los cambios de la release...
                               </Typography>
                             </Box>
                           ) : releaseNotes ? (
@@ -542,7 +542,7 @@ const VersionCheck = () => {
                               {releaseNotes.body && (
                                 <Box>
                                   <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1, color: 'primary.main' }}>
-                                    📋 O que mudou:
+                                    📋 Qué cambió:
                                   </Typography>
                                   <Box sx={{ 
                                     maxHeight: 300, 
@@ -590,12 +590,12 @@ const VersionCheck = () => {
                             </Box>
                           ) : (
                             <Typography variant="body2" sx={{ mb: 2 }}>
-                              📝 Esta versão inclui melhorias de performance, correções de bugs e novos recursos para a biblioteca WhatsApp Web.js.
+                              📝 Esta versión incluye mejoras de rendimiento, correcciones de errores y nuevos recursos para la biblioteca WhatsApp Web.js.
                             </Typography>
                           )}
                           <Box sx={{ mt: 2 }}>
                             <Typography variant="body2" color="primary" sx={{ fontWeight: 'bold' }}>
-                              🔗 Links úteis:
+                              🔗 Enlaces útiles:
                             </Typography>
                             <Box sx={{ ml: 2, mt: 1 }}>
                               <Link 
@@ -604,7 +604,7 @@ const VersionCheck = () => {
                                 rel="noopener noreferrer"
                                 sx={{ display: 'block', mb: 0.5 }}
                               >
-                                📄 Ver release completa no GitHub
+                                📄 Ver la release completa en GitHub
                               </Link>
                               <Link 
                                 href="https://github.com/pedroslopez/whatsapp-web.js/releases" 
@@ -612,7 +612,7 @@ const VersionCheck = () => {
                                 rel="noopener noreferrer"
                                 sx={{ display: 'block', mb: 0.5 }}
                               >
-                                📋 Todas as releases
+                                📋 Todas las releases
                               </Link>
                               <Link 
                                 href="https://github.com/pedroslopez/whatsapp-web.js/blob/main/CHANGELOG.md" 
@@ -634,7 +634,7 @@ const VersionCheck = () => {
               {(versionInfo.whatsappLibNeedsUpdate || versionInfo.whatsappLibHasGitUpdates) ? (
                 <Box sx={{ mt: 3 }}>
                   <Typography variant="h6" gutterBottom sx={{ mb: 2, fontWeight: 'bold' }}>
-                    ⚠️ Atualizações Disponíveis
+                    ⚠️ Actualizaciones Disponibles
                   </Typography>
                   <Grid container spacing={3}>
                     {/* Coluna NPM */}
@@ -646,7 +646,7 @@ const VersionCheck = () => {
                               <CloudDownloadIcon sx={{ fontSize: 40, mr: 2, color: 'warning.main' }} />
                               <div>
                                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                  📦 Versão Estável (NPM)
+                                  📦 Versión Estable (NPM)
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
                                   v{versionInfo.whatsappLibLatestVersion}
@@ -660,7 +660,7 @@ const VersionCheck = () => {
                               <Box display="flex" alignItems="center" justifyContent="center" py={3}>
                                 <CircularProgress size={24} sx={{ mr: 2 }} />
                                 <Typography variant="body2" color="textSecondary">
-                                  Carregando informações da release...
+                                  Cargando información de la release...
                                 </Typography>
                               </Box>
                             ) : releaseNotes?.body ? (
@@ -705,7 +705,7 @@ const VersionCheck = () => {
                                 mb: 1
                               }}
                             >
-                              {updatingLib ? "Atualizando do NPM..." : "Atualizar via NPM"}
+                              {updatingLib ? "Actualizando desde NPM..." : "Actualizar vía NPM"}
                             </Button>
                             
                             <Link 
@@ -732,10 +732,10 @@ const VersionCheck = () => {
                               <GitHubIcon sx={{ fontSize: 40, mr: 2, color: 'info.main' }} />
                               <div>
                                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                  🚀 Versão Desenvolvimento (Git)
+                                  🚀 Versión Desarrollo (Git)
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
-                                  {versionInfo.whatsappLibGitCommitsCount} commit{versionInfo.whatsappLibGitCommitsCount > 1 ? 's' : ''} à frente
+                                  {versionInfo.whatsappLibGitCommitsCount} commit{versionInfo.whatsappLibGitCommitsCount > 1 ? 's' : ''} por delante
                                 </Typography>
                               </div>
                             </Box>
@@ -761,7 +761,7 @@ const VersionCheck = () => {
                                     {commit.message}
                                   </Typography>
                                   <Typography variant="caption" color="textSecondary">
-                                    por {commit.author} • {new Date(commit.date).toLocaleDateString('pt-BR')}
+                                    por {commit.author} • {new Date(commit.date).toLocaleDateString('es-AR')}
                                   </Typography>
                                   {index < Math.min(4, versionInfo.whatsappLibGitCommits.length - 1) && (
                                     <Divider sx={{ mt: 1 }} />
@@ -796,7 +796,7 @@ const VersionCheck = () => {
                                 mb: 1
                               }}
                             >
-                              {updatingLibFromGit ? "Instalando do Git..." : "Atualizar via Git"}
+                              {updatingLibFromGit ? "Instalando desde Git..." : "Actualizar vía Git"}
                             </Button>
                             
                             <Link 
@@ -817,7 +817,7 @@ const VersionCheck = () => {
                   
                   <Box sx={{ mt: 2, p: 2, backgroundColor: 'info.lighter', borderRadius: 1, border: '1px solid', borderColor: 'info.main' }}>
                     <Typography variant="body2" color="textSecondary">
-                      ℹ️ <strong>Dica:</strong> Versões do NPM são estáveis e testadas. Versões do Git contêm as últimas correções e recursos, mas podem ser menos estáveis.
+                      ℹ️ <strong>Consejo:</strong> Las versiones de NPM son estables y probadas. Las versiones de Git contienen las últimas correcciones y recursos, pero pueden ser menos estables.
                     </Typography>
                   </Box>
                 </Box>

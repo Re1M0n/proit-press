@@ -370,7 +370,12 @@ const messages = {
       selected: "seleccionados",
       cancel: "Cancelar",
       confirm: "Confirmar",
-      refresh: "Actualizar"
+      refresh: "Actualizar",
+      close: "Cerrar"
+    },
+    messageReactions: {
+      youReacted: "Reaccionaste",
+      you: "Vos"
     },
     groupActions: {
       selectContacts: "Seleccionar contactos",
@@ -601,6 +606,7 @@ const messages = {
     diskSpace: {
       title: "Espacio en disco",
       systemFolder: "Carpeta del sistema",
+      systemDisk: "Disco del sistema",
       used: "utilizado",
       healthy: "Saludable",
       warning: "Atención",
@@ -669,8 +675,18 @@ const messages = {
         severity: "Severidad",
         startDate: "Fecha inicial",
         endDate: "Fecha final",
-        all: "Todos"
+        all: "Todos",
+        cancel: "Cancelar"
       },
+      delete: {
+        title: "Eliminar Logs Antiguos",
+        cancel: "Cancelar",
+        confirm: "Eliminar"
+      },
+      detail: {
+        close: "Cerrar"
+      },
+      noLogsToDownload: "No hay logs para descargar",
       deleteDialog: {
         title: "Eliminar logs antiguos",
         message: "Esta acción eliminará todos los logs de más de 30 días. Esta acción no se puede deshacer. ¿Desea continuar?"
@@ -692,6 +708,45 @@ const messages = {
         confirm: "Confirmar"
       }
     },
+    "Banco": "Base de datos",
+    "Comando": "Comando",
+    "Conexões Ativas": "Conexiones Activas",
+    "Consulta": "Consulta",
+    "Consultas Lentas (últimas 24h)": "Consultas Lentas (últimas 24 h)",
+    "Consultas Lentas": "Consultas Lentas",
+    "Desempenho": "Rendimiento",
+    "Dialeto": "Dialecto",
+    "Erro ao carregar dados do banco de dados": "Error al cargar los datos de la base de datos",
+    "Estado": "Estado",
+    "Hora de Início": "Hora de Inicio",
+    "Host": "Host",
+    "ID": "ID",
+    "Informações Gerais": "Información General",
+    "Linhas Examinadas": "Filas Examinadas",
+    "Linhas": "Filas",
+    "Monitoramento do Banco de Dados": "Monitoreo de la Base de Datos",
+    "Nenhum processo ativo encontrado": "Ningún proceso activo encontrado",
+    "Nenhuma consulta lenta encontrada": "Ninguna consulta lenta encontrada",
+    "Nenhuma consulta": "Ninguna consulta",
+    "Nenhuma tabela encontrada": "Ninguna tabla encontrada",
+    "Nome da Tabela": "Nombre de la Tabla",
+    "Nome do Banco": "Nombre de la Base de Datos",
+    "Offline": "Sin conexión",
+    "Online": "En línea",
+    "Porta": "Puerto",
+    "Processos Ativos": "Procesos Activos",
+    "SQL": "SQL",
+    "Status": "Estado",
+    "Tabelas do Banco de Dados": "Tablas de la Base de Datos",
+    "Tamanho Total": "Tamaño Total",
+    "Tamanho de Dados": "Tamaño de Datos",
+    "Tamanho de Índices": "Tamaño de Índices",
+    "Tempo (s)": "Tiempo (s)",
+    "Tempo de Atividade": "Tiempo de Actividad",
+    "Tempo de Consulta": "Tiempo de Consulta",
+    "Total de Conexões": "Total de Conexiones",
+    "Total de Consultas": "Total de Consultas",
+    "Usuário": "Usuario",
     forgotPassword: {
       title: "¿Olvidaste tu contraseña?",
       form: {

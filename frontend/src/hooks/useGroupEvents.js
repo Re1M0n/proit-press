@@ -60,7 +60,7 @@ const useGroupEvents = (whatsappId) => {
         return `Nome do grupo alterado para: ${newValue}`;
       
       case "GROUP_DESCRIPTION_CHANGED":
-        return `Descrição do grupo foi alterada`;
+        return `La descripción del grupo fue modificada`;
       
       case "GROUP_ANNOUNCE_CHANGED":
         return newValue === "true" 
@@ -69,14 +69,14 @@ const useGroupEvents = (whatsappId) => {
       
       case "GROUP_RESTRICT_CHANGED":
         return newValue === "true"
-          ? "Apenas administradores podem editar informações"
-          : "Todos podem editar informações";
+          ? "Solo los administradores pueden editar la información"
+          : "Todos pueden editar la información";
       
       case "GROUP_JOINED":
-        return `Você entrou no grupo`;
+        return `Te uniste al grupo`;
       
       case "GROUP_LEFT":
-        return `Você saiu do grupo`;
+        return `Te fuiste del grupo`;
       
       default:
         return null;

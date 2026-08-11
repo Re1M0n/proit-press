@@ -74,11 +74,11 @@ const ChannelMenuItems = ({
       case "CONNECTED":
         return "Conectado";
       case "OPENING":
-        return "Abrindo";
+        return "Abriendo";
       case "PAIRING":
-        return "Pareando";
+        return "Vinculando";
       case "qrcode":
-        return "QR Code";
+        return "Código QR";
       case "DISCONNECTED":
         return "Desconectado";
       default:
@@ -131,7 +131,7 @@ const ChannelMenuItems = ({
                 backgroundColor: theme.palette.action.hover
               }
             }}
-            title="Limpar seleção"
+            title="Limpiar selección"
           >
             <ClearAll fontSize="small" />
           </IconButton>
@@ -185,7 +185,7 @@ const ChannelMenuItems = ({
           ))
         ) : (
           <MenuItem disabled sx={{ margin: "4px 8px" }}>
-            <ListItemText primary="Nenhum canal disponível" />
+            <ListItemText primary="Ningún canal disponible" />
           </MenuItem>
         )}
       </Box>

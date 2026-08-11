@@ -98,7 +98,7 @@ const BlockedContacts = () => {
         whatsappId: selectedWhatsappId
       });
       
-      toast.success(t("contacts.toasts.unblocked") || "Contato desbloqueado com sucesso!");
+      toast.success(t("contacts.toasts.unblocked") || "¡Contacto desbloqueado con éxito!");
       loadBlockedContacts();
     } catch (err) {
       toastError(err, t);
@@ -125,7 +125,7 @@ const BlockedContacts = () => {
               ))}
             </Select>
           </FormControl>
-          <Tooltip title="Atualizar">
+          <Tooltip title="Actualizar">
             <IconButton onClick={loadBlockedContacts} disabled={!selectedWhatsappId}>
               <RefreshIcon />
             </IconButton>
@@ -191,8 +191,8 @@ const BlockedContacts = () => {
             <BlockIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
             <Typography color="textSecondary" variant="h6">
               {selectedWhatsappId
-                ? "Nenhum contato bloqueado"
-                : "Selecione um canal WhatsApp"}
+                ? "Ningún contacto bloqueado"
+                : "Seleccioná un canal de WhatsApp"}
             </Typography>
           </Box>
         )}
