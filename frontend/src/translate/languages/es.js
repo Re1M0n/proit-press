@@ -197,6 +197,7 @@ const messages = {
       buttons: {
         wwebjs: "Agregar",
         addChannel: "Agregar canal",
+        addTelegram: "Agregar Telegram",
         hub: "Hub",
         shutdown: "Eliminar sesión",
         restart: "Reiniciar",

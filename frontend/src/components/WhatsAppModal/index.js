@@ -111,7 +111,7 @@ const SessionSchema = Yup.object().shape({
     .required("Required"),
 });
 
-const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
+const WhatsAppModal = ({ open, onClose, whatsAppId, initialType }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const initialState = {
@@ -148,6 +148,13 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 		};
 		fetchSession();
 	}, [whatsAppId]);
+
+	useEffect(() => {
+		if (open && !whatsAppId) {
+			setWhatsApp({ ...initialState, type: initialType || "wwebjs" });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open, whatsAppId, initialType]);
 
 	const handleSaveWhatsApp = async values => {
 		const whatsappData = { ...values, queueIds: selectedQueueIds, color: color };

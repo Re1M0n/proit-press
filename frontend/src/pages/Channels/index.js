@@ -194,6 +194,7 @@ const Channels = () => {
 	const { user } = useContext(AuthContext);
 	const { whatsApps, loading, fetchWhatsApps } = useContext(WhatsAppsContext);
 	const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
+	const [whatsAppModalType, setWhatsAppModalType] = useState("wwebjs");
 	const [qrModalOpen, setQrModalOpen] = useState(false);
 	const [selectedWhatsApp, setSelectedWhatsApp] = useState(null);
 	const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -491,6 +492,13 @@ const Channels = () => {
 
 	const handleOpenWhatsAppModal = () => {
 		setSelectedWhatsApp(null);
+		setWhatsAppModalType("wwebjs");
+		setWhatsAppModalOpen(true);
+	};
+
+	const handleOpenTelegramModal = () => {
+		setSelectedWhatsApp(null);
+		setWhatsAppModalType("telegram");
 		setWhatsAppModalOpen(true);
 	};
 
@@ -1012,6 +1020,7 @@ const Channels = () => {
 				open={whatsAppModalOpen}
 				onClose={handleCloseWhatsAppModal}
 				whatsAppId={!qrModalOpen && selectedWhatsApp?.id}
+				initialType={whatsAppModalType}
 			/>
 			<MainHeader>
 				<Title>{t("channels.title")} {whatsApps.length > 0 ? `(${whatsApps.length})` : ""}</Title>
@@ -1060,6 +1069,22 @@ const Channels = () => {
 							}}
 						>
 							<WhatsApp />
+						</Button>
+					</Tooltip>
+					<Tooltip title={t("channels.buttons.addTelegram")}>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={handleOpenTelegramModal}
+							sx={{
+								borderRadius: 2,
+								px: { xs: 1, sm: 2 },
+								mr: 1,
+								bgcolor: "#0088cc",
+								"&:hover": { bgcolor: "#0077b3" }
+							}}
+						>
+							<Telegram />
 						</Button>
 					</Tooltip>
 				</MainHeaderButtonsWrapper>
