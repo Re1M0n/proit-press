@@ -2,7 +2,6 @@ import { Message as WbotMessage } from "whatsapp-web.js";
 import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import GetWbotMessage from "../../helpers/GetWbotMessage";
-import SerializeWbotMsgId from "../../helpers/SerializeWbotMsgId";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
@@ -50,6 +49,44 @@ const updateTicketLastMessage = async (
       `Message sent, but ticket ${ticket.id} lastMessage could not be updated: ${err}`
     );
   }
+};
+
+// Cuando wwebjs resuelve sendMessage sin id (el mensaje igual sale: la sesión
+// actual de WhatsApp Web devuelve undefined), se recupera el id real desde el
+// chat para poder guardar el mensaje con su quote y devolver un id válido.
+const recoverSentMessageId = async (
+  wbot: any,
+  chatId: string,
+  payload: string,
+  sentMessage: any
+): Promise<any> => {
+  const chatIds = [chatId];
+  if (chatId.endsWith("@c.us")) {
+    chatIds.push(chatId.replace("@c.us", "@lid"));
+  } else if (chatId.endsWith("@lid")) {
+    chatIds.push(chatId.replace("@lid", "@c.us"));
+  }
+
+  for (const cid of chatIds) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      const chat = await wbot.getChatById(cid);
+      const messages = await chat.fetchMessages({ limit: 5 });
+      const match = messages.find(
+        (m: any) => m.fromMe && m.body === payload
+      );
+      if (match) {
+        return match;
+      }
+    } catch (err) {
+      logger.warn(
+        `[SEND_RECOVER] No se pudo recuperar el id del mensaje (${cid}): ${
+          (err as Error)?.message || err
+        }`
+      );
+    }
+  }
+  return sentMessage;
 };
 
 const SendWhatsAppMessage = async ({
@@ -160,6 +197,15 @@ const SendWhatsAppMessage = async ({
       await updateTicketLastMessage(ticket, body);
 
       if (!sentMessage?.id?.id) {
+        sentMessage = await recoverSentMessageId(
+          wbot,
+          groupId,
+          payload,
+          sentMessage
+        );
+      }
+
+      if (!sentMessage?.id?.id) {
         logger.warn(
           `Message was sent, but WhatsApp returned no message id for ticket ${ticket.id}`
         );
@@ -198,8 +244,11 @@ const SendWhatsAppMessage = async ({
 
   if (quotedMsg) {
     try {
-      await GetWbotMessage(ticket, quotedMsg.id);
-      quotedMsgSerializedId = SerializeWbotMsgId(ticket, quotedMsg);
+      // Usar el _serialized REAL del mensaje encontrado: el remote puede ser
+      // @c.us, @lid, @s.whatsapp.net... Fabricarlo con SerializeWbotMsgId
+      // (siempre @c.us) hace que WhatsApp descarte la cita en silencio.
+      const originalMessage = await GetWbotMessage(ticket, quotedMsg.id);
+      quotedMsgSerializedId = originalMessage.id._serialized;
     } catch (error) {
       console.error(`Erro ao buscar mensagem citada: ${error}`);
       throw new AppError("ERR_FETCH_WAPP_MSG");
@@ -256,6 +305,15 @@ const SendWhatsAppMessage = async ({
     }
 
     await updateTicketLastMessage(ticket, body);
+
+    if (!sentMessage?.id?.id) {
+      sentMessage = await recoverSentMessageId(
+        wbot,
+        userId,
+        payload,
+        sentMessage
+      );
+    }
 
     if (!sentMessage?.id?.id) {
       logger.warn(
