@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import AppError from "../errors/AppError";
 import { getIO } from "../libs/socket";
 import { initWbot, removeWbot, shutdownWbot } from "../libs/wbot";
+import { startTelegramSession, stopTelegramSession } from "../libs/telegram";
 import Whatsapp from "../models/Whatsapp";
 import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
 import CreateWhatsAppService from "../services/WhatsappService/CreateWhatsAppService";
@@ -21,6 +22,8 @@ interface WhatsappData {
   status?: string;
   isDefault?: boolean;
   color?: string;
+  type?: string;
+  tokenTelegram?: string;
 }
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -43,7 +46,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     greetingMessage,
     farewellMessage,
     queueIds,
-    color
+    color,
+    type,
+    tokenTelegram
   }: WhatsappData = req.body;
 
   const { whatsapp, oldDefaultWhatsapp } = await CreateWhatsAppService({
@@ -53,10 +58,18 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     greetingMessage,
     farewellMessage,
     queueIds,
-    color
+    color,
+    type,
+    tokenTelegram
   });
 
-  StartWhatsAppSession(whatsapp);
+  if (type === "telegram") {
+    startTelegramSession(whatsapp).catch(err => {
+      console.error(`[Telegram] Error iniciando sesión: ${err?.message}`);
+    });
+  } else {
+    StartWhatsAppSession(whatsapp);
+  }
   
   const logUserId = req.user?.id || 1;
   
@@ -148,6 +161,7 @@ export const remove = async (
 
   const whatsappToDelete = await ShowWhatsAppService(whatsappId);
   
+  stopTelegramSession(+whatsappId);
   await DeleteWhatsAppService(whatsappId);
   removeWbot(+whatsappId);
   
@@ -204,7 +218,13 @@ export const shutdown = async (req: Request, res: Response): Promise<Response> =
   const { whatsappId } = req.params;
 
   try {
-    await shutdownWbot(whatsappId);
+    const whatsapp = await Whatsapp.findByPk(whatsappId);
+    if (whatsapp?.type === "telegram") {
+      stopTelegramSession(+whatsappId);
+      await whatsapp.update({ status: "DISCONNECTED" });
+    } else {
+      await shutdownWbot(whatsappId);
+    }
     return res.status(200).json({ message: "Whatsapp disconnected." });
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -237,7 +257,11 @@ export const start = async (req: Request, res: Response): Promise<Response> => {
   if (!whatsapp) throw Error("no se encontro el whatsapp");
 
   try {
-    await initWbot(whatsapp);
+    if (whatsapp.type === "telegram") {
+      await startTelegramSession(whatsapp);
+    } else {
+      await initWbot(whatsapp);
+    }
     const io = getIO();
     io.emit("whatsapp", {
       action: "update",

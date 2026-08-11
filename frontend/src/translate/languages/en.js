@@ -880,7 +880,12 @@ const messages = {
           name: "Name",
           default: "Default",
           display: "Show sector schedules",
-          farewellMessage: "Farewell message"
+          farewellMessage: "Farewell message",
+          channelType: "Channel type",
+          typeWhatsapp: "WhatsApp",
+          typeTelegram: "Telegram (bot)",
+          tokenTelegram: "Telegram bot token",
+          tokenTelegramHelp: "Create a bot with @BotFather and paste the token it gives you here."
         },
         buttons: {
           okAdd: "Add",

@@ -17,6 +17,9 @@ interface MessageData {
   mimetype?: string;
   messageType?: string;
   filename?: string;
+  remoteJid?: string | null;
+  userId?: number;
+  fileSize?: number | null;
 }
 interface Request {
   messageData: MessageData;

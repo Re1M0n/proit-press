@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getWbot, removeWbot } from "../libs/wbot";
+import { stopTelegramSession } from "../libs/telegram";
 import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
@@ -84,6 +85,7 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
       console.log("Sessão não encontrada ou já desconectada, continuando...");
     }
 
+    stopTelegramSession(whatsapp.id);
     removeWbot(whatsapp.id);
 
     await UpdateWhatsAppService({

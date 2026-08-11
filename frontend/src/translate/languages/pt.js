@@ -1736,7 +1736,12 @@ const messages = {
           queuesTitle: "Setores",
           channelSelection: "Seleção de Canal",
           selectChannel: "Selecionar Canal",
-          selectChannelPlaceholder: "Selecione um canal"
+          selectChannelPlaceholder: "Selecione um canal",
+          channelType: "Tipo de canal",
+          typeWhatsapp: "WhatsApp",
+          typeTelegram: "Telegram (bot)",
+          tokenTelegram: "Token do bot do Telegram",
+          tokenTelegramHelp: "Crie um bot com @BotFather e cole aqui o token que ele fornecer."
         },
         integration: {
           title: "Integração de Canais",

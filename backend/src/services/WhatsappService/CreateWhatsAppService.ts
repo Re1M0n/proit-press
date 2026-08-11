@@ -13,6 +13,8 @@ interface Request {
   isDefault?: boolean;
   isDisplay?: boolean;
   color?: string;
+  type?: string;
+  tokenTelegram?: string;
 }
 
 interface Response {
@@ -28,7 +30,9 @@ const CreateWhatsAppService = async ({
   farewellMessage,
   isDefault = false,
   isDisplay = false,
-  color = "#5C59A0"
+  color = "#5C59A0",
+  type = "wwebjs",
+  tokenTelegram
 }: Request): Promise<Response> => {
   const schema = Yup.object().shape({
     name: Yup.string()
@@ -84,7 +88,9 @@ const CreateWhatsAppService = async ({
       farewellMessage,
       isDefault,
       isDisplay,
-      color
+      color,
+      type,
+      tokenTelegram
     },
     { include: ["queues"] }
   );

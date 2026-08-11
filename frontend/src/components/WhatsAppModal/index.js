@@ -8,6 +8,8 @@ import {
 	FormControlLabel,
 	IconButton,
 	InputAdornment,
+	Radio,
+	RadioGroup,
 	Switch,
 	TextField,
 	Typography,
@@ -117,7 +119,9 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 		greetingMessage: "",
 		farewellMessage: "",
 		isDefault: false,
-		isDisplay: false
+		isDisplay: false,
+		type: "wwebjs",
+		tokenTelegram: ""
 	};
 	const [whatsApp, setWhatsApp] = useState(initialState);
 	const [selectedQueueIds, setSelectedQueueIds] = useState([]);
@@ -199,7 +203,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 						}, 400);
 					}}
 				>
-					{({ values, touched, errors, isSubmitting }) => (
+					{({ values, touched, errors, isSubmitting, setFieldValue }) => (
 						<Form>
 							<DialogContent dividers>
 								<Box sx={{ mb: 2 }}>
@@ -235,6 +239,47 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
                     />
                   </Box>
                 </MultiFieldLine>
+
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                    {t("whatsappModal.form.channelType")}
+                  </Typography>
+                  <Divider sx={{ mb: 2 }} />
+
+                  <RadioGroup
+                    row
+                    name="type"
+                    value={values.type || "wwebjs"}
+                    onChange={(e) => setFieldValue("type", e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="wwebjs"
+                      control={<Radio />}
+                      label={t("whatsappModal.form.typeWhatsapp")}
+                    />
+                    <FormControlLabel
+                      value="telegram"
+                      control={<Radio />}
+                      label={t("whatsappModal.form.typeTelegram")}
+                    />
+                  </RadioGroup>
+
+                  {values.type === "telegram" && (
+                    <Field
+                      as={StyledTextField}
+                      label={t("whatsappModal.form.tokenTelegram")}
+                      name="tokenTelegram"
+                      fullWidth
+                      variant="outlined"
+                      margin="normal"
+                      placeholder="1234567890:AAF..."
+                      helperText={t("whatsappModal.form.tokenTelegramHelp")}
+                      InputProps={{
+                        sx: { borderRadius: 2 }
+                      }}
+                    />
+                  )}
+                </Box>
 
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="subtitle1" color="text.secondary" gutterBottom>

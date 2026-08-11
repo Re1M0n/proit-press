@@ -1,4 +1,6 @@
+import { startTelegramSession } from "../../libs/telegram";
 import { setChannelWebhook } from "../../helpers/setChannelHubWebhook";
+import { logger } from "../../utils/logger";
 import ListWhatsAppsService from "../WhatsappService/ListWhatsAppsService";
 import { StartWhatsAppSession } from "./StartWhatsAppSession";
 
@@ -8,6 +10,14 @@ export const StartAllWhatsAppsSessions = async (): Promise<void> => {
     whatsapps.forEach(whatsapp => {
       if (whatsapp.type === "wwebjs") {
         StartWhatsAppSession(whatsapp);
+      } else if (whatsapp.type === "telegram") {
+        startTelegramSession(whatsapp).catch(err => {
+          logger.error(
+            `[Telegram] Error iniciando sesión ${whatsapp.id}: ${
+              (err as Error).message
+            }`
+          );
+        });
       } else {
         setChannelWebhook(whatsapp, whatsapp.id.toString());
       }

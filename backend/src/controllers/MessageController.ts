@@ -9,6 +9,10 @@ import DeleteWhatsAppMessage from "../services/WbotServices/DeleteWhatsAppMessag
 import EditWhatsAppMessage from "../services/WbotServices/EditWhatsAppMessage";
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
+import DeleteTelegramMessageService from "../services/TelegramServices/DeleteTelegramMessageService";
+import EditTelegramMessageService from "../services/TelegramServices/EditTelegramMessageService";
+import SendTelegramMediaService from "../services/TelegramServices/SendTelegramMediaService";
+import SendTelegramTextService from "../services/TelegramServices/SendTelegramTextService";
 import SendWhatsAppContacts from "../services/WbotServices/SendWhatsAppContacts";
 import SendPollService from "../services/WbotServices/SendPollService";
 import PresenceService from "../services/WbotServices/PresenceService";
@@ -20,6 +24,7 @@ import MessageReaction from "../models/MessageReaction";
 import ReactToWhatsAppMessage from "../services/WbotServices/ReactToWhatsAppMessage";
 import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
 import GetClientIp from "../helpers/GetClientIp";
+import getProfilePicUrlSafe from "../helpers/GetProfilePicUrlSafe";
 
 type IndexQuery = {
   pageNumber: string;
@@ -33,6 +38,13 @@ export const reactMessage = async (req: Request, res: Response): Promise<Respons
   }
 
   try {
+    const reactMessage = await Message.findByPk(messageId);
+    if (reactMessage?.ticketId) {
+      const reactTicket = await ShowTicketService(String(reactMessage.ticketId));
+      if (reactTicket.whatsapp?.type === "telegram") {
+        return res.status(400).json({ error: "Reaccionar a mensajes no está disponible para canales de Telegram." });
+      }
+    }
     const { ticketId } = await ReactToWhatsAppMessage({ messageId, emoji });
 
     const io = getIO();
@@ -57,6 +69,11 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
     const message = await Message.findByPk(messageId);
     if (!message) {
       return res.status(404).json({ error: "Mensagem não encontrada" });
+    }
+
+    const reactionsTicket = await ShowTicketService(String(message.ticketId));
+    if (reactionsTicket.whatsapp?.type === "telegram") {
+      return res.status(400).json({ error: "Ver reacciones no está disponible para canales de Telegram." });
     }
 
     const dbReactions = await MessageReaction.findAll({
@@ -101,7 +118,7 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
                 }
                 
                 try {
-                  profilePicUrl = await (wbot as any).getProfilePicUrl(reaction.senderId);
+                  profilePicUrl = await getProfilePicUrlSafe(wbot, reaction.senderId);
                 } catch (e) {
                   console.error('[getReactions] Erro ao buscar foto do @lid:', e);
                 }
@@ -394,6 +411,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const shouldCompressVideo = compressVideo === 'true' || compressVideo === true;
 
   const ticket = await ShowTicketService(ticketId);
+  const isTelegram = ticket.whatsapp?.type === "telegram";
 
   if (ticket.status === "open") {
     await SetTicketMessagesAsRead(ticket);
@@ -404,13 +422,15 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   if (medias) {
     const mediaMessages = await Promise.all(
       medias.map(async (media: Express.Multer.File) => {
-        const sentMessage = await SendWhatsAppMedia({ 
-          media, 
-          ticket, 
-          body, 
-          mentions,
-          sendAsDocument: shouldSendAsDocument
-        });
+        const sentMessage = isTelegram
+          ? await SendTelegramMediaService({ media, ticket, body })
+          : await SendWhatsAppMedia({ 
+              media, 
+              ticket, 
+              body, 
+              mentions,
+              sendAsDocument: shouldSendAsDocument
+            });
         return sentMessage;
       })
     );
@@ -441,7 +461,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
       console.error('Erro ao criar log de envio de mídia:', error);
     }
   } else {
-    const sentMessage = await SendWhatsAppMessage({ body, ticket, quotedMsg, mentions });
+    const sentMessage = isTelegram
+      ? await SendTelegramTextService({ body, ticket })
+      : await SendWhatsAppMessage({ body, ticket, quotedMsg, mentions });
     if (sentMessage) {
       messageId = sentMessage.id.id;
     }
@@ -481,7 +503,24 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
   // Buscar mensagem antes de editar para comparar
   const messageToEdit = await Message.findByPk(messageId);
 
-  const message = await EditWhatsAppMessage(messageId, body);
+  let message: Message;
+
+  if (messageToEdit?.ticketId) {
+    const ticket = await ShowTicketService(String(messageToEdit.ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      message = await EditTelegramMessageService(messageId, body);
+
+      const io = getIO();
+      io.to(message.ticketId.toString()).emit("appMessage", {
+        action: "update",
+        message
+      });
+
+      return res.send();
+    }
+  }
+
+  message = await EditWhatsAppMessage(messageId, body);
 
   // LOG: Mensagem editada
   try {
@@ -524,7 +563,24 @@ export const remove = async (
   // Buscar mensagem antes de deletar para log
   const messageToDelete = await Message.findByPk(messageId);
 
-  const message = await DeleteWhatsAppMessage(messageId);
+  let message: Message;
+
+  if (messageToDelete?.ticketId) {
+    const ticket = await ShowTicketService(String(messageToDelete.ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      message = await DeleteTelegramMessageService(messageId);
+
+      const io = getIO();
+      io.to(message.ticketId.toString()).emit("appMessage", {
+        action: "delete",
+        message
+      });
+
+      return res.send();
+    }
+  }
+
+  message = await DeleteWhatsAppMessage(messageId);
 
   // LOG: Mensagem excluída
   try {
@@ -587,6 +643,10 @@ export const sendContacts = async (req: Request, res: Response): Promise<Respons
   }
 
   const ticket = await ShowTicketService(ticketId);
+
+  if (ticket.whatsapp?.type === "telegram") {
+    return res.status(400).json({ error: "Enviar contactos no está disponible para canales de Telegram." });
+  }
 
   if (ticket.status === "open") {
     await SetTicketMessagesAsRead(ticket);
@@ -725,6 +785,10 @@ export const sendPoll = async (req: Request, res: Response): Promise<Response> =
   const { pollName, options, allowMultipleAnswers } = req.body;
 
   try {
+    const ticket = await ShowTicketService(String(ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      return res.status(400).json({ error: "Enviar encuestas no está disponible para canales de Telegram." });
+    }
     if (!pollName || !options || !Array.isArray(options)) {
       return res.status(400).json({ error: "Nome da enquete e opções são obrigatórios" });
     }
@@ -749,6 +813,9 @@ export const sendTypingIndicator = async (req: Request, res: Response): Promise<
 
   try {
     const ticket = await ShowTicketService(Number(ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      return res.status(400).json({ error: "Los indicadores de escritura/presencia no están disponibles para canales de Telegram." });
+    }
     const chatId = `${ticket.contact.number}@c.us`;
 
     await PresenceService.simulateTyping(
@@ -770,6 +837,9 @@ export const sendRecordingIndicator = async (req: Request, res: Response): Promi
 
   try {
     const ticket = await ShowTicketService(Number(ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      return res.status(400).json({ error: "Los indicadores de escritura/presencia no están disponibles para canales de Telegram." });
+    }
     const chatId = `${ticket.contact.number}@c.us`;
 
     await PresenceService.simulateRecording(
@@ -790,6 +860,9 @@ export const setAvailablePresence = async (req: Request, res: Response): Promise
 
   try {
     const ticket = await ShowTicketService(Number(ticketId));
+    if (ticket.whatsapp?.type === "telegram") {
+      return res.status(400).json({ error: "Los indicadores de escritura/presencia no están disponibles para canales de Telegram." });
+    }
     const chatId = `${ticket.contact.number}@c.us`;
 
     await PresenceService.setAvailable(

@@ -18,6 +18,8 @@ interface WhatsappData {
   color?: string;
   qrcode?: string;
   number?: string;
+  type?: string;
+  tokenTelegram?: string;
 }
 
 interface Request {
@@ -51,7 +53,9 @@ const UpdateWhatsAppService = async ({
     queueIds = [],
     color,
     qrcode,
-    number
+    number,
+    type,
+    tokenTelegram
   } = whatsappData;
 
   try {
@@ -87,7 +91,9 @@ const UpdateWhatsAppService = async ({
     isDisplay,
     color,
     qrcode,
-    number
+    number,
+    type,
+    tokenTelegram
   });
 
   await AssociateWhatsappQueue(whatsapp, queueIds);

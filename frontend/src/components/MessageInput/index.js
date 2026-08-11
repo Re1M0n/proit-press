@@ -422,7 +422,9 @@ const MessageInput = ({ ticketStatus }) => {
 
   useEffect(() => {
     if (editingMessage) {
-      setInputMessage(editingMessage.body || "");
+      setInputMessage(
+        (editingMessage.body || "").replace(/^(?:\*[^*\n]+:\*\s*\n?)+/, "")
+      );
     } else {
       setInputMessage("");
     }
@@ -812,7 +814,7 @@ const MessageInput = ({ ticketStatus }) => {
       
       try {
         let response;
-        if (channelType === "wwebjs") {
+        if (channelType === "wwebjs" || channelType === "telegram") {
           response = await api.post(`/messages/${ticketId}`, message);
         } else {
           response = await api.post(`/hub-message/${ticketId}`, message);
@@ -884,7 +886,7 @@ const MessageInput = ({ ticketStatus }) => {
     formData.append("fromMe", true);
 
     try {
-      if (channelType === "wwebjs") {
+      if (channelType === "wwebjs" || channelType === "telegram") {
         await api.post(`/messages/${ticketId}`, formData);
       } else {
         await api.post(`/hub-message/${ticketId}`, formData);
@@ -978,7 +980,7 @@ const MessageInput = ({ ticketStatus }) => {
           }
         }
       } else {
-        if (channelType === "wwebjs") {
+        if (channelType === "wwebjs" || channelType === "telegram") {
           response = await api.post(`/messages/${ticketId}`, message);
         } else {
           response = await api.post(`/hub-message/${ticketId}`, message);
@@ -1207,7 +1209,7 @@ const MessageInput = ({ ticketStatus }) => {
       formData.append("medias", blob, filename);
       formData.append("body", filename);
       formData.append("fromMe", true);
-      if (channelType === "wwebjs") {
+      if (channelType === "wwebjs" || channelType === "telegram") {
         await api.post(`/messages/${ticketId}`, formData);
       } else {
         await api.post(`/hub-message/${ticketId}`, formData);
