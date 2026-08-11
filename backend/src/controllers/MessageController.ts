@@ -462,7 +462,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     }
   } else {
     const sentMessage = isTelegram
-      ? await SendTelegramTextService({ body, ticket })
+      ? await SendTelegramTextService({ body, ticket, quotedMsg })
       : await SendWhatsAppMessage({ body, ticket, quotedMsg, mentions });
     if (sentMessage) {
       messageId = sentMessage.id.id;

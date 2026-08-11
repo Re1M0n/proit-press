@@ -4,10 +4,15 @@ import path from "path";
 import { telegramApi } from "../../libs/telegram";
 import { getIO } from "../../libs/socket";
 import Contact from "../../models/Contact";
+import Message from "../../models/Message";
 import Whatsapp from "../../models/Whatsapp";
 import { logger } from "../../utils/logger";
 import CreateMessageService from "../MessageServices/CreateMessageService";
 import FindOrCreateTicketService from "../TicketServices/FindOrCreateTicketService";
+import {
+  sendWelcomeAutoReply,
+  shouldAutoReply
+} from "./TelegramAutoReplyService";
 
 const TELEGRAM_API = "https://api.telegram.org";
 const PUBLIC_DIR = path.resolve(__dirname, "..", "..", "..", "public");
@@ -233,6 +238,44 @@ export const handleTelegramUpdate = async (
     }
   }
 
+  // Respuesta con cita en la app de Telegram (message.reply_to_message):
+  // enlazar con el mensaje original (id tg_<message_id>). Si el original no
+  // está en la BD (borrado o anterior al canal), se crea una fila mínima para
+  // que la cita se muestre igual en el frontend.
+  let quotedMsgId: string | undefined;
+  if (message.reply_to_message && message.reply_to_message.message_id) {
+    const quotedId = `tg_${message.reply_to_message.message_id}`;
+    let quotedExists = await Message.findByPk(quotedId);
+    if (!quotedExists) {
+      try {
+        const rtm = message.reply_to_message;
+        let quotedBody = rtm.text || rtm.caption || "";
+        if (!quotedBody) {
+          if (rtm.photo) quotedBody = "[Foto]";
+          else if (rtm.document) quotedBody = "[Documento]";
+          else if (rtm.video) quotedBody = "[Video]";
+          else if (rtm.voice || rtm.audio) quotedBody = "[Audio]";
+          else quotedBody = "[Mensaje original]";
+        }
+        quotedExists = await Message.create({
+          id: quotedId,
+          ticketId: ticket.id,
+          contactId: contact.id,
+          body: quotedBody,
+          fromMe: !!rtm.from?.is_bot,
+          read: true,
+          mediaType: "chat",
+          userId: ticket.userId
+        });
+      } catch (e) {
+        /* race o error al crear la fila de la cita */
+      }
+    }
+    if (quotedExists) {
+      quotedMsgId = quotedId;
+    }
+  }
+
   // Mensajes de servicio (miembro entró/salió, pin, etc.) sin texto ni media.
   if (!body && !mediaUrl) {
     return;
@@ -247,6 +290,22 @@ export const handleTelegramUpdate = async (
     status: newStatus
   });
 
+  // Auto-respuesta de bienvenida: saludo (hola, buen día, consulta, etc.) o
+  // primer mensaje del día del usuario. Solo chats privados y mensajes nuevos
+  // (no edits ni posts de canal). Se responde antes de guardar el entrante
+  // para que el conteo del "primer mensaje del día" no incluya el actual.
+  if (update.message && !isGroup && (body || mediaUrl)) {
+    try {
+      if (await shouldAutoReply(ticket, body || "")) {
+        await sendWelcomeAutoReply(session, ticket, chatId);
+      }
+    } catch (err) {
+      logger.error(
+        `[Telegram] Error en auto-respuesta: ${(err as Error).message}`
+      );
+    }
+  }
+
   await CreateMessageService({
     messageData: {
       id: `tg_${message.message_id}`,
@@ -259,6 +318,7 @@ export const handleTelegramUpdate = async (
       mediaType,
       mimetype,
       filename: mediaUrl ? filename : undefined,
+      quotedMsgId,
       userId: ticket.userId
     }
   });

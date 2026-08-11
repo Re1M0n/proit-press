@@ -3,6 +3,7 @@ import path from "path";
 import AppError from "../../errors/AppError";
 import { telegramApi } from "../../libs/telegram";
 import Ticket from "../../models/Ticket";
+import Whatsapp from "../../models/Whatsapp";
 import CreateMessageService from "../MessageServices/CreateMessageService";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -19,7 +20,12 @@ const SendTelegramMediaService = async ({
   ticket,
   body
 }: Request): Promise<any> => {
-  const whatsapp: any = ticket.whatsapp;
+  // ShowTicketService no incluye el token del bot en el asociado "whatsapp"
+  // (attributes: name/type/color), así que lo buscamos por PK como hace el
+  // listener de Telegram — sin exponer el token al frontend.
+  const whatsapp = ticket.whatsappId
+    ? await Whatsapp.findByPk(ticket.whatsappId)
+    : undefined;
   const token = whatsapp?.tokenTelegram;
   if (!token) {
     throw new AppError(

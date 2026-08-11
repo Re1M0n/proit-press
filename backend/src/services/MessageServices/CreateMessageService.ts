@@ -20,6 +20,7 @@ interface MessageData {
   remoteJid?: string | null;
   userId?: number;
   fileSize?: number | null;
+  quotedMsgId?: string;
 }
 interface Request {
   messageData: MessageData;
