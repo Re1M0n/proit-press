@@ -4,6 +4,9 @@ import backgroundImageLight from "../assets/backgroundLight.png";
 const getLightTheme = (config, locale) =>
     createTheme(
         {
+            shape: {
+                borderRadius: 10
+            },
             typography: {
                 fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
                 fontSize: 12,
@@ -28,13 +31,13 @@ const getLightTheme = (config, locale) =>
                 },
                 "&::-webkit-scrollbar-thumb": {
                     boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
-                    backgroundColor: config?.scrollbarThumb || "#E5E5E5",
+                    backgroundColor: config?.scrollbarThumb || "#A7F3D0",
                 },
             },
             palette: {
-                primary: { main: config?.primaryColor || "#5C4B9B" },
-                secondary: { main: config?.secondaryColor || "#D5C6F0" },
-                toolbar: { main: config?.toolbarColor || "#5C4B9B" },
+                primary: { main: config?.primaryColor || "#059669" },
+                secondary: { main: config?.secondaryColor || "#A7F3D0" },
+                toolbar: { main: config?.toolbarColor || "#059669" },
                 menuItens: { main: config?.menuItens || "#FFFFFF" },
                 sub: { main: config?.sub || "#F7F7F7" },
                 toolbarIcon: { main: config?.toolbarIconColor || "#FFFFFF" },

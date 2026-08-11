@@ -201,7 +201,7 @@ const Dashboard = () => {
 					<Grid item xs={12} sm={4}>
 						<FixedHeightPaperCard>
 							<CardContent sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-								<CardIconCircle bgcolor="#6c63ff20">
+								<CardIconCircle bgcolor="#10b98120">
 									<AssignmentIcon sx={{ fontSize: 28, color: theme => theme.palette.primary.main }} />
 								</CardIconCircle>
 								<CardText component="h1" variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
@@ -301,7 +301,7 @@ const Dashboard = () => {
 					<Grid item xs={12} sm={4}>
 						<FixedHeightPaperCard>
 							<CardContent sx={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
-								<CardIconCircle bgcolor="#7c4dff20">
+								<CardIconCircle bgcolor="#05966920">
 									<ChatIcon sx={{ fontSize: 28, color: theme => theme.palette.secondary.main }} />
 								</CardIconCircle>
 								<CardText component="h1" variant="h4" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>

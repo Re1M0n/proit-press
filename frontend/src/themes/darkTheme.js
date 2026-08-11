@@ -4,6 +4,9 @@ import backgroundImageDark from "../assets/backgroundDark.jpg";
 const getDarkTheme = (config, locale) =>
     createTheme(
         {
+            shape: {
+                borderRadius: 10
+            },
             typography: {
                 fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
                 fontSize: 12,
@@ -37,13 +40,13 @@ const getDarkTheme = (config, locale) =>
                 },
                 "&::-webkit-scrollbar-thumb": {
                     boxShadow: "inset 0 0 6px rgba(0, 0, 0, 0.3)",
-                    backgroundColor: config?.scrollbarThumb || "#8A7DCC",
+                    backgroundColor: config?.scrollbarThumb || "#34D399",
                 },
             },
             palette: {
-                primary: { main: config?.primaryColor || "#8A7DCC" },
-                secondary: { main: config?.secondaryColor || "#CCCCCC" },
-                toolbar: { main: config?.toolbarColor || "#8A7DCC" },
+                primary: { main: config?.primaryColor || "#34D399" },
+                secondary: { main: config?.secondaryColor || "#6EE7B7" },
+                toolbar: { main: config?.toolbarColor || "#34D399" },
                 menuItens: { main: config?.menuItens || "#181D22" },
                 sub: { main: config?.sub || "#383850" },
                 toolbarIcon: { main: config?.toolbarIconColor || "#FFFFFF" },

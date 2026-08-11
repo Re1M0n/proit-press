@@ -43,7 +43,9 @@ const Root = styled('div')(({ theme }) => ({
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   paddingRight: 24,
   color: "#ffffff",
-  background: theme.palette?.primary?.main || "#6B62FE",
+  background: theme.palette?.primary?.main
+    ? `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
+    : "linear-gradient(90deg, #059669 0%, #34D399 100%)",
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
