@@ -21,6 +21,9 @@ class Message extends Model<Message> {
   @Column
   id: string;
 
+  @Column(DataType.STRING)
+  remoteJid: string;
+
   @Default(0)
   @Column
   ack: number;

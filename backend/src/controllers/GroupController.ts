@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import isAuth from "../middleware/isAuth"; 
 import AppError from "../errors/AppError";
 import { getWbotByGroupId } from "../libs/wbot";
+import getProfilePicUrlSafe from "../helpers/GetProfilePicUrlSafe";
 import { MessageMedia } from "whatsapp-web.js";
 import fs from "fs";
 import { getIO } from "../libs/socket";
@@ -306,7 +307,7 @@ export const listParticipants = async (req: Request, res: Response) => {
       try {
         const c = await wbot.getContactById(serialized);
         let avatar: string | null = null;
-        try { avatar = await wbot.getProfilePicUrl(serialized); } catch { avatar = null; }
+        try { avatar = (await getProfilePicUrlSafe(wbot, serialized)) || null; } catch { avatar = null; }
         let about: string | null = null;
         try { about = typeof c.getAbout === 'function' ? await c.getAbout() : null; } catch { about = null; }
 

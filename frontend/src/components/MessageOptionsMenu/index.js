@@ -71,6 +71,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
   }, [message?.id]);
 
   const canEditMessage = () => {
+    if (message.isDeleted) return false;
     const timeDiff = new Date() - new Date(message.updatedAt);
     return timeDiff <= 15 * 60 * 1000; 
   };

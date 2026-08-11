@@ -14,6 +14,7 @@ interface Request {
   address?: string;
   email?: string;
   profilePicUrl?: string;
+  whatsappId?: number;
   extraInfo?: ExtraInfo[];
 }
 
@@ -21,6 +22,7 @@ const CreateOrUpdateContactService = async ({
   name,
   number: rawNumber,
   profilePicUrl,
+  whatsappId,
   isGroup,
   address = "",
   email = "",
@@ -101,6 +103,9 @@ const CreateOrUpdateContactService = async ({
     if (email !== undefined && contact.email !== email) {
       (updatedData as any).email = email;
     }
+    if (whatsappId !== undefined && contact.whatsappId !== whatsappId) {
+      (updatedData as any).whatsappId = whatsappId;
+    }
     if (Object.keys(updatedData).length) {
       await contact.update(updatedData);
       io.emit("contact", { action: "update", contact });
@@ -112,6 +117,7 @@ const CreateOrUpdateContactService = async ({
     name,
     number: digits,
     profilePicUrl,
+    whatsappId,
     address,
     email,
     isGroup: false,

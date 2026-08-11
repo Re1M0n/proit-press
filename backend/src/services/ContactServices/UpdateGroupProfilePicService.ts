@@ -1,5 +1,6 @@
 import Contact from "../../models/Contact";
 import { getWbot } from "../../libs/wbot";
+import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import { logger } from "../../utils/logger";
 
 interface Request {
@@ -33,7 +34,7 @@ const UpdateGroupProfilePicService = async ({
     let profilePicUrl: string | undefined;
     
     try {
-      profilePicUrl = await wbot.getProfilePicUrl(groupJid);
+      profilePicUrl = await getProfilePicUrlSafe(wbot, groupJid);
       logger.info(`[UpdateGroupProfilePic] Foto obtida para grupo ${groupJid}: ${profilePicUrl ? 'SIM' : 'NÃO'}`);
     } catch (picError) {
       logger.warn(`[UpdateGroupProfilePic] Erro ao obter foto do grupo ${groupJid}:`, picError);

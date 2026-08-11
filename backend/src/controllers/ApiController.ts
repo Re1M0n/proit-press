@@ -54,10 +54,17 @@ const createContact = async (
 
   const contact = await CreateOrUpdateContactService(contactData);
 
-  let whatsapp: Whatsapp | null;
+  let whatsapp: Whatsapp | null = null;
 
   if (whatsappId === undefined) {
-    whatsapp = await GetDefaultWhatsApp();
+    // Preferir el canal que recibió al contacto (ej. el que recibió su
+    // vCard); si no tiene, usar la línea por defecto del sistema.
+    if (contact.whatsappId) {
+      whatsapp = await Whatsapp.findByPk(contact.whatsappId);
+    }
+    if (!whatsapp) {
+      whatsapp = await GetDefaultWhatsApp();
+    }
   } else {
     whatsapp = await Whatsapp.findByPk(whatsappId);
 

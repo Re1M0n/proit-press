@@ -1,4 +1,5 @@
 import { getWbot } from "../../libs/wbot";
+import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import AppError from "../../errors/AppError";
 import Whatsapp from "../../models/Whatsapp";
 import Contact from "../../models/Contact";
@@ -53,7 +54,7 @@ const ListBlockedContactsService = async ({
     
     let profilePicUrl: string | undefined;
     try {
-      profilePicUrl = await wbot.getProfilePicUrl(wContact.id._serialized);
+      profilePicUrl = await getProfilePicUrlSafe(wbot, wContact.id._serialized);
     } catch (error) {
       profilePicUrl = undefined;
     }

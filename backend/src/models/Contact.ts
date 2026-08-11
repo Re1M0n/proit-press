@@ -61,6 +61,10 @@ class Contact extends Model<Contact> {
   lastContactAt: Date;
 
   @AllowNull(true)
+  @Column
+  whatsappId: number;
+
+  @AllowNull(true)
   @Default("")
   @Column
   country: string;

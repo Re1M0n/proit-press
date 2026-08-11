@@ -15,6 +15,7 @@ import {
 
 import ffmpeg from "fluent-ffmpeg";
 import Contact from "../../models/Contact";
+import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import Integration from "../../models/Integration";
 import Message from "../../models/Message";
 import OldMessage from "../../models/OldMessage";
@@ -45,11 +46,15 @@ interface Session extends Client {
 
 const writeFileAsync = promisify(writeFile);
 
-const verifyContact = async (msgContact: WbotContact): Promise<Contact> => {
+const verifyContact = async (
+  msgContact: WbotContact,
+  whatsappId?: number
+): Promise<Contact> => {
   const contactData = {
     name: msgContact.name || msgContact.pushname || msgContact.id.user,
     number: msgContact.id.user,
-    isGroup: msgContact.isGroup
+    isGroup: msgContact.isGroup,
+    whatsappId
   };
 
   const contact = await CreateOrUpdateContactService(contactData);
@@ -118,6 +123,32 @@ const verifyRevoked = async (msgBody?: string): Promise<void> => {
           message: msgIsDeleted
         });
     }
+  } catch (err) {
+    Sentry.captureException(err);
+    logger.error(`Error Message Revoke. Err: ${err}`);
+  }
+};
+
+const verifyRevokedById = async (messageId: string): Promise<void> => {
+  await new Promise(r => setTimeout(r, 500));
+
+  const io = getIO();
+
+  try {
+    const message = await Message.findByPk(messageId);
+
+    if (!message) {
+      return;
+    }
+
+    await message.update({ isDeleted: true });
+
+    io.to(message.ticketId.toString())
+      .to("notification")
+      .emit("appMessage", {
+        action: "update",
+        message
+      });
   } catch (err) {
     Sentry.captureException(err);
     logger.error(`Error Message Revoke. Err: ${err}`);
@@ -222,6 +253,7 @@ const downloaded = await msg.downloadMedia();
     filename: media.filename,
     quotedMsgId: quotedMsg?.id,
     albumId: albumId,
+    remoteJid: (msg as any).id?.remote || (msg as any).id?._serialized?.split("_")[1] || null,
     userId: ticket.userId,
     fileSize: fileSize
   };
@@ -391,6 +423,7 @@ const verifyMessage = async (
     messageType: msg.type,
     read: msg.fromMe,
     quotedMsgId: quotedMsg?.id,
+    remoteJid: (msg as any).id?.remote || (msg as any).id?._serialized?.split("_")[1] || null,
     userId: ticket.userId
   };
 
@@ -438,7 +471,8 @@ const verifyMessage = async (
             try {
               const cont = await CreateContactService({
                 name: contact.name,
-                number: contact.number.replace(/\D/g, "")
+                number: contact.number.replace(/\D/g, ""),
+                whatsappId: ticket.whatsappId
               });
               processedContacts.push({
                 id: cont.id,
@@ -953,7 +987,7 @@ const chat = await getSafeChat(wbot, msg);
       baseContact = await getSafeContact(wbot, msg);
     }
     
-    const contact = await verifyContact(baseContact);
+    const contact = await verifyContact(baseContact, wbot.id!);
     
     const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
     
@@ -1051,19 +1085,14 @@ const chat = await getSafeChat(wbot, msg);
         let retries = 2;
         
         while (retries > 0) {
-          try {
-            profilePicUrl = await (wbot as any).getProfilePicUrl(fullJid);
-            if (profilePicUrl) {
-              logger.info(`[WBOT_LISTENER] Foto de grupo obtida: ${fullJid}`);
-              break;
-            }
-          } catch (picErr) {
-            retries--;
-            if (retries > 0) {
-              await new Promise(resolve => setTimeout(resolve, 500));
-            } else {
-              logger.warn(`[WBOT_LISTENER] Falha ao obter foto do grupo ${fullJid} após tentativas`);
-            }
+          profilePicUrl = await getProfilePicUrlSafe(wbot, fullJid);
+          if (profilePicUrl) {
+            logger.info(`[WBOT_LISTENER] Foto de grupo obtida: ${fullJid}`);
+            break;
+          }
+          retries--;
+          if (retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
 
@@ -1097,7 +1126,7 @@ const chat = await getSafeChat(wbot, msg);
 
     const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
 
-    const contact = await verifyContact(msgContact);
+    const contact = await verifyContact(msgContact, wbot.id!);
 
     if (!msg.fromMe) {
       try {
@@ -1247,7 +1276,8 @@ const chat = await getSafeChat(wbot, msg);
               if (cleanNumber) {
                 const cont = await CreateContactService({
                   name: extractedData.name || "Contato",
-                  number: cleanNumber
+                  number: cleanNumber,
+                  whatsappId: wbot.id!
                 });
                 contactsCreated.push({
                   id: cont.id,
@@ -1262,7 +1292,8 @@ const chat = await getSafeChat(wbot, msg);
               if (cleanNumber) {
                 const cont = await CreateContactService({
                   name: extractedData.name || "Contato",
-                  number: cleanNumber
+                  number: cleanNumber,
+                  whatsappId: wbot.id!
                 });
                 contactsCreated.push({
                   id: cont.id,
@@ -1437,7 +1468,8 @@ const chat = await getSafeChat(wbot, msg);
           try {
             const cont = await CreateContactService({
               name: ob.name,
-              number: ob.number.replace(/\D/g, "")
+              number: ob.number.replace(/\D/g, ""),
+              whatsappId: wbot.id!
             });
             conts.push({
               id: cont.id,
@@ -1494,7 +1526,14 @@ const chat = await getSafeChat(wbot, msg);
 
     let profilePicUrl;
     try {
-      if (typeof msgContact.getProfilePicUrl === 'function') {
+      const jid =
+        (msgContact as any)?.id?._serialized ||
+        ((msgContact as any)?.id?.user
+          ? `${(msgContact as any).id.user}@c.us`
+          : undefined);
+      if (jid) {
+        profilePicUrl = await getProfilePicUrlSafe(wbot, jid);
+      } else if (typeof msgContact.getProfilePicUrl === 'function') {
         profilePicUrl = await msgContact.getProfilePicUrl();
       }
     } catch (picErr) {
@@ -1732,9 +1771,21 @@ const wbotMessageListener = async (wbot: Session): Promise<void> => {
   });
 
   wbot.on("message_revoke_everyone", async (after, before) => {
-    const msgBody: string | undefined = before?.body;
-    if (msgBody !== undefined) {
-      verifyRevoked(msgBody || "");
+    const msgId: string | undefined = before?.id?.id;
+    if (msgId) {
+      verifyRevokedById(msgId);
+    } else {
+      const msgBody: string | undefined = before?.body;
+      if (msgBody !== undefined) {
+        verifyRevoked(msgBody || "");
+      }
+    }
+  });
+
+  wbot.on("message_revoke_me", async (after: any, before: any) => {
+    const msgId: string | undefined = before?.id?.id;
+    if (msgId) {
+      verifyRevokedById(msgId);
     }
   });
   

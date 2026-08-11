@@ -12,6 +12,7 @@ interface Request {
   address?: string;
   email?: string;
   profilePicUrl?: string;
+  whatsappId?: number;
   extraInfo?: ExtraInfo[];
   birthdate?: Date | string;
   gender?: string;
@@ -33,6 +34,7 @@ const CreateContactService = async ({
   address = "",
   email = "",
   extraInfo = [],
+  whatsappId,
   birthdate,
   gender = "",
   status = "",
@@ -72,7 +74,8 @@ const CreateContactService = async ({
       neighborhood,
       city,
       state,
-      cpf
+      cpf,
+      whatsappId
     },
     {
       include: ["extraInfo"]

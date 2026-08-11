@@ -22,20 +22,29 @@ const CreateTicketService = async ({
   queueId,
   whatsappId
 }: Request): Promise<Ticket> => {
+  const contact = await ShowContactService(contactId);
+
   let whatsapp;
-  
+
   if (whatsappId) {
     whatsapp = await Whatsapp.findByPk(whatsappId);
     if (!whatsapp) {
       throw new AppError("ERR_NO_WAPP_FOUND", 404);
     }
-  } else {
+  } else if (contact.whatsappId) {
+    // Si el ticket se crea sin canal explícito, usar el canal que recibió
+    // al contacto (ej. la línea que recibió la vCard), para que las
+    // respuestas salgan desde el mismo número que recibió el contacto.
+    whatsapp = await Whatsapp.findByPk(contact.whatsappId);
+  }
+
+  if (!whatsapp) {
     whatsapp = await GetDefaultWhatsApp(userId);
   }
 
   await CheckContactOpenTickets(contactId, whatsapp.id);
 
-  const { isGroup } = await ShowContactService(contactId);
+  const { isGroup } = contact;
 
   if(queueId === undefined) {
     const user = await User.findByPk(userId, { include: ["queues"]});

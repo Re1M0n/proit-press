@@ -1,4 +1,5 @@
 import { getWbot } from "../../libs/wbot";
+import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import AppError from "../../errors/AppError";
 import Contact from "../../models/Contact";
 import Whatsapp from "../../models/Whatsapp";
@@ -76,7 +77,7 @@ const GetCommonGroupsService = async ({
       
       let profilePicUrl: string | undefined;
       try {
-        profilePicUrl = await wbot.getProfilePicUrl(groupId);
+        profilePicUrl = await getProfilePicUrlSafe(wbot, groupId);
       } catch (picError) {
         profilePicUrl = undefined;
       }

@@ -25,9 +25,29 @@ const EditWhatsAppMessage = async (
     throw new AppError("O novo texto da mensagem não pode estar vazio.");
   }
 
+  // Un mensaje eliminado/revocado no se puede editar: WhatsApp en vez de
+  // editar crea un mensaje nuevo, lo que confunde (parece que "borra uno
+  // para escribir el editado").
+  if (message.isDeleted) {
+    throw new AppError("ERR_MSG_NOT_EDITABLE", 400);
+  }
+
   const { ticket } = message;
 
   const oldBody = message.body;
+
+  // Conservar la firma del agente (ej. "*Emiliano:*") al editar: el
+  // frontend a veces la antepone y a veces no, así que se normaliza acá
+  // para que el mensaje editado mantenga exactamente una firma con el
+  // mismo nombre que el original.
+  const signatureMatch = oldBody?.match(/^(\*[^*\n]+:\*)\s*\n?/);
+  // Quitar firmas que el nuevo texto ya traiga (el frontend a veces deja
+  // una o hasta dos: "\*Emiliano:*\n\*Emiliano:*\n...") y anteponer la
+  // firma original exactamente una sola vez.
+  let editBody = newBody.trim().replace(/^(?:(?:\*[^*\n]+:\*)\s*\n?)+/, "");
+  if (signatureMatch && signatureMatch[1]) {
+    editBody = `${signatureMatch[1]}\n${editBody}`;
+  }
   
   let messageToEdit;
 
@@ -44,7 +64,7 @@ const EditWhatsAppMessage = async (
   let res: any;
 
   try {
-    res = await messageToEdit.edit(newBody);
+    res = await messageToEdit.edit(editBody);
   } catch (err: any) {
     console.error("[EditWhatsAppMessage] edit() lanzó un error:", err);
     throw new AppError("ERR_EDITING_WAPP_MSG", 400);
@@ -81,7 +101,7 @@ const EditWhatsAppMessage = async (
   }
 
   await message.update({
-    body: newBody,
+    body: editBody,
     isEdited: true,
     updatedAt: new Date()
   });
@@ -92,7 +112,7 @@ const EditWhatsAppMessage = async (
   });
 
   if (mostRecentMessage && mostRecentMessage.id === messageId) {
-    await ticket.update({ lastMessage: newBody });
+    await ticket.update({ lastMessage: editBody });
     await ticket.reload();
   }
 

@@ -439,6 +439,7 @@ const SendWhatsAppMedia = async ({
       mediaUrl: savedFilename,
       read: true,
       userId: ticket.userId,
+      remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
       fileSize: fileSize
     };
 

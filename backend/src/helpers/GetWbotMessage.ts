@@ -33,6 +33,13 @@ const buildCandidateIds = (
   const prefixes = ["true", "false"];
 
   const candidates: string[] = [];
+  // El remote real guardado al crear el mensaje (ej. xxx@lid) es el más
+  // confiable: es el JID que WhatsApp usó de verdad, por eso va primero.
+  if (message?.remoteJid && message.remoteJid.includes("@")) {
+    for (const prefix of prefixes) {
+      candidates.push(`${prefix}_${message.remoteJid}_${messageId}`);
+    }
+  }
   for (const prefix of prefixes) {
     for (const remote of remotes) {
       candidates.push(`${prefix}_${remote}_${messageId}`);
@@ -108,7 +115,7 @@ export const GetWbotMessage = async (
                 const m = Msg.get(c);
                 if (m && m.serialize) {
                   const s = m.serialize();
-                  if (s && s.id && s.id.id) return s.id._serialized;
+                  if (s && s.id && s.id.id) return s.id["$1"] || s.id._serialized;
                 }
               } catch (e) {
                 /* probar el siguiente */
@@ -117,10 +124,10 @@ export const GetWbotMessage = async (
 
             // 2b) barrido de la colección por id.id o sufijo del _serialized.
             try {
-              const models = Msg.models || (waw?.Store?.Msg?.models) || [];
+              const models = Msg._models || Msg.models || (waw?.Store?.Msg?._models) || (waw?.Store?.Msg?.models) || [];
               for (const m of models) {
                 const iid = m?.id?.id || "";
-                const sid = m?.id?._serialized || "";
+                const sid = m?.id?.["$1"] || m?.id?._serialized || "";
                 if (iid === targetId || sid.endsWith(`_${targetId}`)) {
                   if (m.serialize) return sid;
                 }
@@ -151,7 +158,7 @@ export const GetWbotMessage = async (
   // 3) Fallback: buscar en el chat. fetchMessages() de wwebjs pagina hacia
   //    atrás con loadEarlierMsgs() hasta alcanzar el limit, así que un limit
   //    mayor = buscar más profundo (no existe parámetro `before` en esta versión).
-  let chatId = ticket.contact.number;
+  let chatId = storedMessage?.remoteJid || ticket.contact.number;
   if (!chatId.includes("@")) {
     chatId = `${chatId}@${ticket.isGroup ? "g" : "c"}.us`;
   }
@@ -183,7 +190,7 @@ export const GetWbotMessage = async (
     const msgFound = chatMessages.find(
       (msg: WbotMessage) =>
         msg.id.id === messageId ||
-        candidateIds.includes(msg.id._serialized)
+        ((msg.id as any)["$1"] && candidateIds.includes((msg.id as any)["$1"])) || candidateIds.includes(msg.id._serialized)
     );
 
     if (msgFound) {

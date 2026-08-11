@@ -175,6 +175,7 @@ const SendWhatsAppMessage = async ({
         mediaType: "chat",
         read: true,
         quotedMsgId: quotedMsg?.id,
+        remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
         userId: ticket.userId
       };
 
@@ -272,6 +273,7 @@ const SendWhatsAppMessage = async ({
       mediaType: "chat",
       read: true,
       quotedMsgId: quotedMsg?.id,
+      remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
       userId: ticket.userId
     };
 
