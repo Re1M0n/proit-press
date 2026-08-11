@@ -414,7 +414,7 @@ const Channels = () => {
 			case "webchat":
 				return <Sms sx={{ color: "#EB6D58" }} />;
 			case "wwebjs":
-				return <WhatsApp sx={{ color: "#075e54" }} />;
+				return <WhatsApp sx={{ color: "#25D366" }} />;
 			default:
 				return null;
 		}
