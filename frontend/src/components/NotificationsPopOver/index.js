@@ -196,6 +196,14 @@ const NotificationsPopOver = () => {
 			}
 		});
 
+		socket.on("ticket", (data) => {
+			if (data.action === "updateUnread" && data.ticketId) {
+				setNotifications((prevState) =>
+					prevState.filter((t) => t.id !== data.ticketId)
+				);
+			}
+		});
+
 		return () => {
 			socket.disconnect();
 		};

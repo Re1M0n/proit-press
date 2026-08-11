@@ -117,7 +117,12 @@ const MarkMessagesAsReadService = async ({
     }
     
     await ticket.update({ unreadMessages: 0 });
-    
+
+    io.to(ticket.status).to("notification").emit("ticket", {
+      action: "updateUnread",
+      ticketId: ticket.id
+    });
+
   } catch (error) {
     logger.error(`Error al marcar mensajes como leídos para el ticket ${ticketId}: ${error.message}`);
     console.error("Error al marcar mensajes como leídos:", error);
