@@ -1709,30 +1709,6 @@ const messages = {
       },
       success: "Agente guardado con éxito."
     },
-    notificameHubModal: {
-      title: "Activar canales NotificameHub",
-      form: {
-        name: "Nombre",
-        namePlaceholder: "Escriba el nombre de la conexión",
-        channelSelection: "Selección de canal",
-        selectChannel: "Seleccionar canal",
-        selectChannelPlaceholder: "Seleccione un canal",
-        mainInfo: "Información principal"
-      },
-      integration: {
-        title: "Integración de canales",
-        description: "Para activar <strong>Facebook</strong>, <strong>Instagram</strong>, <strong>Telegram</strong> y <strong>WebChat</strong>, regístrese con el botón de abajo, luego adquiera los canales deseados usando el cupón. Ingrese el token de su <strong>Account</strong> en la página de Integraciones para finalizar la integración.",
-        discount: "¡Use el cupón de abajo para tener cada canal por <strong>R$ 50,00</strong>!",
-        copied: "¡Copiado!",
-        copy: "Copiar cupón",
-        register: "REGÍSTRESE AQUÍ"
-      },
-      buttons: {
-        add: "Agregar",
-        cancel: "Cancelar"
-      },
-      success: "Canal activado con éxito."
-    },
     whatsappModal: {
       title: {
         add: "Agregar WhatsApp",
