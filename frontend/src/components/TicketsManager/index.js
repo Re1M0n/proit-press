@@ -194,7 +194,6 @@ const TicketsManager = () => {
   const { whatsApps } = useContext(WhatsAppsContext);
   const [openCount, setOpenCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
-  const [closedCount, setClosedCount] = useState(0);
   const [openGroupsCount, setOpenGroupsCount] = useState(0);
   const userQueueIds = user?.queues?.map((q) => q.id);
   const [settings, setSettings] = useState([]);
@@ -214,7 +213,6 @@ const TicketsManager = () => {
       
       setOpenCount(data.open || 0);
       setPendingCount(data.pending || 0);
-      setClosedCount(data.closed || 0);
       setOpenGroupsCount(data.openGroups || 0);
     } catch (err) {
       console.error("Erro ao buscar contadores:", err);
@@ -292,7 +290,6 @@ const TicketsManager = () => {
       if (data.action === "updateCounter" && data.counters) {
         setOpenCount(data.counters.open || 0);
         setPendingCount(data.counters.pending || 0);
-        setClosedCount(data.counters.closed || 0);
         setOpenGroupsCount(data.counters.openGroups || 0);
       } else if (data.action === "update" || data.action === "create" || data.action === "delete") {
         debouncedFetchCounts();
@@ -507,16 +504,9 @@ const TicketsManager = () => {
             <Tab
               value={"closed"}
               icon={
-                <StyledBadge
-                  badgeContent={closedCount}
-                  overlap="circular"
-                  max={999}
-                  color="secondary"
-                >
-                  <Tooltip title={t("tickets.tabs.closed.title")} placement="top" arrow>
-                    <CheckCircle />
-                  </Tooltip>
-                </StyledBadge>
+                <Tooltip title={t("tickets.tabs.closed.title")} placement="top" arrow>
+                  <CheckCircle />
+                </Tooltip>
               }  
               sx={{ minWidth: 100, width: "auto" }}
             />
@@ -756,7 +746,6 @@ const TicketsManager = () => {
           showAll={showAllTickets}
           selectedQueueIds={selectedQueueIds}
           selectedChannelIds={selectedChannelIds}
-          updateCount={(val) => setClosedCount(val)}
         />
       </TabPanelStyled>
       <TabPanelStyled value={tab} name="search">
