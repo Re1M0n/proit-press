@@ -165,6 +165,13 @@ export const stopTelegramSession = (whatsappId: number): void => {
   }
 };
 
+export const stopAllTelegramSessions = (): void => {
+  for (const [, session] of sessions) {
+    session.stopped = true;
+  }
+  sessions.clear();
+};
+
 export const getTelegramSession = (
   whatsappId: number
 ): TelegramSession | undefined => sessions.get(whatsappId);

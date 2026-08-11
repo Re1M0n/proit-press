@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import { execFileSync } from "child_process";
 import { Configuration, CreateImageRequestSizeEnum, OpenAIApi } from "openai";
 import path from "path";
 import qrCode from "qrcode-terminal";
@@ -177,6 +178,23 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
       let clientSession = `${sanitize(process.env.COMPANY_NAME || '')}_${whatsapp.id}`;
       if (!process.env.COMPANY_NAME) {
         clientSession = `${sanitize(whatsapp.name)}_${whatsapp.id}`;
+      }
+
+      // Si una instancia anterior fue matada sin cerrar (SIGKILL, crash, corte de
+      // luz), sus browsers quedan huérfanos pero siguen conectados a WhatsApp Web
+      // con la misma sesión. Abrir otra conexión con el mismo LocalAuth provoca
+      // conflicto y WhatsApp termina matando ambas. Limpiamos los browsers
+      // huérfanos de esta sesión antes de lanzar el nuestro.
+      try {
+        const escaped = clientSession.replace(/([.*+?^${}()|[\]\\])/g, "\\$1");
+        execFileSync("pkill", ["-f", `--user-data-dir=.*session-${escaped}`], {
+          stdio: "ignore"
+        });
+        logger.info(
+          `Session: ${sessionName} browsers huérfanos de la sesión anterior eliminados`
+        );
+      } catch (err) {
+        // pkill devuelve 1 cuando no hay procesos que matar: normal.
       }
 
       const wbot: Session = new Client({
@@ -697,6 +715,18 @@ export const removeWbot = (whatsappId: number): void => {
     }
   } catch (err: any) {
     logger.error(err);
+  }
+};
+
+export const destroyAllWbots = async (): Promise<void> => {
+  const toDestroy = [...sessions];
+  sessions.length = 0;
+  for (const s of toDestroy) {
+    try {
+      await s.destroy();
+    } catch (err: any) {
+      logger.warn(`Error al destruir sesión ${s.id}: ${err?.message}`);
+    }
   }
 };
 
