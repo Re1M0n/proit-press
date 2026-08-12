@@ -232,7 +232,7 @@ const Contacts = () => {
         const { data } = await api.get("/client-status/");
         setClientStatusList(data.clientStatus || []);
       } catch (err) {
-        console.error("Erro ao carregar status de clientes:", err);
+        console.error("Error al cargar el estado de los clientes:", err);
       }
     };
     fetchClientStatus();
@@ -560,29 +560,29 @@ const Contacts = () => {
       };
 
       const fieldMapping = {
-        id: { label: 'ID', getValue: (c) => c.id },
-        name: { label: 'Nome', getValue: (c) => escapeCSV(c.name) },
-        number: { label: 'Número', getValue: (c) => formatNumber(c.number) },
-        email: { label: 'Email', getValue: (c) => escapeCSV(c.email) },
-        cpf: { label: 'CPF', getValue: (c) => formatNumber(c.cpf) },
-        birthdate: { label: 'Data Nascimento', getValue: (c) => c.birthdate },
-        gender: { label: 'Género', getValue: (c) => escapeCSV(c.gender) },
-        status: { label: 'Status', getValue: (c) => escapeCSV(c.status) },
-        address: { label: 'Dirección', getValue: (c) => escapeCSV(c.address) },
-        addressNumber: { label: 'Número', getValue: (c) => c.addressNumber },
-        addressComplement: { label: 'Complemento', getValue: (c) => escapeCSV(c.addressComplement) },
-        neighborhood: { label: 'Bairro', getValue: (c) => escapeCSV(c.neighborhood) },
-        city: { label: 'Cidade', getValue: (c) => escapeCSV(c.city) },
-        state: { label: 'Estado', getValue: (c) => escapeCSV(c.state) },
-        zip: { label: 'CEP', getValue: (c) => formatNumber(c.zip) },
-        country: { label: 'País', getValue: (c) => escapeCSV(c.country) },
-        isGroup: { label: 'Es Grupo', getValue: (c) => c.isGroup },
-        profilePicUrl: { label: 'Foto Perfil', getValue: (c) => c.profilePicUrl },
-        extraInfo: { label: 'Información Extra', getValue: (c) => escapeCSV(c.extraInfo) },
-        tags: { label: 'Tags', getValue: (c) => escapeCSV(c.tags) },
-        createdAt: { label: 'Fecha de Creación', getValue: (c) => c.createdAt },
-        updatedAt: { label: 'Fecha de Actualización', getValue: (c) => c.updatedAt },
-        lastContactAt: { label: 'Último Contacto', getValue: (c) => c.lastContactAt }
+        id: { label: t("contacts.exportModal.fields.id"), getValue: (c) => c.id },
+        name: { label: t("contacts.exportModal.fields.name"), getValue: (c) => escapeCSV(c.name) },
+        number: { label: t("contacts.exportModal.fields.number"), getValue: (c) => formatNumber(c.number) },
+        email: { label: t("contacts.exportModal.fields.email"), getValue: (c) => escapeCSV(c.email) },
+        cpf: { label: t("contacts.exportModal.fields.cpf"), getValue: (c) => formatNumber(c.cpf) },
+        birthdate: { label: t("contacts.exportModal.fields.birthdate"), getValue: (c) => c.birthdate },
+        gender: { label: t("contacts.exportModal.fields.gender"), getValue: (c) => escapeCSV(c.gender) },
+        status: { label: t("contacts.exportModal.fields.status"), getValue: (c) => escapeCSV(c.status) },
+        address: { label: t("contacts.exportModal.fields.address"), getValue: (c) => escapeCSV(c.address) },
+        addressNumber: { label: t("contacts.exportModal.fields.addressNumber"), getValue: (c) => c.addressNumber },
+        addressComplement: { label: t("contacts.exportModal.fields.addressComplement"), getValue: (c) => escapeCSV(c.addressComplement) },
+        neighborhood: { label: t("contacts.exportModal.fields.neighborhood"), getValue: (c) => escapeCSV(c.neighborhood) },
+        city: { label: t("contacts.exportModal.fields.city"), getValue: (c) => escapeCSV(c.city) },
+        state: { label: t("contacts.exportModal.fields.state"), getValue: (c) => escapeCSV(c.state) },
+        zip: { label: t("contacts.exportModal.fields.zip"), getValue: (c) => formatNumber(c.zip) },
+        country: { label: t("contacts.exportModal.fields.country"), getValue: (c) => escapeCSV(c.country) },
+        isGroup: { label: t("contacts.exportModal.fields.isGroup"), getValue: (c) => c.isGroup },
+        profilePicUrl: { label: t("contacts.exportModal.fields.profilePicUrl"), getValue: (c) => c.profilePicUrl },
+        extraInfo: { label: t("contacts.exportModal.fields.extraInfo"), getValue: (c) => escapeCSV(c.extraInfo) },
+        tags: { label: t("contacts.exportModal.fields.tags"), getValue: (c) => escapeCSV(c.tags) },
+        createdAt: { label: t("contacts.exportModal.fields.createdAt"), getValue: (c) => c.createdAt },
+        updatedAt: { label: t("contacts.exportModal.fields.updatedAt"), getValue: (c) => c.updatedAt },
+        lastContactAt: { label: t("contacts.exportModal.fields.lastContactAt"), getValue: (c) => c.lastContactAt }
       };
 
       const headers = selectedFields.map(fieldId => fieldMapping[fieldId]?.label || fieldId).join(';');
@@ -1002,8 +1002,8 @@ const Contacts = () => {
           <Divider sx={{ mb: 1.5 }} />
 
           <Tabs value={dataTab} onChange={(e, v) => setDataTab(v)} variant="scrollable" allowScrollButtonsMobile sx={{ mb: 2 }}>
-            <Tab label={t('contactModal.form.mainInfo', { defaultValue: 'DADOS DO CONTATO' })} />
-            <Tab label={t('contactModal.form.contact', { defaultValue: 'CONTATO' })} />
+            <Tab label={t('contactModal.form.mainInfo', { defaultValue: 'DATOS DEL CONTACTO' })} />
+            <Tab label={t('contactModal.form.contact', { defaultValue: 'CONTACTO' })} />
             <Tab label={t('contactModal.form.address', { defaultValue: 'DIRECCIÓN' })} />
             <Tab label={t('contactModal.form.extraInfo', { defaultValue: 'INFORMACIÓN ADICIONAL' })} />
           </Tabs>
@@ -1015,7 +1015,7 @@ const Contacts = () => {
                 <Typography variant="body2">{selectedDataContact?.name || "—"}</Typography>
               </Box>
               <Box>
-                <Typography variant="subtitle2" color="primary">{t('contacts.fields.cpf', { defaultValue: 'CPF/CNPJ' })}</Typography>
+                <Typography variant="subtitle2" color="primary">{t('contacts.fields.cpf', { defaultValue: 'DNI' })}</Typography>
                 <Typography variant="body2">
                   {selectedDataContact?.cpf 
                     ? selectedDataContact.cpf.length <= 11
@@ -1026,7 +1026,7 @@ const Contacts = () => {
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.birthdate', { defaultValue: 'Data de nascimento' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.birthdate', { defaultValue: 'Fecha de nacimiento' })}</Typography>
                   <Typography variant="body2">{formatDate(selectedDataContact?.birthdate)}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -1035,7 +1035,7 @@ const Contacts = () => {
                 </Box>
               </Box>
               <Box>
-                <Typography variant="subtitle2" color="primary">{t('contacts.fields.status', { defaultValue: 'Status' })}</Typography>
+                <Typography variant="subtitle2" color="primary">{t('contacts.fields.status', { defaultValue: 'Estado' })}</Typography>
                 <Typography variant="body2">{selectedDataContact?.status || "—"}</Typography>
               </Box>
             </Box>
@@ -1045,7 +1045,7 @@ const Contacts = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.createdAt', { defaultValue: 'Data de cadastrado' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.createdAt', { defaultValue: 'Fecha de registro' })}</Typography>
                   <Typography variant="body2">{formatDate(selectedDataContact?.createdAt)}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
@@ -1078,7 +1078,7 @@ const Contacts = () => {
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.zip', { defaultValue: 'CEP' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.zip', { defaultValue: 'Código postal' })}</Typography>
                   <Typography variant="body2">{selectedDataContact?.zip || selectedDataContact?.cep || "—"}</Typography>
                 </Box>
                 <Box sx={{ flex: 2 }}>
@@ -1098,11 +1098,11 @@ const Contacts = () => {
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.neighborhood', { defaultValue: 'Bairro' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.neighborhood', { defaultValue: 'Barrio' })}</Typography>
                   <Typography variant="body2">{selectedDataContact?.neighborhood || selectedDataContact?.district || "—"}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.city', { defaultValue: 'Cidade' })}</Typography>
+                  <Typography variant="subtitle2" color="primary">{t('contacts.fields.city', { defaultValue: 'Ciudad' })}</Typography>
                   <Typography variant="body2">{selectedDataContact?.city || "—"}</Typography>
                 </Box>
                 <Box sx={{ flex: 1 }}>

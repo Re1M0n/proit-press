@@ -246,6 +246,7 @@ const messages = {
         },
         form: {
           mainInfo: "Dados do contato",
+          contact: "Contato",
           extraInfo: "Informações adicionais",
           name: "Nome",
           number: "Número do Whatsapp",
@@ -272,7 +273,9 @@ const messages = {
           exportSuccess: "Contatos exportados com sucesso!",
           noContactsToExport: "Não há contatos para exportar.",
           blocked: "Contato bloqueado no WhatsApp",
-          unblocked: "Contato desbloqueado no WhatsApp"
+          unblocked: "Contato desbloqueado no WhatsApp",
+          groupNotSupported: "Bloqueio não suportado para grupos",
+          noContactsFound: "Nenhum contato encontrado."
         },
         errors: {
           ticketAlreadyOpen: "Já existe um ticket aberto para este contato, atribuído ao Atendente: *{{userName}}* no Canal: *{{userChannel}}* criado em: *{{ticketCreatedAt}}*.",
@@ -302,6 +305,8 @@ const messages = {
           address: "Endereço",
           channels: "Canais",
           actions: "Ações",
+          data: "Dados",
+          viewChannels: "Ver canais"
         },
         filters: {
           status: "Filtrar por Status",
@@ -356,6 +361,31 @@ const messages = {
           processing: "Processando dados...",
           finishing: "Finalizando..."
         },
+        fields: {
+          birthdate: "Data de nascimento",
+          city: "Cidade",
+          complement: "Complemento",
+          country: "País",
+          cpf: "CPF/CNPJ",
+          createdAt: "Data de cadastro",
+          gender: "Gênero",
+          lastContactAt: "Último contato",
+          neighborhood: "Bairro",
+          noAdditional: "Sem informações adicionais",
+          number: "Número",
+          state: "Estado",
+          status: "Status",
+          zip: "CEP"
+        },
+        channelsModal: {
+          id: "ID",
+          name: "Nome",
+          title: "Canais",
+          type: "Tipo"
+        },
+        dataModal: {
+          title: "Dados do contato"
+        }
       },
       contactDrawer: {
         header: "Dados do contato",

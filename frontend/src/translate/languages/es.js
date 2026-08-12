@@ -246,6 +246,7 @@ const messages = {
       },
       form: {
         mainInfo: "Datos del contacto",
+        contact: "Contacto",
         extraInfo: "Información adicional",
         name: "Nombre",
         number: "Número de WhatsApp",
@@ -272,7 +273,9 @@ const messages = {
         exportSuccess: "¡Contactos exportados con éxito!",
         noContactsToExport: "No hay contactos para exportar.",
         blocked: "Contacto bloqueado en WhatsApp",
-        unblocked: "Contacto desbloqueado en WhatsApp"
+        unblocked: "Contacto desbloqueado en WhatsApp",
+        groupNotSupported: "Bloqueo no soportado para grupos",
+        noContactsFound: "No se encontraron contactos."
       },
       errors: {
         ticketAlreadyOpen: "Ya existe un ticket abierto para este contacto, asignado al Agente: *{{userName}}* en el Canal: *{{userChannel}}* creado en: *{{ticketCreatedAt}}*.",
@@ -301,7 +304,9 @@ const messages = {
         type: "Tipo",
         address: "Dirección",
         channels: "Canales",
-        actions: "Acciones"
+        actions: "Acciones",
+        data: "Datos",
+        viewChannels: "Ver canales"
       },
       filters: {
         status: "Filtrar por estado",
@@ -355,6 +360,31 @@ const messages = {
         fetching: "Buscando contactos...",
         processing: "Procesando datos...",
         finishing: "Finalizando..."
+      },
+      fields: {
+        birthdate: "Fecha de nacimiento",
+        city: "Ciudad",
+        complement: "Complemento",
+        country: "País",
+        cpf: "DNI",
+        createdAt: "Fecha de creación",
+        gender: "Género",
+        lastContactAt: "Último contacto",
+        neighborhood: "Barrio",
+        noAdditional: "Sin información adicional",
+        number: "Número",
+        state: "Provincia",
+        status: "Estado",
+        zip: "Código postal"
+      },
+      channelsModal: {
+        id: "ID",
+        name: "Nombre",
+        title: "Canales",
+        type: "Tipo"
+      },
+      dataModal: {
+        title: "Datos del contacto"
       }
     },
     contactDrawer: {
