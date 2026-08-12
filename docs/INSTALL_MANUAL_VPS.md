@@ -1,4 +1,4 @@
-# Manual de Instalação do Press Ticket® na VPS
+# Manual de Instalação do ProIT CRM® na VPS
 
 ### Observação:
 
@@ -164,12 +164,12 @@ wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install ./google-chrome-stable_current_amd64.deb
 ```
 
-## Seção 5: Instalação do Press Ticket®
+## Seção 5: Instalação do ProIT CRM®
 
-### 6.1 Baixando o repositório do Press Ticket®
+### 6.1 Baixando o repositório do ProIT CRM®
 
 ```
-git clone https://github.com/rtenorioh/Press-Ticket.git Press-Ticket
+git clone https://github.com/Re1M0n/proit-press.git ProIT-CRM
 ```
 
 ## Seção 7: Configuração do Backend
@@ -192,9 +192,9 @@ COMPANY_NAME=press_ticket
 DEVICE_NAME=
 
 #URLs e Portas
-BACKEND_URL=https://back.pressticket.com.br
-FRONTEND_URL=https://ticket.pressticket.com.br
-WEBHOOK=https://back.pressticket.com.br
+BACKEND_URL=https://back.pressticket.com.ar
+FRONTEND_URL=https://ticket.pressticket.com.ar
+WEBHOOK=https://back.pressticket.com.ar
 PORT=4000
 PROXY_PORT=443
 
@@ -234,13 +234,13 @@ JWT_REFRESH_SECRET=FwJXkGgXv7ARfxPRb7/6RdNmtXJlR4PsQvvw8VIbOho=
 Abra o arquivo .env e preencha com as informações geradas:
 
 ```
-nano Press-Ticket/backend/.env
+nano ProIT-CRM/backend/.env
 ```
 
 ### 7.5 Acessando o diretório do backend
 
 ```
-cd Press-Ticket/backend
+cd ProIT-CRM/backend
 ```
 
 ### 7.6 Instalando as dependências
@@ -273,10 +273,10 @@ npx sequelize db:seed:all
 sudo npm install -g pm2
 ```
 
-### 7.11 Inicia o backend usando PM2, atribuindo o nome "Press-Ticket-backend" ao processo
+### 7.11 Inicia o backend usando PM2, atribuindo o nome "ProIT-CRM-backend" ao processo
 
 ```
-pm2 start dist/server.js --name Press-Ticket-backend
+pm2 start dist/server.js --name ProIT-CRM-backend
 ```
 
 ### 7.12 Configura o PM2 para que todos os processos gerenciados por ele iniciem automaticamente quando o Ubuntu for reiniciado, usando o usuário deploy
@@ -311,7 +311,7 @@ npm install
 NODE_ENV=production
 
 #URL BACKEND
-REACT_APP_BACKEND_URL=https://back.pressticket.com.br
+REACT_APP_BACKEND_URL=https://back.pressticket.com.ar
 
 #Tempo de encerramento automático dos tickets em horas
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO=
@@ -338,7 +338,7 @@ npm run build
 ### 8.6 Iniciando o frontend com PM2
 
 ```
-pm2 start server.js --name Press-Ticket-frontend
+pm2 start server.js --name ProIT-CRM-frontend
 ```
 
 ### 8.7 Salvando os serviços iniciados pelo PM2
@@ -364,7 +364,7 @@ sudo apt install nginx
 ### 9.2 Criando e editando o arquivo de configuração do frontend
 
 ```
-sudo nano /etc/nginx/sites-available/Press-Ticket-frontend
+sudo nano /etc/nginx/sites-available/ProIT-CRM-frontend
 ```
 
 Preencha com as informações abaixo, atualizando as informações de acordo com o seu domínio:
@@ -373,7 +373,7 @@ Preencha com as informações abaixo, atualizando as informações de acordo com
 
 ```
 server {
-  server_name front.pressticket.com.br;
+  server_name front.pressticket.com.ar;
   
   # Security Headers
   add_header X-Frame-Options "SAMEORIGIN" always;
@@ -381,7 +381,7 @@ server {
   add_header X-XSS-Protection "1; mode=block" always;
   add_header Referrer-Policy "strict-origin-when-cross-origin" always;
   add_header Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()" always;
-  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; media-src 'self' https: blob:; connect-src 'self' https://back.pressticket.com.br wss://back.pressticket.com.br; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';" always;
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.youtube-nocookie.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; media-src 'self' https: blob:; connect-src 'self' https://back.pressticket.com.ar wss://back.pressticket.com.ar; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; object-src 'none'; base-uri 'self'; form-action 'self';" always;
   
   location / {
     proxy_pass http://127.0.0.1:3000;
@@ -397,19 +397,19 @@ server {
 }
 ```
 
-**Nota**: Lembre-se de substituir `back.pressticket.com.br` no `Content-Security-Policy` pela URL real do seu backend!
+**Nota**: Lembre-se de substituir `back.pressticket.com.ar` no `Content-Security-Policy` pela URL real do seu backend!
 
 ### 9.3 Criando e editando o arquivo de configuração do backend
 
 ```
-sudo nano /etc/nginx/sites-available/Press-Ticket-backend
+sudo nano /etc/nginx/sites-available/ProIT-CRM-backend
 ```
 
 Preencha com as informações abaixo atualizando as informações de acordo com o seu domínio:
 
 ```
 server {
-  server_name back.pressticket.com.br;
+  server_name back.pressticket.com.ar;
   location / {
     proxy_pass http://127.0.0.1:4000;
     proxy_http_version 1.1;
@@ -441,13 +441,13 @@ ls
 Frontend
 
 ```
-sudo ln -s /etc/nginx/sites-available/Press-Ticket-frontend /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/ProIT-CRM-frontend /etc/nginx/sites-enabled
 ```
 
 Backend
 
 ```
-sudo ln -s /etc/nginx/sites-available/Press-Ticket-backend /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/ProIT-CRM-backend /etc/nginx/sites-enabled
 ```
 
 ### 9.7 Acessar a pasta onde os links foram criados
@@ -533,7 +533,7 @@ sudo certbot --nginx
 Usuário:
 
 ```
-admin@pressticket.com.br
+admin@pressticket.com.ar
 ```
 
 Senha:
@@ -547,7 +547,7 @@ admin
 Usuário:
 
 ```
-masteradmin@pressticket.com.br
+masteradmin@pressticket.com.ar
 ```
 
 Senha:
@@ -567,7 +567,7 @@ Após a instalação completa e configuração do SSL, você pode verificar a se
 Acesse o site [SecurityHeaders.com](https://securityheaders.com) e teste seu domínio frontend:
 
 ```
-https://securityheaders.com/?q=https://front.pressticket.com.br
+https://securityheaders.com/?q=https://front.pressticket.com.ar
 ```
 
 **Resultado esperado**: Nota **A** 🎉
@@ -575,7 +575,7 @@ https://securityheaders.com/?q=https://front.pressticket.com.br
 ### 13.2 Verificar Headers via Terminal
 
 ```bash
-curl -I https://front.pressticket.com.br/ | grep -i "x-frame\|content-security\|permissions"
+curl -I https://front.pressticket.com.ar/ | grep -i "x-frame\|content-security\|permissions"
 ```
 
 Você deve ver os seguintes headers:
@@ -589,7 +589,7 @@ Você deve ver os seguintes headers:
 ### 13.3 Verificar Ausência de Duplicação
 
 ```bash
-curl -I https://front.pressticket.com.br/ | grep -c "X-Frame-Options"
+curl -I https://front.pressticket.com.ar/ | grep -c "X-Frame-Options"
 ```
 
 **Resultado esperado**: `1` (não deve retornar `2` ou mais)

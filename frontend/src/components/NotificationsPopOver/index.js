@@ -213,9 +213,9 @@ const NotificationsPopOver = () => {
 		const updateDocumentTitle = async () => {
 			try {
 				const { data } = await api.get("/personalizations");
-				let baseTitle = "Press Ticket®";
+				let baseTitle = "ProIT CRM®";
 				let faviconUrl =
-					"https://github.com/rtenorioh/Press-Ticket/blob/main/frontend/public/favicon.ico?raw=true";
+					"https://github.com/Re1M0n/proit-press/blob/main/frontend/public/favicon.ico?raw=true";
 				if (data && data.length > 0) {
 					const lightConfig = data.find((config) => config.theme === "light");
 					const darkConfig = data.find((config) => config.theme === "dark");

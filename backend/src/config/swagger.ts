@@ -10,17 +10,15 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Documentación de la API de Press Ticket®',
+      title: 'Documentación de la API de ProIT CRM®',
       version: '1.3.0',
       description: 'Documentación de la API para el envío de mensajes y la gestión de contactos.',
-      contact: {
-        email: 'robson.tenorio@gmail.com'
-      }
+
     },
     servers: [
       {
         url: apiUrl,
-        description: isProduction ? 'API Press Ticket®' : 'Desarrollo local'
+        description: isProduction ? 'API ProIT CRM®' : 'Desarrollo local'
       }
     ],
     components: {

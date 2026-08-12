@@ -88,7 +88,7 @@ class EmailService {
       }
 
       const mailOptions = {
-        from: `"${process.env.COMPANY_NAME || 'Press Ticket'}" <${fromEmail}>`,
+        from: `"${process.env.COMPANY_NAME || 'ProIT CRM'}" <${fromEmail}>`,
         to,
         subject,
         text,

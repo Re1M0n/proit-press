@@ -199,7 +199,7 @@ const NotifyAdminsService = async ({ whatsappId }: Request): Promise<void> => {
         
         <div class="footer">
           <p>Este é um e-mail automático, não responda.</p>
-          <p>&copy; ${new Date().getFullYear()} ${process.env.COMPANY_NAME || 'Press Ticket'}</p>
+          <p>&copy; ${new Date().getFullYear()} ${process.env.COMPANY_NAME || 'ProIT CRM'}</p>
         </div>
       </div>
     </body>

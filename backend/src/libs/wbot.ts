@@ -200,7 +200,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
       const wbot: Session = new Client({
         authStrategy: new LocalAuth({ clientId: clientSession }),
         browserName: 'Chrome',
-        deviceName: process.env.DEVICE_NAME || 'Press Ticket®',
+        deviceName: process.env.DEVICE_NAME || 'ProIT CRM®',
         puppeteer: {
           executablePath: process.env.CHROME_BIN || undefined,
           browserWSEndpoint: process.env.CHROME_WS || undefined,

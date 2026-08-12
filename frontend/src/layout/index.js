@@ -131,8 +131,8 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [companyData, setCompanyData] = useState({
     logo: defaultLogo,
-    name: "Press Ticket®",
-    url: "https://github.com/rtenorioh/Press-Ticket"
+    name: "ProIT CRM®",
+    url: "https://github.com/Re1M0n/proit-press"
   });
 
   useEffect(() => {
@@ -147,8 +147,8 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
           if (lightConfig) {
             setCompanyData(prevData => ({
               ...prevData,
-              name: lightConfig.company || "Press Ticket®",
-              url: lightConfig.url || "https://github.com/rtenorioh/Press-Ticket"
+              name: lightConfig.company || "ProIT CRM®",
+              url: lightConfig.url || "https://github.com/Re1M0n/proit-press"
             }));
           }
         }
@@ -347,8 +347,8 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
             noWrap
           >
             {document.body.offsetWidth < 600 ? 
-              companyData.name || "Press Ticket®" :
-              `${t("mainDrawer.appBar.message.hi")} ${user?.name || "Visitante"}, ${t("mainDrawer.appBar.message.text")} ${companyData.name || "Press Ticket®"}.`
+              companyData.name || "ProIT CRM®" :
+              `${t("mainDrawer.appBar.message.hi")} ${user?.name || "Visitante"}, ${t("mainDrawer.appBar.message.text")} ${companyData.name || "ProIT CRM®"}.`
             }
           </Title>
 

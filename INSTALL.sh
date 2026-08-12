@@ -40,7 +40,7 @@ show_usage() {
     echo -e "\033[1mComando:\033[0m"
     echo -e "  \033[1;32mcurl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/INSTALL.sh | sudo bash -s <SENHA_DEPLOY> <NOME_EMPRESA> <URL_BACKEND> <URL_FRONTEND> <PORT_BACKEND> <PORT_FRONTEND> <DB_PASS> <USER_LIMIT> <CONNECTION_LIMIT> <EMAIL>\033[0m"
     echo -e "\n\033[1mEjemplo:\033[0m"
-    echo -e "  \033[1;32mcurl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/INSTALL.sh | sudo bash -s "senha123" "empresa" "back.pressticket.com.br" "front.pressticket.com.br" 4000 3000 "senha123" 3 10 "email@pressticket.com.br"\033[0m"
+    echo -e "  \033[1;32mcurl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/INSTALL.sh | sudo bash -s "senha123" "empresa" "back.pressticket.com.ar" "front.pressticket.com.ar" 4000 3000 "senha123" 3 10 "email@pressticket.com.ar"\033[0m"
     echo -e "\n\033[1;33m======================\033[0m"
     exit 1
 }
@@ -115,7 +115,7 @@ finalizar() {
     {
         echo " "
         echo "**************************************************************"
-        echo "*                 PRESS TICKET® - INSTALACIÓN                *"
+        echo "*                 PROIT CRM® - INSTALACIÓN                *"
         echo "**************************************************************"
         echo " Versión Instalada: $VERSION                           "
         echo " Zona Horaria: $SELECTED_TZ                                 "
@@ -391,7 +391,7 @@ sleep 3
 {
     echo " "
     echo "**************************************************************"
-    echo "*               PRESS TICKET® - LOG DE INSTALACIÓN           *"
+    echo "*               PROIT CRM® - LOG DE INSTALACIÓN           *"
     echo "**************************************************************"
     echo " Versión a instalar: $VERSION                           "
     echo " Zona Horaria: $SELECTED_TZ                                 "
@@ -739,7 +739,7 @@ else
     echo -e "${RED}Error al eliminar el paquete de instalación.${RESET}" | tee -a "$LOG_FILE"
 fi
 
-## Sección 6: Instalación de Press Ticket®
+## Sección 6: Instalación de ProIT CRM®
 
 # Garantizar que se use el directorio home del usuario deploy
 DEPLOY_HOME=$(eval echo ~deploy)
@@ -888,7 +888,7 @@ if cd "$DEPLOY_HOME/$NOME_EMPRESA/backend"; then
     fi
 
     # Reemplaza el email en el archivo usando sed
-    if ! sed -i "s/masteradmin@pressticket.com.br/$EMAIL/g" "$SEED_FILE"; then
+    if ! sed -i "s/masteradmin@pressticket.com.ar/$EMAIL/g" "$SEED_FILE"; then
         echo -e "${RED}Error al reemplazar el email en el archivo de seed.${RESET}" | tee -a "$LOG_FILE"
         if mv "$BACKUP_FILE" "$SEED_FILE"; then
             echo -e "${YELLOW}Archivo de seed restaurado con éxito.${RESET}" | tee -a "$LOG_FILE"
@@ -899,7 +899,7 @@ if cd "$DEPLOY_HOME/$NOME_EMPRESA/backend"; then
     fi
 
     # Verifica si el reemplazo fue exitoso
-    if grep -q "masteradmin@pressticket.com.br" "$SEED_FILE"; then
+    if grep -q "masteradmin@pressticket.com.ar" "$SEED_FILE"; then
         echo -e "${YELLOW}Aviso: El email del MasterAdmin no se cambió correctamente. Verificá manualmente.${RESET}" | tee -a "$LOG_FILE"
     else
         echo -e "${GREEN}Email del usuario MasterAdmin actualizado con éxito a: $EMAIL.${RESET}" | tee -a "$LOG_FILE"
@@ -1281,7 +1281,7 @@ echo -e "${BOLD}---------------------------------------${RESET}" | tee -a "$LOG_
 
 # Información de Usuarios
 echo -e "${BOLD}Usuario Estándar para Acceso${RESET}" | tee -a "$LOG_FILE"
-echo -e "${BOLD}Usuário:${RESET} admin@pressticket.com.br" | tee -a "$LOG_FILE"
+echo -e "${BOLD}Usuário:${RESET} admin@pressticket.com.ar" | tee -a "$LOG_FILE"
 echo -e "${BOLD}Senha:${RESET} admin" | tee -a "$LOG_FILE"
 echo -e "${BOLD}---------------------------------------${RESET}" | tee -a "$LOG_FILE"
 echo -e "${BOLD}Usuario Master para Acceso${RESET}" | tee -a "$LOG_FILE"
@@ -1293,7 +1293,7 @@ echo -e "${GREEN}---------------------------------------${RESET}" | tee -a "$LOG
 echo " " | tee -a "$LOG_FILE"
 echo -e "${COLOR}Accedé al sistema y configuralo según sea necesario.${RESET}" | tee -a "$LOG_FILE"
 echo " " | tee -a "$LOG_FILE"
-echo -e "${COLOR}¡Gracias por usar el Sistema Press Ticket®!${RESET}" | tee -a "$LOG_FILE"
+echo -e "${COLOR}¡Gracias por usar el Sistema ProIT CRM®!${RESET}" | tee -a "$LOG_FILE"
 echo -e "${COLOR}************** Desde 2022 ****************${RESET}" | tee -a "$LOG_FILE"
 echo " " | tee -a "$LOG_FILE"
 

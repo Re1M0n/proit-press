@@ -30,7 +30,7 @@ interface UpdateStatus {
   lastUpdateInstalled?: Date;
 }
 
-const REPO_URL = "https://api.github.com/repos/rtenorioh/Press-Ticket/releases/latest";
+const REPO_URL = "https://api.github.com/repos/Re1M0n/proit-press/releases/latest";
 const CONFIG_DIR = path.join(process.cwd(), "config");
 const UPDATE_STATUS_FILE = path.join(CONFIG_DIR, "update_status.json");
 const BACKUP_DIR = path.join(process.cwd(), "backups");

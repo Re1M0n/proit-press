@@ -1,4 +1,4 @@
-# Manual de Instalação do Press Ticket® em Localhost
+# Manual de Instalação do ProIT CRM® em Localhost
 
 ### Programas Essenciais:
 
@@ -35,20 +35,20 @@ E crie o banco de dados manualmente.
 
 ### 2. Clonar o repositório:
 
-Para clonar o repositório do Press Ticket®, use o seguinte comando no terminal:
+Para clonar o repositório do ProIT CRM®, use o seguinte comando no terminal:
 
 ```bash
-git clone https://github.com/rtenorioh/Press-Ticket.git Press-Ticket
+git clone https://github.com/Re1M0n/proit-press.git ProIT-CRM
 ```
 
 ---
 
-### 3. Entrar no diretório backend do Press-Ticket:
+### 3. Entrar no diretório backend do ProIT-CRM:
 
 Após clonar o repositório, entre no diretório `backend` usando o comando:
 
 ```bash
-cd Press-Ticket/backend
+cd ProIT-CRM/backend
 ```
 
 ---
@@ -154,12 +154,12 @@ npm start
 
 ---
 
-### 11. Entrar no diretório frontend do Press-Ticket:
+### 11. Entrar no diretório frontend do ProIT-CRM:
 
-Agora, vá para o diretório `frontend` do Press-Ticket com o seguinte comando:
+Agora, vá para o diretório `frontend` do ProIT-CRM com o seguinte comando:
 
 ```bash
-cd Press-Ticket/frontend
+cd ProIT-CRM/frontend
 ```
 
 ---
@@ -229,7 +229,7 @@ Utilize o seguinte usuário e senha para acessar o sistema:
 - **Usuário**:
 
 ```bash
-admin@pressticket.com.br
+admin@pressticket.com.ar
 ```
 
 - **Senha**:
@@ -245,7 +245,7 @@ admin
 Usuário:
 
 ```
-masteradmin@pressticket.com.br
+masteradmin@pressticket.com.ar
 ```
 
 Senha:

@@ -43,7 +43,7 @@ finalizar() {
     {
         echo " "
         echo "**************************************************************"
-        echo "*                 PRESS TICKET® - ATUALIZAÇÃO                 *"
+        echo "*                 PROIT CRM® - ATUALIZAÇÃO                 *"
         echo "**************************************************************"
         echo " Versão Atual do Sistema: $SYSTEM_VERSION                   "
         echo " Nova Versão Atualizada: $VERSION                           "
@@ -102,7 +102,7 @@ echo "Depois de escolher o fuso horário desejado, execute novamente o script in
 echo ""
 echo "Por exemplo, para usar o fuso horário 'Asia/Kolkata', execute:"
 echo ""
-echo "    curl -sSL https://update.pressticket.com.br | sudo bash -s -- Asia/Kolkata"
+echo "    curl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/UPDATE.sh | sudo bash -s -- Asia/Kolkata"
 echo ""
 
 # Pausa para o usuário ler a mensagem
@@ -278,7 +278,7 @@ fi
 {
     echo " "
     echo "**************************************************************"
-    echo "*               PRESS TICKET® - LOG DE ATUALIZAÇÃO            *"
+    echo "*               PROIT CRM® - LOG DE ATUALIZAÇÃO            *"
     echo "**************************************************************"
     echo " Versão Atual do Sistema: $SYSTEM_VERSION                   "
     echo " Nova Versão Atualizada: $VERSION                           "

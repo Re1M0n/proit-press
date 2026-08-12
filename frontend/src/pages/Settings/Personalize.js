@@ -470,7 +470,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                         fullWidth
                         value={data?.company}
                         onChange={handleCompanyChange}
-                        placeholder="Press Ticket®"
+                        placeholder="ProIT CRM®"
                     />
                     <StyledTextField
                         label={t("settings.personalize.tabpanel.url")}
@@ -478,7 +478,7 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                         fullWidth
                         value={data?.url}
                         onChange={handleUrlChange}
-                        placeholder="https://github.com/rtenorioh/Press-Ticket"
+                        placeholder="https://github.com/Re1M0n/proit-press"
                     />
                     <ActionButton
                         variant="contained"

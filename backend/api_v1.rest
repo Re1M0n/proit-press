@@ -1,4 +1,4 @@
-@baseUrl = https://devapi.pressticket.com.br
+@baseUrl = https://localhost:4000
 @apiToken = a7753eab-63ae-49ad-9af8-67dd6152289a
 
 ### Variáveis para testes

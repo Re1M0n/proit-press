@@ -63,7 +63,7 @@ rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
       step2: `Após ${rateLimits.auth} tentativas em 15 minutos, você receberá erro 429`,
       step3: "Aguarde 15 minutos ou reinicie o servidor para resetar",
       example: {
-        bash: `for i in {1..25}; do curl -X POST https://devapi.pressticket.com.br/auth/login -H "Content-Type: application/json" -d '{"email":"test@test.com","password":"wrong"}'; done`,
+        bash: `for i in {1..25}; do curl -X POST http://localhost:4000/auth/login -H "Content-Type: application/json" -d '{"email":"test@test.com","password":"wrong"}'; done`,
         description: "Após 20 tentativas (produção), receberá erro 429"
       }
     },

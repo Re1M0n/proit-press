@@ -3,7 +3,7 @@
 # Script para monitorar rate limit em tempo real
 # Uso: ./monitor-rate-limit.sh [auth|api]
 
-API_URL="https://devapi.pressticket.com.br"
+API_URL="https://localhost:4000"
 TYPE="${1:-auth}"  # Padrão: auth
 
 if [ "$TYPE" != "auth" ] && [ "$TYPE" != "api" ]; then

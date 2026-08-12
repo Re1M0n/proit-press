@@ -126,7 +126,7 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Press Ticket® API Documentation"
+    customSiteTitle: "ProIT CRM® API Documentation"
   })
 );
 

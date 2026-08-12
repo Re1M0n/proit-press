@@ -5,7 +5,7 @@ import { logger } from "../../utils/logger";
 // La carpeta de la plataforma es la raíz de la propia aplicación.
 // En src y en dist el archivo vive 4 niveles adentro del repo
 // (backend/src/services/DiskSpaceService | backend/dist/services/DiskSpaceService),
-// así que subiendo 4 niveles llegamos a la raíz de la app (p. ej. /home/deploy/Press-Ticket).
+// así que subiendo 4 niveles llegamos a la raíz de la app (p. ej. /home/deploy/ProIT-CRM).
 // Antes se usaba /home/deploy/${COMPANY_NAME}, pero ese directorio no existe en esta
 // instalación y el endpoint terminaba en 500.
 const APP_BASE = path.resolve(__dirname, "../../../../");

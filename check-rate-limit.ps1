@@ -1,7 +1,7 @@
 # Script PowerShell para verificar status do Rate Limit
 # Uso: .\check-rate-limit.ps1
 
-Write-Host "🔍 Verificando Rate Limit do Press-Ticket..." -ForegroundColor Cyan
+Write-Host "🔍 Verificando Rate Limit do ProIT-CRM..." -ForegroundColor Cyan
 Write-Host ""
 
 try {

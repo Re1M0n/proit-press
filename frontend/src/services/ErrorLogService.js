@@ -156,7 +156,7 @@ const ErrorLogService = {
       return "Ningún log encontrado.";
     }
 
-    let content = "LOGS DE ERRO - PRESS-TICKET®\n\n";
+    let content = "LOGS DE ERRO - PROIT-CRM®\n\n";
     
     logs.forEach(log => {
       content += `=== LOG ID: ${log.id} ===\n`;

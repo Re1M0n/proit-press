@@ -752,7 +752,7 @@ const SystemUpdate = () => {
                 🔄 Actualizaciones del Sistema
               </Typography>
               <Typography variant="body1" color="textSecondary">
-                Mantené tu Press-Ticket siempre actualizado con las últimas mejoras y correcciones
+                Mantené tu ProIT CRM siempre actualizado con las últimas mejoras y correcciones
               </Typography>
             </Box>
             <RefreshButtonStyled
@@ -960,7 +960,7 @@ const SystemUpdate = () => {
                   />
                 </Box>
                 <Typography variant="body1" paragraph color="textSecondary">
-                  Una nueva versión de Press-Ticket está disponible. Recomendamos actualizar para obtener las últimas mejoras y correcciones.
+                  Una nueva versión de ProIT-CRM está disponible. Recomendamos actualizar para obtener las últimas mejoras y correcciones.
                 </Typography>
                 
                 {updateInfo.releaseNotes && (
@@ -1009,15 +1009,15 @@ const SystemUpdate = () => {
                   </Typography>
                   <Box display="flex" flexDirection="column" gap={1}>
                     <Link 
-                      href="https://github.com/rtenorioh/Press-Ticket" 
+                      href="https://github.com/Re1M0n/proit-press" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                     >
-                      📦 Repositorio: Press-Ticket en GitHub
+                      📦 Repositorio: ProIT-CRM en GitHub
                     </Link>
                     <Link 
-                      href="https://github.com/rtenorioh/Press-Ticket/blob/main/docs/INSTALL_AUTOMATICO_VPS.md" 
+                      href="https://github.com/Re1M0n/proit-press/blob/main/docs/INSTALL_AUTOMATICO_VPS.md" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
@@ -1060,7 +1060,7 @@ const SystemUpdate = () => {
                   />
                 </Box>
                 <Typography variant="body1" color="textSecondary">
-                  🎉 Tu sistema Press-Ticket está ejecutando la versión más reciente disponible. No es necesario realizar ninguna acción por el momento.
+                  🎉 Tu sistema ProIT-CRM está ejecutando la versión más reciente disponible. No es necesario realizar ninguna acción por el momento.
                 </Typography>
               </Box>
             </Box>

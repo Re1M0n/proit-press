@@ -7,7 +7,7 @@ module.exports = {
       [
         {
           name: "MasterAdmin",
-          email: "masteradmin@pressticket.com.br",
+          email: "masteradmin@pressticket.com.ar",
           passwordHash:
             "$2a$08$nLlBSlHj.6XJNFLq.FSjVOjp4rSFHtFYHSUewBIQhceOv4gXU3yLC",
           profile: "masteradmin",

@@ -28,7 +28,7 @@ const fetchLatestVersion = async (): Promise<string | null> => {
   try {
     const headers: any = {
       'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'Press-Ticket'
+      'User-Agent': 'ProIT-CRM',
     };
     
     if (process.env.GITHUB_TOKEN) {
@@ -37,14 +37,14 @@ const fetchLatestVersion = async (): Promise<string | null> => {
 
     try {
       const response = await axios.get(
-        "https://api.github.com/repos/rtenorioh/Press-Ticket/releases/latest",
+        "https://api.github.com/repos/Re1M0n/proit-press/releases/latest",
         { headers }
       );
 
       return response.data.tag_name;
     } catch (releaseError: any) {
       const tagsResponse = await axios.get(
-        "https://api.github.com/repos/rtenorioh/Press-Ticket/tags",
+        "https://api.github.com/repos/Re1M0n/proit-press/tags",
         { headers, params: { per_page: 1 } }
       );
       

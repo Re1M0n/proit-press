@@ -3,7 +3,7 @@
 # Script simples para verificar rate limit
 # Uso: ./check-rate-limit-simple.sh [auth|api]
 
-API_URL="https://devapi.pressticket.com.br"
+API_URL="https://localhost:4000"
 TYPE="${1:-auth}"
 
 if [ "$TYPE" != "auth" ] && [ "$TYPE" != "api" ]; then

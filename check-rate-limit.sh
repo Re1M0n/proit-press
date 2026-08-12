@@ -3,11 +3,11 @@
 # Script para verificar status do Rate Limit
 # Uso: ./check-rate-limit.sh
 
-echo "🔍 Verificando Rate Limit do Press-Ticket..."
+echo "🔍 Verificando Rate Limit do ProIT-CRM..."
 echo ""
 
 # Fazer requisição e capturar headers
-RESPONSE=$(curl -s -i https://devapi.pressticket.com.br/rate-limit-status 2>&1)
+RESPONSE=$(curl -s -i https://localhost:4000/rate-limit-status 2>&1)
 
 # Debug: mostrar headers recebidos (descomente para debug)
 # echo "DEBUG - Headers recebidos:"
@@ -68,7 +68,7 @@ else
     echo ""
     echo "Tentando conexão básica..."
     
-    if curl -s https://devapi.pressticket.com.br/health > /dev/null 2>&1; then
+    if curl -s https://localhost:4000/health > /dev/null 2>&1; then
         echo "✅ Servidor está rodando"
     else
         echo "❌ Servidor não está respondendo"
