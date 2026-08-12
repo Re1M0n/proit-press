@@ -174,7 +174,7 @@ const PreviewThumbnail = styled('img')(({ theme }) => ({
 
 const PRESET_COLORS = {
     light: [
-        { name: "ProIT", primary: "#585490", secondary: "#C9C6EA" },
+        { name: "ProIT", primary: "#00B0C8", secondary: "#B8F8F8" },
         { name: "Verde Esmeralda", primary: "#059669", secondary: "#A7F3D0" },
         { name: "Azul", primary: "#2563EB", secondary: "#BFDBFE" },
         { name: "Celeste", primary: "#0891B2", secondary: "#A5F3FC" },
@@ -190,7 +190,7 @@ const PRESET_COLORS = {
         { name: "Grafito", primary: "#475569", secondary: "#CBD5E1" },
     ],
     dark: [
-        { name: "ProIT", primary: "#8B87C9", secondary: "#A9A6DA" },
+        { name: "ProIT", primary: "#08D8F0", secondary: "#B8F8F8" },
         { name: "Verde Esmeralda", primary: "#34D399", secondary: "#6EE7B7" },
         { name: "Azul", primary: "#60A5FA", secondary: "#93C5FD" },
         { name: "Celeste", primary: "#22D3EE", secondary: "#67E8F9" },

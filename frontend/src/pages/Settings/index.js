@@ -1,9 +1,8 @@
 import { Box, Container, Tab, Tabs, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
 import openSocket from "../../services/socket-io.js";
@@ -62,9 +61,6 @@ const Settings = ({ toggleTheme, onThemeConfigUpdate }) => {
 	const { t } = useTranslation();
 	const [settings, setSettings] = useState([]);
 	const [tabValue, setTabValue] = useState(0);
-	const { user } = useContext(AuthContext);
-	const isMasterAdmin = process.env.REACT_APP_MASTERADMIN === 'ON';
-	const isUserMaster = user?.profile === 'masteradmin';
 
 	useEffect(() => {
 		let isMounted = true;
@@ -171,27 +167,13 @@ const Settings = ({ toggleTheme, onThemeConfigUpdate }) => {
 		setTabValue(newValue);
 	};
 
-	const shouldShowTab = (tabName) => {
-		const restrictedTabs = ['personalize'];
-			
-		if (!isMasterAdmin) {
-			return true;
-		}
-
-		if (isUserMaster) {
-			return true;
-		}
-			
-		return !restrictedTabs.includes(tabName);
-	};
-
 	const tabList = [
 		{ key: "personalize", label: t("settings.tabs.personalize"), component: <Personalize toggleTheme={toggleTheme} onThemeConfigUpdate={onThemeConfigUpdate} /> },
 		{ key: "general", label: t("settings.tabs.general"), component: <ComponentSettings settings={settings} getSettingValue={getSettingValue} handleChangeBooleanSetting={handleChangeBooleanSetting} handleChangeSetting={handleChangeSetting} /> },
 		{ key: "integrations", label: t("settings.tabs.integrations"), component: <Integrations /> }
 	];
 
-	const visibleTabs = tabList.filter(tab => shouldShowTab(tab.key));
+	const visibleTabs = tabList;
 	
 	return (
 		<MainContainer>
