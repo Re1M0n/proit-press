@@ -65,10 +65,21 @@ if (isProduction) {
 	console.log('🔧 Modo Desenvolvimento: Security headers gerenciados pelo Helmet');
 }
 
-const oneDay = 24 * 60 * 60 * 1000; // Cache de 1 dia em milissegundos
-app.use(express.static(path.join(__dirname, "build"), { maxAge: oneDay }));
+// Hashed assets (build/static/*) can be cached forever: the filename changes on every build,
+// so a new deploy always references new files. index.html is NOT served here (index: false).
+const oneYear = 365 * 24 * 60 * 60 * 1000;
+app.use(
+	express.static(path.join(__dirname, "build"), {
+		maxAge: oneYear,
+		immutable: true,
+		index: false,
+	})
+);
 
+// index.html must revalidate on every request so that deploys are picked up immediately
+// (the browser re-checks with ETag and gets the new HTML pointing at the new bundle).
 app.get("/*", (req, res) => {
+	res.set("Cache-Control", "no-cache");
 	res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
