@@ -1,51 +1,53 @@
-# Manual de Instalação do ProIT CRM® em Localhost
+# Manual de Instalación del ProIT CRM® en Localhost
 
-### Programas Essenciais:
+### Programas Esenciales:
 
 - **Node JS**
 - **GIT**
-- **XAMPP ou WAMPP**
-- **IDE** (ATOM, Sublime Text, VS Code ou outro da sua escolha)
+- **XAMPP o WAMPP**
+- **IDE** (ATOM, Sublime Text, VS Code u otro de tu elección)
 
 ---
 
-## Passos para a Instalação
+## Pasos para la Instalación
 
-### 1. Criar o Banco de Dados
+### 1. Crear la Base de Datos
 
-#### 1.1. Via Comando SQL:
+#### 1.1. Vía Comando SQL:
 
-Execute o seguinte comando no seu terminal para criar o banco de dados:
+Ejecuta el siguiente comando en tu terminal para crear la base de datos:
 
 ```bash
 CREATE DATABASE press_ticket CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
 
-#### 1.2. Se estiver usando XAMPP ou WAMPP, poderá criar o banco de dados via phpMyAdmin:
+#### 1.2. Si estás usando XAMPP o WAMPP, podés crear la base de datos vía phpMyAdmin:
 
-Acesse o phpMyAdmin através da URL:
+Accede al phpMyAdmin a través de la URL:
 
 ```bash
 http://localhost/phpmyadmin
 ```
 
-E crie o banco de dados manualmente.
+Y crea la base de datos manualmente.
 
 ---
 
-### 2. Clonar o repositório:
+### 2. Clonar el repositorio:
 
-Para clonar o repositório do ProIT CRM®, use o seguinte comando no terminal:
+Para clonar el repositorio del ProIT CRM®, usa el siguiente comando en el terminal:
 
 ```bash
 git clone https://github.com/Re1M0n/proit-press.git ProIT-CRM
 ```
 
+> El repositorio se clona desde la rama `main`, que es la rama de despliegue oficial.
+
 ---
 
-### 3. Entrar no diretório backend do ProIT-CRM:
+### 3. Entrar en el directorio backend del ProIT-CRM:
 
-Após clonar o repositório, entre no diretório `backend` usando o comando:
+Después de clonar el repositorio, entra en el directorio `backend` usando el comando:
 
 ```bash
 cd ProIT-CRM/backend
@@ -53,30 +55,30 @@ cd ProIT-CRM/backend
 
 ---
 
-### 4. Editar as informações no arquivo `.env`:
+### 4. Editar la información en el archivo `.env`:
 
-Crie ou edite o arquivo `.env` no diretório `backend` com as seguintes informações:
+Crea o edita el archivo `.env` en el directorio `backend` con la siguiente información:
 
 ```bash
 NODE_ENV=
 
-#Nome da Instalação
+#Nombre de la Instalación
 COMPANY_NAME=press_ticket
 
-#Nome do Dispositivo
+#Nombre del Dispositivo
 DEVICE_NAME=
 
-#URLs e Portas
+#URLs y Puertos
 WEBHOOK=https://ninety-yaks-trade.loca.lt
 BACKEND_URL=http://localhost
 FRONTEND_URL=http://localhost:3000
 PORT=4000
 PROXY_PORT=4000
 
-#Caminho do Chrome
+#Ruta de Chrome
 CHROME_BIN=C:\Program Files\Google\Chrome\Application\chrome.exe
 
-#Dados de acesso ao Banco de dados
+#Datos de acceso a la Base de datos
 DB_DIALECT=mysql
 DB_HOST=localhost
 DB_TIMEZONE=-03:00
@@ -84,29 +86,29 @@ DB_USER=root
 DB_PASS=
 DB_NAME=press_ticket
 
-#Limitar Usuários e Conexões
+#Limitar Usuarios y Conexiones
 USER_LIMIT=3
 CONNECTIONS_LIMIT=5
 
-#Modo DEMO que evita alterar algumas funções, para ativar: ON
+#Modo DEMO que evita modificar algunas funciones, para activar: ON
 DEMO=OFF
 
-#Permitir a rotação de tokens
+#Permitir la rotación de tokens
 JWT_SECRET=JYszCWFNE0kmbbb0w/dvMl66zDd1GZozzaC27dKOCDY=
 JWT_REFRESH_SECRET=FwJXkGgXv7ARfxPRb7/6RdNmtXJlR4PsQvvw8VIbOho=
 ```
 
 ---
 
-### 5. Criar o arquivo `.env` e inserir as informações do item 4.
+### 5. Crear el archivo `.env` e insertar la información del punto 4.
 
-Se o arquivo `.env` ainda não existir, crie um novo arquivo e insira as informações listadas no item 4.
+Si el archivo `.env` aún no existe, crea un archivo nuevo e inserta la información listada en el punto 4.
 
 ---
 
-### 6. Instalar as dependências:
+### 6. Instalar las dependencias:
 
-Instale as dependências necessárias do projeto executando o seguinte comando no terminal:
+Instala las dependencias necesarias del proyecto ejecutando el siguiente comando en el terminal:
 
 ```bash
 npm install
@@ -114,9 +116,9 @@ npm install
 
 ---
 
-### 7. Buildar o projeto:
+### 7. Compilar el proyecto:
 
-Para compilar o projeto, execute o seguinte comando:
+Para compilar el proyecto, ejecuta el siguiente comando:
 
 ```bash
 npm run build
@@ -124,9 +126,9 @@ npm run build
 
 ---
 
-### 8. Criar as tabelas no banco de dados:
+### 8. Crear las tablas en la base de datos:
 
-Execute as migrações para criar as tabelas no banco de dados:
+Ejecuta las migraciones para crear las tablas en la base de datos:
 
 ```bash
 npx sequelize db:migrate
@@ -134,19 +136,21 @@ npx sequelize db:migrate
 
 ---
 
-### 9. Popular o banco de dados:
+### 9. Poblar la base de datos:
 
-Popule o banco de dados com os dados iniciais executando o comando:
+Puebla la base de datos con los datos iniciales ejecutando el comando:
 
 ```bash
 npx sequelize db:seed:all
 ```
 
+> Ambos comandos son idempotentes: si las migraciones o los datos iniciales ya existen, no se vuelven a aplicar.
+
 ---
 
-### 10. Rodar o servidor:
+### 10. Levantar el servidor:
 
-Inicie o servidor backend com o seguinte comando:
+Inicia el servidor backend con el siguiente comando:
 
 ```bash
 npm start
@@ -154,9 +158,9 @@ npm start
 
 ---
 
-### 11. Entrar no diretório frontend do ProIT-CRM:
+### 11. Entrar en el directorio frontend del ProIT-CRM:
 
-Agora, vá para o diretório `frontend` do ProIT-CRM com o seguinte comando:
+Ahora, ve al directorio `frontend` del ProIT-CRM con el siguiente comando:
 
 ```bash
 cd ProIT-CRM/frontend
@@ -164,11 +168,11 @@ cd ProIT-CRM/frontend
 
 ---
 
-### 12. Editar as informações no arquivo `.env`:
+### 12. Editar la información en el archivo `.env`:
 
-Crie ou edite o arquivo `.env` no diretório `frontend` com as seguintes informações:
+Crea o edita el archivo `.env` en el directorio `frontend` con la siguiente información:
 
-**IMPORTANTE**: Em localhost, defina `NODE_ENV=development` para que o `server.js` ative automaticamente os **Security Headers** via Helmet (já que não há Nginx em desenvolvimento).
+**IMPORTANTE**: En localhost, define `NODE_ENV=development` para que el `server.js` active automáticamente los **Security Headers** vía Helmet (ya que no hay Nginx en desarrollo).
 
 ```bash
 #Ambiente (development para localhost)
@@ -177,34 +181,34 @@ NODE_ENV=development
 #URL BACKEND
 REACT_APP_BACKEND_URL=http://localhost:4000
 
-#Tempo de encerramento automático dos tickets em horas
+#Tiempo de cierre automático de los tickets en horas
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO=
 
-#PORTA do frontend
+#PUERTO del frontend
 PORT=3000
 
-# Para permitir acesso apenas do MasterAdmin (sempre ON)
+# Para permitir acceso solo del MasterAdmin (siempre ON)
 REACT_APP_MASTERADMIN=ON
 
 ```
 
-**Nota sobre Security Headers em Localhost**:
-- Com `NODE_ENV=development`, o `server.js` automaticamente habilita os security headers via Helmet
-- O Content-Security-Policy permite conexões com `localhost:*` (qualquer porta)
-- Isso garante segurança mesmo em ambiente de desenvolvimento
-- Em produção (VPS), o Nginx gerencia os headers e o `server.js` os desabilita automaticamente
+**Nota sobre Security Headers en Localhost**:
+- Con `NODE_ENV=development`, el `server.js` automáticamente habilita los security headers vía Helmet
+- El Content-Security-Policy permite conexiones con `localhost:*` (cualquier puerto)
+- Esto garantiza seguridad incluso en ambiente de desarrollo
+- En producción (VPS), el Nginx gestiona los headers y el `server.js` los deshabilita automáticamente
 
 ---
 
-### 13. Criar o arquivo `.env` e inserir as informações do item 12.
+### 13. Crear el archivo `.env` e insertar la información del punto 12.
 
-Se o arquivo `.env` ainda não existir, crie um novo arquivo e insira as informações listadas no item 12.
+Si el archivo `.env` aún no existe, crea un archivo nuevo e inserta la información listada en el punto 12.
 
 ---
 
-### 14. Instalar as dependências:
+### 14. Instalar las dependencias:
 
-No diretório `frontend`, instale as dependências com o comando:
+En el directorio `frontend`, instala las dependencias con el comando:
 
 ```bash
 npm install
@@ -212,9 +216,9 @@ npm install
 
 ---
 
-### 15. Rodar o servidor:
+### 15. Levantar el servidor:
 
-Para iniciar o servidor frontend, execute o seguinte comando:
+Para iniciar el servidor frontend, ejecuta el siguiente comando:
 
 ```bash
 npm start
@@ -222,17 +226,17 @@ npm start
 
 ---
 
-## Usuário Padrão para Acesso:
+## Usuario Estándar para Acceso:
 
-Utilize o seguinte usuário e senha para acessar o sistema:
+Usa el siguiente usuario y contraseña para acceder al sistema:
 
-- **Usuário**:
+- **Usuario**:
 
 ```bash
 admin@pressticket.com.ar
 ```
 
-- **Senha**:
+- **Contraseña**:
 
 ```bash
 admin
@@ -240,15 +244,15 @@ admin
 
 ---
 
-# Usuário Master para Acesso
+# Usuario Master para Acceso
 
-Usuário:
+Usuario:
 
 ```
 masteradmin@pressticket.com.ar
 ```
 
-Senha:
+Contraseña:
 
 ```
 masteradmin
@@ -256,21 +260,21 @@ masteradmin
 
 ---
 
-## Verificação de Security Headers em Localhost
+## Verificación de Security Headers en Localhost
 
-### Como Funciona em Desenvolvimento
+### Cómo Funciona en Desarrollo
 
-Em ambiente de desenvolvimento (localhost), o `server.js` detecta automaticamente que `NODE_ENV=development` e habilita os security headers via Helmet.
+En ambiente de desarrollo (localhost), el `server.js` detecta automáticamente que `NODE_ENV=development` y habilita los security headers vía Helmet.
 
-### Testar Headers em Localhost
+### Probar Headers en Localhost
 
-Após iniciar o frontend, você pode verificar os headers:
+Después de iniciar el frontend, podés verificar los headers:
 
 ```bash
 curl -I http://localhost:3000/ | grep -i "x-frame\|content-security\|permissions"
 ```
 
-**Você deve ver**:
+**Deberías ver**:
 - `X-Frame-Options: SAMEORIGIN`
 - `X-Content-Type-Options: nosniff`
 - `X-XSS-Protection: 1; mode=block`
@@ -278,30 +282,30 @@ curl -I http://localhost:3000/ | grep -i "x-frame\|content-security\|permissions
 - `Permissions-Policy: geolocation=()...`
 - `Content-Security-Policy: default-src 'self'...`
 
-### Diferenças entre Desenvolvimento e Produção
+### Diferencias entre Desarrollo y Producción
 
 | Aspecto | Localhost (Development) | VPS (Production) |
 |---------|------------------------|------------------|
-| **Headers gerenciados por** | Helmet (server.js) | Nginx |
-| **CSP connect-src** | `localhost:*` (qualquer porta) | URL específica do backend |
-| **Configuração** | Automática via NODE_ENV | Nginx + server.js |
+| **Headers gestionados por** | Helmet (server.js) | Nginx |
+| **CSP connect-src** | `localhost:*` (cualquier puerto) | URL específica del backend |
+| **Configuración** | Automática vía NODE_ENV | Nginx + server.js |
 
-### Logs do server.js
+### Logs del server.js
 
-Ao iniciar o frontend em localhost, você verá:
+Al iniciar el frontend en localhost, verás:
 
 ```
-🔧 Modo Desenvolvimento: Security headers gerenciados pelo Helmet
+🔧 Modo Desarrollo: Security headers gestionados por Helmet
 Server is running on port 3000
 ```
 
-Isso confirma que os headers estão sendo enviados pelo Helmet.
+Eso confirma que los headers se están enviando a través del Helmet.
 
-### Benefícios em Desenvolvimento
+### Beneficios en Desarrollo
 
-- ✅ **Headers automáticos**: Não precisa configurar Nginx local
-- ✅ **CSP flexível**: Permite conexões com qualquer porta do localhost
-- ✅ **Testes realistas**: Mesmo comportamento de segurança da produção
-- ✅ **Sem configuração extra**: Funciona out-of-the-box
+- ✅ **Headers automáticos**: No hace falta configurar Nginx local
+- ✅ **CSP flexible**: Permite conexiones con cualquier puerto del localhost
+- ✅ **Pruebas realistas**: Mismo comportamiento de seguridad que producción
+- ✅ **Sin configuración extra**: Funciona out-of-the-box
 
-**Nota**: Quando você fizer deploy para produção (VPS), basta mudar `NODE_ENV=production` e o sistema automaticamente desabilita os headers no Helmet, deixando o Nginx gerenciar tudo!
+**Nota**: Cuando hagas deploy a producción (VPS), basta con cambiar `NODE_ENV=production` y el sistema automáticamente deshabilita los headers en el Helmet, dejando que el Nginx gestione todo.

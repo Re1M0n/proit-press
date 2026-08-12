@@ -123,7 +123,7 @@ else
 fi
 
 # Captura o fuso horário passado como argumento ou usa America/Sao_Paulo} como padrão
-SELECTED_TZ=${1:-America/Sao_Paulo}
+SELECTED_TZ=${1:-America/Argentina/Buenos_Aires}
 
 # Configuração do arquivo de log (ajustado para usar o fuso horário)
 LOG_FILE="$CURRENT_LOG_DIR/update_${VERSION}_$(TZ=$SELECTED_TZ date +"%d-%m-%Y_%H-%M-%S").log"

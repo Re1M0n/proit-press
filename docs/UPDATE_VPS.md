@@ -1,35 +1,45 @@
-# Manual de Atualização Automática do ProIT CRM® na VPS
+# Manual de Actualización Automática del ProIT CRM® en la VPS
 
-Este manual descreve os passos necessários para realizar a atualização automática do sistema **ProIT CRM®** em sua VPS.
+Este manual describe los pasos necesarios para realizar la actualización automática del sistema **ProIT CRM®** en tu VPS.
 
-## Passos para Atualização
+El actualizador (`UPDATE.sh`) se encarga de: pasar a la rama `main` del repositorio `github.com/Re1M0n/proit-press`, traer los últimos cambios (`git pull`), instalar las dependencias, compilar backend y frontend, y reiniciar los servicios PM2.
 
-### 1. Acessar a VPS
+## Pasos para la Actualización
 
-Conecte-se à VPS onde o **ProIT CRM®** está instalado. Utilize o usuário apropriado (`root` ou `deploy`), dependendo de sua configuração:
+### 1. Acceder a la VPS
+
+Conéctate a la VPS donde está instalado el **ProIT CRM®**. Usa el usuario apropiado (`root` o `deploy`), según tu configuración:
 
 ```bash
-ssh usuario@ip-da-vps
+ssh usuario@ip-de-la-vps
 ```
 
-### 2. Navegar até a pasta do sistema
+### 2. Navegar hasta la carpeta del sistema
 
-Uma vez conectado à VPS, vá até o diretório onde o sistema está instalado:
+Una vez conectado a la VPS, ve al directorio donde está instalado el sistema:
 
 ```bash
 cd ProIT-CRM/
 ```
 
-### 3. Executar o comando para atualização
+### 3. Ejecutar el comando de actualización
 
-Com o diretório correto acessado, execute o comando para atualização abaixo:
+Con el directorio correcto accedido, ejecuta el comando de actualización de abajo:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/UPDATE.sh | sudo bash -s
 ```
 
-> Nota: O script executado será responsável por realizar o processo de atualização automaticamente.
+> Nota: El script ejecutado se encarga de realizar el proceso de actualización automáticamente (actualiza el código, compila y reinicia los servicios PM2).
 
-### 4. Finalização
+### 4. Zona horaria (opcional)
 
-Após a execução do comando, verifique se a atualização foi concluída com sucesso e sem erros. Caso ocorra algum problema, revise os logs ou entre em contato para suporte.
+El actualizador usa por defecto la zona horaria `America/Argentina/Buenos_Aires` para el registro del log. Si querés usar otra, pasala como argumento:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Re1M0n/proit-press/main/UPDATE.sh | sudo bash -s -- America/Argentina/Buenos_Aires
+```
+
+### 5. Finalización
+
+Después de ejecutar el comando, verifica que la actualización haya concluido con éxito y sin errores. En caso de algún problema, revisa los logs o contacta a soporte.

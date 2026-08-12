@@ -1,143 +1,143 @@
-# Manual de Instalação do phpMyAdmin na VPS
+# Manual de Instalación de phpMyAdmin en la VPS
 
-> **Observação:** Se o MySQL já estiver instalado, não há problema. Ele será atualizado durante o processo.
+> **Observación:** Si MySQL ya está instalado, no hay problema. Se actualizará durante el proceso.
 
 ---
 
-## Passos para Instalação
+## Pasos para la Instalación
 
-### 1. Atualizar e fazer upgrade da VPS
+### 1. Actualizar y hacer upgrade de la VPS
 
-Antes de qualquer instalação, atualize a lista de pacotes e aplique upgrades no sistema:
+Antes de cualquier instalación, actualiza la lista de paquetes y aplica upgrades en el sistema:
 
 ```bash
 sudo apt update && sudo apt upgrade
 ```
 
-### 2. Instalar o MySQL Server
+### 2. Instalar el MySQL Server
 
-Se o MySQL Server ainda não estiver instalado, utilize o comando abaixo:
+Si el MySQL Server aún no está instalado, usa el comando de abajo:
 
 ```bash
 sudo apt install mysql-server
 ```
 
-### 3. Verificar a versão do MySQL
+### 3. Verificar la versión de MySQL
 
-Para confirmar a instalação e verificar a versão do MySQL, execute:
+Para confirmar la instalación y verificar la versión de MySQL, ejecuta:
 
 ```bash
 mysql --version
 ```
 
-### 4. Verificar se o MySQL está rodando
+### 4. Verificar si MySQL está corriendo
 
-Confirme se o serviço MySQL está em execução:
+Confirma que el servicio MySQL esté en ejecución:
 
 ```bash
 sudo systemctl status mysql
 ```
 
-### 5. Instalar o phpMyAdmin
+### 5. Instalar el phpMyAdmin
 
-Agora, instale o phpMyAdmin e outras dependências necessárias:
+Ahora, instala el phpMyAdmin y las demás dependencias necesarias:
 
 ```bash
 sudo apt install phpmyadmin php-mbstring
 ```
 
-Durante a instalação:
+Durante la instalación:
 
-- Selecione 'apache2' como o servidor web.
-- Escolha 'Yes' para configurar o banco de dados com dbconfig-common.
-- Defina a senha para o usuário phpmyadmin.
+- Selecciona `apache2` como servidor web.
+- Elige `Sí` para configurar la base de datos con dbconfig-common.
+- Define la contraseña para el usuario phpmyadmin.
 
-### 6. Acessar a pasta de configuração do Apache
+### 6. Acceder a la carpeta de configuración de Apache
 
-Vá até o diretório de configuração do Apache:
+Ve al directorio de configuración de Apache:
 
 ```bash
 cd /etc/apache2/
 ```
 
-### 7. Modificar a porta padrão do Apache
+### 7. Modificar el puerto por defecto de Apache
 
-Abra o arquivo ports.conf e altere a linha Listen 80 para Listen 81, se necessário:
+Abre el archivo `ports.conf` y cambia la línea `Listen 80` por `Listen 81`, si es necesario:
 
 ```bash
 sudo nano ports.conf
 ```
 
-> Nota: Essa alteração é necessária caso a porta 80 já esteja em uso por outro serviço.
+> Nota: Este cambio es necesario si el puerto 80 ya está en uso por otro servicio.
 
-### 8. Reiniciar o Apache
+### 8. Reiniciar Apache
 
-Após a modificação, reinicie o Apache para aplicar as mudanças:
+Después de la modificación, reinicia Apache para aplicar los cambios:
 
 ```bash
 sudo systemctl restart apache2
 ```
 
-### 8.1. Verificar se o Apache está rodando
+### 8.1. Verificar si Apache está corriendo
 
-Confirme se o serviço do Apache está funcionando corretamente:
+Confirma que el servicio de Apache funcione correctamente:
 
 ```bash
 sudo systemctl status apache2
 ```
 
-### 9. Criar um link simbólico para o phpMyAdmin
+### 9. Crear un enlace simbólico para el phpMyAdmin
 
-Crie um link simbólico para que o phpMyAdmin seja acessível via navegador:
+Crea un enlace simbólico para que el phpMyAdmin sea accesible desde el navegador:
 
 ```bash
 sudo ln -s /usr/share/phpmyadmin /var/www/html
 ```
 
-### 10. Criar um novo usuário MySQL para o phpMyAdmin
+### 10. Crear un nuevo usuario MySQL para el phpMyAdmin
 
-Para adicionar um novo usuário ao MySQL, siga os passos abaixo:
+Para agregar un nuevo usuario a MySQL, sigue los pasos de abajo:
 
-#### 10.1. Acesse o MySQL como root:
+#### 10.1. Accede a MySQL como root:
 
 ```bash
 mysql -u root
 ```
 
-#### 10.2. Crie um novo usuário com uma senha:
+#### 10.2. Crea un nuevo usuario con una contraseña:
 
 ```bash
-CREATE USER 'novoUsuario'@'localhost' IDENTIFIED BY 'senha';
+CREATE USER 'nuevoUsuario'@'localhost' IDENTIFIED BY 'contraseña';
 ```
 
-#### 10.3. Conceda todos os privilégios ao novo usuário:
+#### 10.3. Otorga todos los privilegios al nuevo usuario:
 
 ```bash
-GRANT ALL PRIVILEGES ON *.* TO 'novoUsuario'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'nuevoUsuario'@'localhost' WITH GRANT OPTION;
 ```
 
-#### 10.4. Execute o comando abaixo para garantir que as mudanças sejam aplicadas:
+#### 10.4. Ejecuta el comando de abajo para asegurar que los cambios se apliquen:
 
 ```bash
 FLUSH PRIVILEGES;
 ```
 
-#### 10.5. Saia do MySQL:
+#### 10.5. Sal de MySQL:
 
 ```bash
 exit;
 ```
 
-### 11. Acessar o phpMyAdmin
+### 11. Acceder al phpMyAdmin
 
-Abra o navegador e acesse o phpMyAdmin através do endereço abaixo:
+Abre el navegador y accede al phpMyAdmin a través de la siguiente dirección:
 
 ```bash
-http://IPdaVPS:81/phpmyadmin
+http://IPdeLaVPS:81/phpmyadmin
 ```
 
-### 12. Login no phpMyAdmin
+### 12. Login en el phpMyAdmin
 
-Use o nome de usuário e senha criados na etapa 10 para fazer login no phpMyAdmin.
+Usa el nombre de usuario y la contraseña creados en el paso 10 para iniciar sesión en el phpMyAdmin.
 
-> Agora está completamente formatado e pronto para uso.
+> Ahora quedó completamente formateado y listo para usar.

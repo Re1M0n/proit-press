@@ -1,114 +1,114 @@
-# Manual de Instalação do ProIT CRM® na VPS
+# Manual de Instalación del ProIT CRM® en la VPS
 
-### Observação:
+### Observación:
 
-- Antes de começar a instalação, é necessário ter criado os subdomínios e garantir que estejam apontados para o IP da VPS.
+- Antes de comenzar la instalación, es necesario haber creado los subdominios y asegurarse de que apunten al IP de la VPS.
 
 ---
 
-## Seção 1: Preparação Inicial
+## Sección 1: Preparación Inicial
 
-### 1.1 Alterando para root
+### 1.1 Cambiando a root
 
 ```bash
 sudo su root
 ```
 
-### 1.2 Acessando o diretório raiz
+### 1.2 Accediendo al directorio raíz
 
 ```
 cd ~
 ```
 
-### 1.3 Atualizando e fazendo upgrade da VPS
+### 1.3 Actualizando y haciendo upgrade de la VPS
 
 ```
 apt update && sudo apt upgrade -y
 ```
 
-## Seção 2: Instalação do MariaDB
+## Sección 2: Instalación del MariaDB
 
-### 2.1 Instalação do MariaDB
+### 2.1 Instalación del MariaDB
 
 ```
 apt install mariadb-server mariadb-client -y
 ```
 
-### 2.2 Verificando a versão do MySQL Server (opcional)
+### 2.2 Verificando la versión del MySQL Server (opcional)
 
 ```
 mariadb --version
 ```
 
-### 2.3 Verificando o status do MySQL Server
+### 2.3 Verificando el estado del MySQL Server
 
 ```
 sudo systemctl status mariadb
 ```
 
-### 2.4 Saindo da visualização de status do MySQL
+### 2.4 Saliendo de la vista de estado del MySQL
 
-Pressione `CTRL + C` para sair.
+Presiona `CTRL + C` para salir.
 
-### 2.5 Acessando o MySQL Server
+### 2.5 Accediendo al MySQL Server
 
 ```
 sudo mysql -u root
 ```
 
-### 2.6 Criando o banco de dados
+### 2.6 Creando la base de datos
 
 ```
 CREATE DATABASE press_ticket CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
 
-### 2.7 Alterando o usuário root para usar senha para autenticar no banco de dados
+### 2.7 Cambiando el usuario root para que use contraseña al autenticarse en la base de datos
 
 ```
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'senha_root';
 ```
 
-### 2.8 Aplicando as mudanças
+### 2.8 Aplicando los cambios
 
 ```
 FLUSH PRIVILEGES;
 ```
 
-### 2.9 Saindo do MySQL
+### 2.9 Saliendo del MySQL
 
 ```
 exit;
 ```
 
-### 2.10 Reiniciando o MySQL
+### 2.10 Reiniciando el MySQL
 
 ```
 service mariadb restart
 ```
 
-## Seção 3: Configuração do Usuário
+## Sección 3: Configuración del Usuario
 
-### 3.1 Criando o usuário deploy
+### 3.1 Creando el usuario deploy
 
 ```
 adduser deploy
 ```
 
-### 3.2 Dar privilégios de superusuário ao usuário deploy
+### 3.2 Dar privilegios de superusuario al usuario deploy
 
 ```
 usermod -aG sudo deploy
 ```
 
-### 3.3 Alterando para o novo usuário deploy
+### 3.3 Cambiando al nuevo usuario deploy
 
 ```
 su deploy
 ```
 
-## Seção 4: Instalação do Node.js e Dependências
+## Sección 4: Instalación del Node.js y Dependencias
 
-### 4.1 Baixando Node.js 22.x
+### 4.1 Descargando Node.js 22.x
 
 ```
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -120,88 +120,90 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-### 4.3 Instalando bibliotecas adicionais
+### 4.3 Instalando bibliotecas adicionales
 
 ```
 sudo apt install apt-transport-https ca-certificates curl software-properties-common git ffmpeg
 ```
 
-### 4.4 Atualizando
+### 4.4 Actualizando
 
 ```
 sudo apt update
 ```
 
-### 4.5 Adicionar o usuário atual ao grupo mysql, permitindo que ele tenha permissões adicionais para acessar os recursos do MySQL
+### 4.5 Agregar el usuario actual al grupo mysql, permitiendo que tenga permisos adicionales para acceder a los recursos del MySQL
 
 ```
 sudo usermod -aG mysql ${USER}
 ```
 
-### 4.6 Realizar a "troca de login" para o usuário atual, carregando as variáveis de ambiente e configurações de login como se o usuário tivesse feito um novo login.
+### 4.6 Realizar el "cambio de login" para el usuario actual, cargando las variables de entorno y configuraciones de login como si el usuario hubiera hecho un nuevo login.
 
 ```bash
 su - ${USER}
 ```
 
-## Seção 5: Instalação do Chrome e Dependências
+## Sección 5: Instalación del Chrome y Dependencias
 
-### 5.1 Instalando bibliotecas necessárias para o Chrome
+### 5.1 Instalando bibliotecas necesarias para el Chrome
 
 ```
 sudo apt-get install -y libgbm-dev wget unzip fontconfig locales gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils
 ```
 
-### 5.2 Baixando o Google Chrome
+### 5.2 Descargando el Google Chrome
 
 ```
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 ```
 
-### 5.3 Instalando o Google Chrome
+### 5.3 Instalando el Google Chrome
 
 ```
 sudo apt install ./google-chrome-stable_current_amd64.deb
 ```
 
-## Seção 5: Instalação do ProIT CRM®
+## Sección 6: Instalación del ProIT CRM®
 
-### 6.1 Baixando o repositório do ProIT CRM®
+### 6.1 Descargando el repositorio del ProIT CRM®
 
 ```
 git clone https://github.com/Re1M0n/proit-press.git ProIT-CRM
 ```
 
-## Seção 7: Configuração do Backend
+> El repositorio se clona desde la rama `main`, que es la rama de despliegue oficial.
 
-### 7.2 Gerando as chaves JWT_SECRET e JWT_REFRESH_SECRET (rodar o comando duas vezes)
+## Sección 7: Configuración del Backend
+
+### 7.1 Generando las claves JWT_SECRET y JWT_REFRESH_SECRET (ejecutar el comando dos veces)
 
 ```
 openssl rand -base64 32
 ```
 
-### 7.3 Editar os dados abaixo usando suas informações e os valores gerados pelo comando anterior.
+### 7.2 Editar los datos de abajo usando tu información y los valores generados por el comando anterior.
 
 ```bash
 NODE_ENV=production
 
-#Nome da Instalação
+#Nombre de la Instalación
 COMPANY_NAME=press_ticket
 
-#Nome do Dispositivo
+#Nombre del Dispositivo
 DEVICE_NAME=
 
-#URLs e Portas
+#URLs y Puertos
 BACKEND_URL=https://back.pressticket.com.ar
 FRONTEND_URL=https://ticket.pressticket.com.ar
 WEBHOOK=https://back.pressticket.com.ar
 PORT=4000
 PROXY_PORT=443
 
-#Caminho do Chrome
+#Ruta de Chrome
 CHROME_BIN=/usr/bin/google-chrome-stable
 
-#Dados de acesso ao Banco de dados
+#Datos de acceso a la Base de datos
 DB_DIALECT=mysql
 DB_HOST=localhost
 DB_TIMEZONE=-03:00
@@ -209,103 +211,105 @@ DB_USER=root
 DB_PASS=senha_root
 DB_NAME=press_ticket
 
-#Limitar Usuários e Conexões
+#Limitar Usuarios y Conexiones
 USER_LIMIT=3
 CONNECTIONS_LIMIT=1
 
-#Credenciais do Email para o Nodemailer
-EMAIL_USER=seu.email@gmail.com
-EMAIL_PASS=suasenha
+#Credenciales del Email para el Nodemailer
+EMAIL_USER=tu.email@gmail.com
+EMAIL_PASS=tucontraseña
 
-#ID do PM2 do Frontend e Backend para poder ser restartado na tela de Conexões
+#ID del PM2 del Frontend y Backend para poder ser reiniciado en la pantalla de Conexiones
 PM2_FRONTEND=1
 PM2_BACKEND=0
 
-#Modo DEMO que evita alterar algumas funções, para ativar: ON
+#Modo DEMO que evita modificar algunas funciones, para activar: ON
 DEMO=OFF
 
-#Permitir a rotação de tokens
+#Permitir la rotación de tokens
 JWT_SECRET=JYszCWFNE0kmbbb0w/dvMl66zDd1GZozzaC27dKOCDY=
 JWT_REFRESH_SECRET=FwJXkGgXv7ARfxPRb7/6RdNmtXJlR4PsQvvw8VIbOho=
 ```
 
-### 7.4 Editando o arquivo .env
+### 7.3 Editando el archivo .env
 
-Abra o arquivo .env e preencha com as informações geradas:
+Abre el archivo .env y complétalo con la información generada:
 
 ```
 nano ProIT-CRM/backend/.env
 ```
 
-### 7.5 Acessando o diretório do backend
+### 7.4 Accediendo al directorio del backend
 
 ```
 cd ProIT-CRM/backend
 ```
 
-### 7.6 Instalando as dependências
+### 7.5 Instalando las dependencias
 
 ```
 npm install
 ```
 
-### 7.7 Compilando o backend
+### 7.6 Compilando el backend
 
 ```
 npm run build
 ```
 
-### 7.8 Criando as tabelas no banco de dados
+### 7.7 Creando las tablas en la base de datos
 
 ```
 npx sequelize db:migrate
 ```
 
-### 7.9 Inserindo dados nas tabelas
+### 7.8 Insertando datos en las tablas
 
 ```
 npx sequelize db:seed:all
 ```
 
-### 7.10 Instalando o PM2
+> Ambos comandos son idempotentes: si las migraciones o los datos iniciales ya existen, no se vuelven a aplicar.
+
+### 7.9 Instalando el PM2
 
 ```
 sudo npm install -g pm2
 ```
 
-### 7.11 Inicia o backend usando PM2, atribuindo o nome "ProIT-CRM-backend" ao processo
+### 7.10 Inicia el backend usando PM2, asignando el nombre "ProIT-CRM-backend" al proceso
 
 ```
 pm2 start dist/server.js --name ProIT-CRM-backend
 ```
 
-### 7.12 Configura o PM2 para que todos os processos gerenciados por ele iniciem automaticamente quando o Ubuntu for reiniciado, usando o usuário deploy
+### 7.11 Configura el PM2 para que todos los procesos gestionados por él se inicien automáticamente cuando Ubuntu sea reiniciado, usando el usuario deploy
 
 ```
 pm2 startup ubuntu -u deploy
 ```
 
-### 7.13 Configura o PM2 para iniciar automaticamente no boot do sistema, usando o usuário deploy e garantindo que o PATH esteja configurado corretamente
+### 7.12 Configura el PM2 para iniciar automáticamente en el boot del sistema, usando el usuario deploy y asegurando que el PATH esté configurado correctamente
 
 ```
 sudo env PATH=$PATH:/usr/bin pm2 startup ubuntu -u deploy --hp /home/deploy
 ```
 
-## Seção 8: Configuração do Frontend
+## Sección 8: Configuración del Frontend
 
-### 8.1 Acessando o diretório do frontend
+### 8.1 Accediendo al directorio del frontend
 
 ```
 cd ../frontend
 ```
 
-### 8.2 Instalando as dependências
+### 8.2 Instalando las dependencias
 
 ```
 npm install
 ```
 
-### 8.3 Editar os dados abaixo usando suas informações
+### 8.3 Editar los datos de abajo usando tu información
 
 ```bash
 NODE_ENV=production
@@ -313,63 +317,63 @@ NODE_ENV=production
 #URL BACKEND
 REACT_APP_BACKEND_URL=https://back.pressticket.com.ar
 
-#Tempo de encerramento automático dos tickets em horas
+#Tiempo de cierre automático de los tickets en horas
 REACT_APP_HOURS_CLOSE_TICKETS_AUTO=
 
-#PORTA do frontend
+#PUERTO del frontend
 PORT=3000
 
-#Para permitir acesso apenas do MasterAdmin (sempre ON)
+#Para permitir acceso solo del MasterAdmin (siempre ON)
 REACT_APP_MASTERADMIN=OFF
 ```
 
-### 8.4 Editando o arquivo .env do frontend usando os dados do item 8.3
+### 8.4 Editando el archivo .env del frontend usando los datos del punto 8.3
 
 ```
 nano .env
 ```
 
-### 8.5 Compilando o frontend
+### 8.5 Compilando el frontend
 
 ```
 npm run build
 ```
 
-### 8.6 Iniciando o frontend com PM2
+### 8.6 Iniciando el frontend con PM2
 
 ```
 pm2 start server.js --name ProIT-CRM-frontend
 ```
 
-### 8.7 Salvando os serviços iniciados pelo PM2
+### 8.7 Guardando los servicios iniciados por el PM2
 
 ```
 pm2 save
 ```
 
-### 8.8 Listar os serviços iniciados pelo PM2
+### 8.8 Listar los servicios iniciados por el PM2
 
 ```
 pm2 list
 ```
 
-## Seção 9: Configuração do Nginx
+## Sección 9: Configuración del Nginx
 
-### 9.1 Instalando o Nginx
+### 9.1 Instalando el Nginx
 
 ```
 sudo apt install nginx
 ```
 
-### 9.2 Criando e editando o arquivo de configuração do frontend
+### 9.2 Creando y editando el archivo de configuración del frontend
 
 ```
 sudo nano /etc/nginx/sites-available/ProIT-CRM-frontend
 ```
 
-Preencha com as informações abaixo, atualizando as informações de acordo com o seu domínio:
+Complétalo con la información de abajo, actualizando los datos según tu dominio:
 
-**IMPORTANTE**: A configuração abaixo já inclui os **Security Headers** para garantir nota A no [SecurityHeaders.com](https://securityheaders.com)
+**IMPORTANTE**: La configuración de abajo ya incluye los **Security Headers** para garantizar nota A en [SecurityHeaders.com](https://securityheaders.com)
 
 ```
 server {
@@ -397,15 +401,15 @@ server {
 }
 ```
 
-**Nota**: Lembre-se de substituir `back.pressticket.com.ar` no `Content-Security-Policy` pela URL real do seu backend!
+**Nota**: Recuerda reemplazar `back.pressticket.com.ar` en el `Content-Security-Policy` por la URL real de tu backend!
 
-### 9.3 Criando e editando o arquivo de configuração do backend
+### 9.3 Creando y editando el archivo de configuración del backend
 
 ```
 sudo nano /etc/nginx/sites-available/ProIT-CRM-backend
 ```
 
-Preencha com as informações abaixo atualizando as informações de acordo com o seu domínio:
+Complétalo con la información de abajo, actualizando los datos según tu dominio:
 
 ```
 server {
@@ -424,19 +428,19 @@ server {
 }
 ```
 
-### 9.4 Acessar a pasta onde os arquivos foram criados
+### 9.4 Acceder a la carpeta donde se crearon los archivos
 
 ```
 cd /etc/nginx/sites-available/
 ```
 
-### 9.5 Listar para conferir se foram criados corretamente os arquivos
+### 9.5 Listar para comprobar que los archivos se crearon correctamente
 
 ```
 ls
 ```
 
-### 9.6 Criando links simbólicos
+### 9.6 Creando enlaces simbólicos
 
 Frontend
 
@@ -450,77 +454,71 @@ Backend
 sudo ln -s /etc/nginx/sites-available/ProIT-CRM-backend /etc/nginx/sites-enabled
 ```
 
-### 9.7 Acessar a pasta onde os links foram criados
+### 9.7 Acceder a la carpeta donde se crearon los enlaces
 
 ```
 cd /etc/nginx/sites-enabled/
 ```
 
-### 9.8 Listar para conferir se foram criados corretamente os links
+### 9.8 Listar para comprobar que los enlaces se crearon correctamente
 
 ```
 ls
 ```
 
-### 9.9 Testando o Nginx
+### 9.9 Probando el Nginx
 
 ```
 sudo nginx -t
 ```
 
-### 9.10 Reiniciando o Nginx
+### 9.10 Reiniciando el Nginx
 
 ```
 sudo service nginx restart
 ```
 
-### 9.11 Editar o arquivo de configuração do nginx com o comando abaixo e preencher com os dados do item 9.12
+### 9.11 Editar el archivo de configuración del nginx con el comando de abajo y completar con los datos del punto 9.12
 
 ```
 sudo nano /etc/nginx/nginx.conf
 ```
 
-### 9.12 Incluir no arquivos de configuração do nginx dentro do http no item 9.11
+### 9.12 Incluir en el archivo de configuración del nginx, dentro de http, el dato del punto 9.11
 
 ```
 client_max_body_size 100M;
 ```
 
-### 9.13 Testando o Nginx
+### 9.13 Probando el Nginx
 
 ```
 sudo nginx -t
 ```
 
-### 9.14 Reiniciando o Nginx
+### 9.14 Reiniciando el Nginx
 
 ```
 sudo service nginx restart
 ```
 
-## Seção 10: Instalação de Certificado SSL
+## Sección 10: Instalación del Certificado SSL
 
-### 10.1 Instalando suporte a Snap e Certbot
+### 10.1 Instalando soporte para Snap y Certbot
 
 ```
 sudo apt-get install snapd
 ```
 
-### 10.2 Instalar o pacote do notes
-
-```
-sudo snap install notes
-```
-
-### 10.3 Instalar o pacote do certbot(SSL)
+### 10.2 Instalar el paquete del Certbot (SSL)
 
 ```
 sudo snap install --classic certbot
 ```
 
-### 10.2 Gerando certificado SSL para backend e frontend
+### 10.3 Generando el certificado SSL para backend y frontend
 
-Executar o comando e ativar o certificado SSL separadamente para cada um dos subdomínios.
+Ejecutar el comando y activar el certificado SSL por separado para cada uno de los subdominios.
 
 ```
 sudo certbot --nginx
@@ -528,29 +526,29 @@ sudo certbot --nginx
 
 ---
 
-# Seção 11: Usuário padrão para Acesso do Admin
+# Sección 11: Usuario estándar para Acceso del Admin
 
-Usuário:
+Usuario:
 
 ```
 admin@pressticket.com.ar
 ```
 
-Senha:
+Contraseña:
 
 ```
 admin
 ```
 
-# Seção 12: Usuário padrão para Acesso do MasterAdmin
+# Sección 12: Usuario estándar para Acceso del MasterAdmin
 
-Usuário:
+Usuario:
 
 ```
 masteradmin@pressticket.com.ar
 ```
 
-Senha:
+Contraseña:
 
 ```
 masteradmin
@@ -558,13 +556,13 @@ masteradmin
 
 ---
 
-# Seção 13: Verificação de Security Headers
+# Sección 13: Verificación de Security Headers
 
-Após a instalação completa e configuração do SSL, você pode verificar a segurança do seu sistema:
+Después de la instalación completa y la configuración del SSL, podés verificar la seguridad de tu sistema:
 
-### 13.1 Testar Security Headers
+### 13.1 Probar Security Headers
 
-Acesse o site [SecurityHeaders.com](https://securityheaders.com) e teste seu domínio frontend:
+Accede al sitio [SecurityHeaders.com](https://securityheaders.com) y prueba tu dominio frontend:
 
 ```
 https://securityheaders.com/?q=https://front.pressticket.com.ar
@@ -572,13 +570,13 @@ https://securityheaders.com/?q=https://front.pressticket.com.ar
 
 **Resultado esperado**: Nota **A** 🎉
 
-### 13.2 Verificar Headers via Terminal
+### 13.2 Verificar Headers vía Terminal
 
 ```bash
 curl -I https://front.pressticket.com.ar/ | grep -i "x-frame\|content-security\|permissions"
 ```
 
-Você deve ver os seguintes headers:
+Deberías ver los siguientes headers:
 - `X-Frame-Options: SAMEORIGIN`
 - `X-Content-Type-Options: nosniff`
 - `X-XSS-Protection: 1; mode=block`
@@ -586,32 +584,32 @@ Você deve ver os seguintes headers:
 - `Permissions-Policy: geolocation=()...`
 - `Content-Security-Policy: default-src 'self'...`
 
-### 13.3 Verificar Ausência de Duplicação
+### 13.3 Verificar Ausencia de Duplicación
 
 ```bash
 curl -I https://front.pressticket.com.ar/ | grep -c "X-Frame-Options"
 ```
 
-**Resultado esperado**: `1` (não deve retornar `2` ou mais)
+**Resultado esperado**: `1` (no debe devolver `2` o más)
 
-### 13.4 Sobre os Security Headers
+### 13.4 Sobre los Security Headers
 
-Os security headers configurados no Nginx do frontend garantem:
+Los security headers configurados en el Nginx del frontend garantizan:
 
-- ✅ **X-Frame-Options**: Previne clickjacking
-- ✅ **X-Content-Type-Options**: Previne MIME sniffing
-- ✅ **X-XSS-Protection**: Proteção contra XSS (legacy)
-- ✅ **Referrer-Policy**: Controla informações do Referer
-- ✅ **Permissions-Policy**: Bloqueia recursos sensíveis (câmera, microfone, geolocalização)
-- ✅ **Content-Security-Policy**: Controla fontes de recursos e previne XSS
+- ✅ **X-Frame-Options**: Previene clickjacking
+- ✅ **X-Content-Type-Options**: Previene MIME sniffing
+- ✅ **X-XSS-Protection**: Protección contra XSS (legacy)
+- ✅ **Referrer-Policy**: Controla la información del Referer
+- ✅ **Permissions-Policy**: Bloquea recursos sensibles (cámara, micrófono, geolocalización)
+- ✅ **Content-Security-Policy**: Controla fuentes de recursos y previene XSS
 
-**Nota sobre CSP**: O aviso sobre `unsafe-inline` e `unsafe-eval` é esperado e necessário para o React funcionar corretamente. Isso não compromete a nota A.
+**Nota sobre CSP**: El aviso sobre `unsafe-inline` y `unsafe-eval` es esperado y necesario para que React funcione correctamente. Eso no compromete la nota A.
 
-### 13.5 Comportamento do server.js
+### 13.5 Comportamiento del server.js
 
-O `server.js` do frontend detecta automaticamente o ambiente:
+El `server.js` del frontend detecta automáticamente el ambiente:
 
-- **Produção** (`NODE_ENV=production`): Headers desabilitados no Helmet, pois o Nginx já os envia
-- **Desenvolvimento** (localhost): Headers habilitados no Helmet, pois não há Nginx
+- **Producción** (`NODE_ENV=production`): Headers deshabilitados en el Helmet, porque el Nginx ya los envía
+- **Desarrollo** (localhost): Headers habilitados en el Helmet, porque no hay Nginx
 
-Isso evita duplicação de headers em produção e garante segurança em desenvolvimento.
+Eso evita la duplicación de headers en producción y garantiza seguridad en desarrollo.

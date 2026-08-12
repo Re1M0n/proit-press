@@ -1,53 +1,61 @@
-# Alterar o Horário da VPS pelo Terminal
+# Cambiar la Hora de la VPS desde el Terminal
 
-> **Observação:** Este tutorial deve ser seguido quando houver problemas relacionados a horário, como falhas em implementações que dependem do fuso horário correto da VPS.
+> **Observación:** Este tutorial debe seguirse cuando haya problemas relacionados con la hora, como fallas en implementaciones que dependen de la zona horaria correcta de la VPS.
 
 ---
 
-## Passos para Alterar o Fuso Horário
+## Pasos para cambiar la zona horaria
 
-### 1. Verificar a hora atual da VPS
+### 1. Verificar la hora actual de la VPS
 
-Para verificar o horário atual configurado na sua VPS, execute o seguinte comando no terminal:
+Para verificar la hora configurada actualmente en tu VPS, ejecuta el siguiente comando en el terminal:
 
 ```bash
 date
 ```
 
-### 2. Alterar o fuso horário da VPS
+### 2. Cambiar la zona horaria de la VPS
 
-Para alterar o fuso horário, utilize o seguinte comando:
+Para cambiar la zona horaria, usa el siguiente comando:
 
 ```bash
 sudo dpkg-reconfigure tzdata
 ```
 
-### 3. Escolher o continente
+### 3. Elegir el continente
 
-Após rodar o comando acima, será exibida uma tela de configuração. Na primeira etapa, selecione o continente correspondente ao seu fuso horário. No caso de fuso horário de América, escolha:
+Después de ejecutar el comando anterior, se mostrará una pantalla de configuración. En el primer paso, selecciona el continente correspondiente a tu zona horaria. Para el horario de América, elige:
 
 ```bash
 America
 ```
 
-### 4. Selecionar a cidade
+### 4. Seleccionar la ciudad
 
-Na próxima tela, selecione a cidade que corresponde ao seu fuso horário. Por exemplo, para o horário de São Paulo, escolha:
+En la siguiente pantalla, selecciona la ciudad que corresponde a tu zona horaria. Por ejemplo, para el horario de Argentina (Buenos Aires), elige:
 
 ```bash
-Sao_Paulo
+Argentina
 ```
 
-### 5. Verificar a alteração
-
-Após concluir a seleção, o sistema exibirá uma mensagem confirmando que o fuso horário foi alterado com sucesso. A saída será algo similar a:
+y luego:
 
 ```bash
-Current default time zone: 'America/Sao_Paulo'
+Buenos_Aires
+```
+
+> El instalador del sistema ProIT CRM usa por defecto la zona horaria `America/Argentina/Buenos_Aires`. Te recomendamos usar la misma zona en la VPS para que los horarios registrados coincidan.
+
+### 5. Verificar el cambio
+
+Después de completar la selección, el sistema mostrará un mensaje confirmando que la zona horaria se cambió correctamente. La salida será similar a:
+
+```bash
+Current default time zone: 'America/Argentina/Buenos_Aires'
 Local time is now:      Tue Mar 20 08:21:57 -03 2018.
 Universal Time is now:  Tue Mar 20 11:21:57 UTC 2018.
 ```
 
 ---
 
-Agora o fuso horário da sua VPS estará configurado corretamente de acordo com sua localização.
+Ahora la zona horaria de tu VPS quedará configurada correctamente según tu ubicación.
