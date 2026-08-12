@@ -213,7 +213,7 @@ const CpuUsage = () => {
               <Box display="flex" alignItems="center">
                 <CpuIcon className={classes.infoIcon} />
                 <Typography variant="h5" fontWeight="600">
-                  {t('cpuUsage.systemCpu')}
+                  {t('cpuUsage.systemCpu', 'CPU del sistema')}
                 </Typography>
               </Box>
               <Box 
@@ -241,7 +241,7 @@ const CpuUsage = () => {
                   fontWeight="bold"
                   fontSize="0.95rem"
                 >
-                  {cpuInfo.cpuUsage < 70 ? 'Saludable' : cpuInfo.cpuUsage < 90 ? 'Alerta' : 'Crítico'}
+                  {cpuInfo.cpuUsage < 70 ? t('cpuUsage.statusHealthy', 'Saludable') : cpuInfo.cpuUsage < 90 ? t('cpuUsage.statusWarning', 'Alerta') : t('cpuUsage.statusCritical', 'Crítico')}
                 </Typography>
               </Box>
             </Box>
@@ -249,7 +249,7 @@ const CpuUsage = () => {
             <Box mb={1}>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={1.5}>
                 <Typography variant="body1" fontWeight="500" fontSize="1.1rem">
-                  Uso da CPU
+                  {t('cpuUsage.cpuUsage', 'Uso de CPU')}
                 </Typography>
                 <Typography 
                   variant="h6" 
@@ -259,7 +259,7 @@ const CpuUsage = () => {
                   {cpuInfo.cpuUsage}%
                 </Typography>
               </Box>
-              <Tooltip title={`${cpuInfo.cpuUsage}% em uso`}>
+              <Tooltip title={`${cpuInfo.cpuUsage}% en uso`}>
                 <LinearProgress 
                   className={classes.progressBar}
                   variant="determinate" 

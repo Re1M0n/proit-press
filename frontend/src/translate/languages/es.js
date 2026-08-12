@@ -474,7 +474,10 @@ const messages = {
       cpuUsage: "Uso de CPU",
       cpuTime: "Tiempo de CPU",
       noProcessesFound: "No se encontraron procesos",
-      systemCpu: "CPU del sistema"
+      systemCpu: "CPU del sistema",
+      statusHealthy: "Saludable",
+      statusWarning: "Alerta",
+      statusCritical: "Crítico"
     },
     dashboard: {
       messages: {
