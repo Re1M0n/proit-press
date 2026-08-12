@@ -422,7 +422,7 @@ const ActivityLogs = () => {
       
       toast.success("¡Logs exportados con éxito!");
     } catch (err) {
-      toast.error("Erro ao exportar logs");
+      toast.error("Error al exportar los logs");
       console.error(err);
     }
   };

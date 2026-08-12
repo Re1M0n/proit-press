@@ -469,6 +469,7 @@ const messages = {
         cpuUsage: "Uso de CPU",
         cpuTime: "Tempo de CPU",
         noProcessesFound: "Nenhum processo encontrado",
+        systemCpu: "CPU do sistema",
       },
       dashboard: {
         messages: {
@@ -1857,6 +1858,9 @@ const messages = {
         errors: "Erros",
         checkConnections: "Verificar Conexões",
         databaseStatus: "Status do Banco de Dados",
+        connectedSessions: "Sessões conectadas",
+        disconnectedSessions: "Sessões desconectadas",
+        whatsappConnections: "Conexões do WhatsApp",
         databaseResponseTime: "Tempo de Resposta do Banco",
         databaseConnections: "Conexões ao Banco de Dados",
         whatsappStatus: "Status das Conexões WhatsApp",
@@ -2003,7 +2007,13 @@ const messages = {
         logDetails: "Detalhes do Log",
         basicInfo: "Informações Básicas",
         ip: "IP",
-        close: "Fechar"
+        close: "Fechar",
+        allActions: "Todas as ações",
+        allUsers: "Todos os usuários",
+        applyFilters: "Aplicar filtros",
+        clearFilters: "Limpar filtros",
+        detailsError: "Erro ao carregar os detalhes",
+        loadError: "Erro ao carregar os logs"
       },
       systemUpdate: {
         title: "Atualizações do Sistema",
@@ -2016,6 +2026,8 @@ const messages = {
         updateAvailable: "Atualização Disponível",
         systemUpdated: "Sistema Atualizado",
         upToDate: "Atualizado",
+        outdated: "Sistema desatualizado",
+        updated: "Sistema atualizado",
         lastChecked: "Última verificação",
         releaseNotes: "Notas da Versão",
         installUpdate: "Instalar Atualização",

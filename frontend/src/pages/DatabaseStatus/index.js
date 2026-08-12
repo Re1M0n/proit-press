@@ -145,7 +145,7 @@ const DatabaseStatus = () => {
       setDbInfo(data);
       setError(null);
     } catch (err) {
-      console.error('Erro ao obter dados do banco de dados:', err);
+      console.error('Error al obtener los datos de la base de datos:', err);
       setError(err.message || 'Error al cargar la información de la base de datos');
       toastError(err, t);
     } finally {

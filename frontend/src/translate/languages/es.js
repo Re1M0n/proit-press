@@ -473,7 +473,8 @@ const messages = {
       user: "Usuario",
       cpuUsage: "Uso de CPU",
       cpuTime: "Tiempo de CPU",
-      noProcessesFound: "No se encontraron procesos"
+      noProcessesFound: "No se encontraron procesos",
+      systemCpu: "CPU del sistema"
     },
     dashboard: {
       messages: {
@@ -675,14 +676,24 @@ const messages = {
         startDate: "Fecha inicial",
         endDate: "Fecha final",
         all: "Todos",
-        cancel: "Cancelar"
+        cancel: "Cancelar",
+        reset: "Limpiar",
+        apply: "Aplicar"
       },
       delete: {
         title: "Eliminar Logs Antiguos",
         cancel: "Cancelar",
-        confirm: "Eliminar"
+        confirm: "Eliminar",
+        confirmation: "Esta acción eliminará todos los logs de más de 30 días. Esta acción no se puede deshacer. ¿Desea continuar?"
       },
       detail: {
+        title: "Detalles del log",
+        loading: "Cargando detalles...",
+        component: "Componente",
+        url: "URL",
+        user: "Nombre del usuario",
+        userAgent: "Navegador",
+        stack: "Stack Trace",
         close: "Cerrar"
       },
       noLogsToDownload: "No hay logs para descargar",
@@ -705,7 +716,15 @@ const messages = {
         cancel: "Cancelar",
         applyFilters: "Aplicar filtros",
         confirm: "Confirmar"
-      }
+      },
+      fetchError: "Error al cargar los logs",
+      loadMoreError: "Error al cargar más logs",
+      deleteError: "Error al eliminar los logs antiguos",
+      deleteSuccess: "Logs antiguos eliminados con éxito",
+      detailError: "Error al buscar los detalles del log",
+      downloadError: "Error al descargar los logs",
+      downloadSuccess: "Logs descargados con éxito",
+      usingLocalLog: "Usando el log almacenado localmente"
     },
     "Banco": "Base de datos",
     "Comando": "Comando",
@@ -1928,6 +1947,9 @@ const messages = {
       errors: "Errores",
       checkConnections: "Verificar conexiones",
       databaseStatus: "Estado de la base de datos",
+      connectedSessions: "Sesiones conectadas",
+      disconnectedSessions: "Sesiones desconectadas",
+      whatsappConnections: "Conexiones de WhatsApp",
       databaseResponseTime: "Tiempo de respuesta de la base",
       databaseConnections: "Conexiones a la base de datos",
       whatsappStatus: "Estado de las conexiones WhatsApp",
@@ -2074,7 +2096,13 @@ const messages = {
       logDetails: "Detalles del log",
       basicInfo: "Información básica",
       ip: "IP",
-      close: "Cerrar"
+      close: "Cerrar",
+      allActions: "Todas las acciones",
+      allUsers: "Todos los usuarios",
+      applyFilters: "Aplicar filtros",
+      clearFilters: "Limpiar filtros",
+      detailsError: "Error al cargar los detalles",
+      loadError: "Error al cargar los logs"
     },
     systemUpdate: {
       title: "Actualizaciones del sistema",
@@ -2087,6 +2115,8 @@ const messages = {
       updateAvailable: "Actualización disponible",
       systemUpdated: "Sistema actualizado",
       upToDate: "Actualizado",
+      outdated: "Sistema desactualizado",
+      updated: "Sistema actualizado",
       lastChecked: "Última verificación",
       releaseNotes: "Notas de la versión",
       installUpdate: "Instalar actualización",

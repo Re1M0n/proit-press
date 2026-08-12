@@ -332,7 +332,7 @@ const DiskSpace = () => {
       setFolderContents(prev => new Map(prev.set(folderPath, data)));
       return data;
     } catch (err) {
-      console.error('Erro ao carregar conteúdo da pasta:', err);
+      console.error('Error al cargar el contenido de la carpeta:', err);
       toastError(err, t);
       return [];
     }

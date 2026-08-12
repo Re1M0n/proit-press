@@ -542,7 +542,7 @@ const SystemUpdate = () => {
         needsUpdate: data.needsUpdate || prevState.needsUpdate
       }));
     } catch (err) {
-      console.error("Erro ao buscar versão atual:", err);
+      console.error("Error al buscar la versión actual:", err);
     }
   }, []);
 
@@ -879,7 +879,7 @@ const SystemUpdate = () => {
                       <StatusBadge 
                         statusType={updateInfo.needsUpdate ? "error" : "success"}
                         icon={updateInfo.needsUpdate ? <WarningIcon /> : <CheckCircleIcon />}
-                        label={updateInfo.needsUpdate ? "Sistema Desatualizado" : "Sistema Atualizado"}
+                        label={updateInfo.needsUpdate ? t("systemUpdate.outdated", "Sistema desactualizado") : t("systemUpdate.updated", "Sistema actualizado")}
                         size="medium"
                       />
                     </Box>
@@ -1050,12 +1050,12 @@ const SystemUpdate = () => {
               <Box flex={1}>
                 <Box display="flex" alignItems="center" gap={2} mb={1}>
                   <Typography variant="h5" fontWeight={700}>
-                    Sistema Atualizado
+                    {t("systemUpdate.updated", "Sistema actualizado")}
                   </Typography>
                   <StatusBadge
                     statusType="success"
                     icon={<CheckCircleIcon />}
-                    label="Tudo Certo"
+                    label={t("systemUpdate.upToDate", "Actualizado")}
                     size="small"
                   />
                 </Box>
@@ -1177,7 +1177,7 @@ const SystemUpdate = () => {
               onClick={getBackups}
               sx={{ borderRadius: 2 }}
             >
-              {t("systemUpdate.refreshBackups") || "Atualizar Lista"}
+              {t("systemUpdate.refreshBackups") || "Actualizar lista"}
             </ActionButton>
           </CardActions>
         </StyledCard>

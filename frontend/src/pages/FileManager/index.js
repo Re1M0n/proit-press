@@ -366,7 +366,7 @@ const FileManager = () => {
                     onClick={handleDownloadSelected}
                     sx={{ mr: 1 }}
                   >
-                    Baixar Selecionados
+                    Descargar Seleccionados
                   </Button>
                   <Button
                     variant="contained"
@@ -452,7 +452,7 @@ const FileManager = () => {
                             </IconButton>
                           </Tooltip>
                         )}
-                        <Tooltip title="Baixar">
+                        <Tooltip title="Descargar">
                           <IconButton
                             size="small"
                             onClick={() => handleDownload(file.path)}
@@ -531,9 +531,9 @@ const FileManager = () => {
                 alt={previewFile.name}
                 style={{ maxWidth: '100%', maxHeight: '70vh', objectFit: 'contain' }}
                 onError={(e) => {
-                  console.error('Erro ao carregar imagem');
+                  console.error('Error al cargar la imagen');
                   e.target.src = '';
-                  e.target.alt = 'Erro ao carregar imagem';
+                  e.target.alt = 'Error al cargar la imagen';
                 }}
               />
             </Box>
@@ -545,7 +545,7 @@ const FileManager = () => {
                 autoPlay
                 style={{ maxWidth: '100%', maxHeight: '70vh' }}
                 onError={(e) => {
-                  console.error('Erro ao carregar vídeo');
+                  console.error('Error al cargar el video');
                 }}
               >
                 <source src={previewFile.blobUrl} />
@@ -564,7 +564,7 @@ const FileManager = () => {
                 autoPlay
                 style={{ width: '100%', maxWidth: '500px' }}
                 onError={(e) => {
-                  console.error('Erro ao carregar áudio');
+                  console.error('Error al cargar el audio');
                 }}
               >
                 <source src={previewFile.blobUrl} />

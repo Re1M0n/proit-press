@@ -140,7 +140,7 @@ const ApiKey = () => {
             setPageNumber(page);
         } catch (err) {
             console.error(err);
-            toast.error('Erro ao carregar tokens');
+            toast.error('Error al cargar los tokens');
         } finally {
             setLoading(false);
         }

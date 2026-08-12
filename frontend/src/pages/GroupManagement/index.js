@@ -114,7 +114,7 @@ const GroupManagement = () => {
         setSelectedWhatsappId(wwebjs[0].id);
       }
     } catch (err) {
-      toast.error("Erro ao carregar canais");
+      toast.error("Error al cargar los canales");
     }
   };
 
@@ -124,7 +124,7 @@ const GroupManagement = () => {
       const { data } = await api.get(`/whatsapp/${selectedWhatsappId}/groups`);
       setGroups(data);
     } catch (err) {
-      toast.error("Erro ao carregar grupos");
+      toast.error("Error al cargar los grupos");
     }
     setLoading(false);
   };
@@ -150,9 +150,9 @@ const GroupManagement = () => {
       );
       
       navigator.clipboard.writeText(data.inviteLink);
-      toast.success("Link de convite copiado!");
+      toast.success("¡Enlace de invitación copiado!");
     } catch (err) {
-      toast.error("Erro ao obter link de convite");
+      toast.error("Error al obtener el enlace de invitación");
     }
   };
 
@@ -166,7 +166,7 @@ const GroupManagement = () => {
       toast.success("Saliste del grupo con éxito");
       loadGroups();
     } catch (err) {
-      toast.error("Erro ao sair do grupo");
+      toast.error("Error al salir del grupo");
     }
   };
 

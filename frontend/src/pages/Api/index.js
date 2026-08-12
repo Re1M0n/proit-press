@@ -329,8 +329,8 @@ const Api = () => {
             setMedia(null);
 
         } catch (error) {
-            console.error("Erro ao enviar mensagem:", error);
-            toast.error(`Erro ao enviar mensagem: ${error.response?.data?.message || error.message}`);
+            console.error("Error al enviar mensaje:", error);
+            toast.error(`Error al enviar mensaje: ${error.response?.data?.message || error.message}`);
         }
     };
 
@@ -346,7 +346,7 @@ const Api = () => {
                             </PermissionTag>
 
                             <SubTitle variant="h6">Métodos de Envío</SubTitle>
-                            <ListItem>Mensagens de Texto</ListItem>
+                            <ListItem>Mensajes de Texto</ListItem>
                             <ListItem>Mensajes Multimedia</ListItem>
 
                             <Divider sx={{ my: 2 }} />
@@ -377,7 +377,7 @@ const Api = () => {
 
                             <Divider sx={{ my: 2 }} />
 
-                            <SubTitle variant="h6">1. Mensagens de Texto</SubTitle>
+                            <SubTitle variant="h6">1. Mensajes de Texto</SubTitle>
                             <Typography variant="body2" sx={{ mb: 2 }}>
                                 Información necesaria para el envío de mensajes de texto:
                             </Typography>
@@ -396,7 +396,7 @@ const Api = () => {
                             <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Headers:</Typography>
                             <ApiHeader>
                                 <Typography variant="body2" fontFamily="monospace">
-                                    x-api-token: [seu_token]<br />
+                                    x-api-token: [tu_token]<br />
                                     Content-Type: application/json
                                 </Typography>
                             </ApiHeader>
@@ -405,7 +405,7 @@ const Api = () => {
                             <CodeBlock>
 {`{
   "number": "5522999999999",
-  "body": "Mensagem de teste via API",
+  "body": "Mensaje de prueba vía API",
   "userId": 1,
   "queueId": 1,
   "whatsappId": 1
@@ -424,10 +424,10 @@ const Api = () => {
                                     <Typography variant="body2"><b>userId:</b> ID del usuario que está enviando el mensaje</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>queueId:</b> ID do Setor</Typography>
+                                    <Typography variant="body2"><b>queueId:</b> ID del Sector</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>whatsappId:</b> ID do Canal WhatsApp(wwebjs)</Typography>
+                                    <Typography variant="body2"><b>whatsappId:</b> ID del Canal WhatsApp (wwebjs)</Typography>
                                 </ListItem>
                             </Box>
 
@@ -452,7 +452,7 @@ const Api = () => {
                             <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Headers:</Typography>
                             <ApiHeader>
                                 <Typography variant="body2" fontFamily="monospace">
-                                    x-api-token: [seu_token]<br />
+                                    x-api-token: [tu_token]<br />
                                     Content-Type: multipart/form-data
                                 </Typography>
                             </ApiHeader>
@@ -461,7 +461,7 @@ const Api = () => {
                             <CodeBlock>
 {`{
   "number": "5522999999999",
-  "body": "Mensagem de teste via API",
+  "body": "Mensaje de prueba vía API",
   "medias": "arquivo.jpg",
   "userId": 1,
   "queueId": 1,
@@ -484,16 +484,16 @@ const Api = () => {
                                     <Typography variant="body2"><b>userId:</b> ID del usuario que está enviando</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>queueId:</b> ID do Setor</Typography>
+                                    <Typography variant="body2"><b>queueId:</b> ID del Sector</Typography>
                                 </ListItem>
                                 <ListItem>
-                                    <Typography variant="body2"><b>whatsappId:</b> ID do Canal WhatsApp(wwebjs)</Typography>
+                                    <Typography variant="body2"><b>whatsappId:</b> ID del Canal WhatsApp (wwebjs)</Typography>
                                 </ListItem>
                             </Box>
 
                             <Divider sx={{ my: 2 }} />
 
-                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Respostas da API:</Typography>
+                            <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>Respuestas de la API:</Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={200}>200</ResponseCode>
@@ -509,7 +509,7 @@ const Api = () => {
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ResponseCode status={500}>500</ResponseCode>
-                                    <Typography variant="body2">Erro interno!</Typography>
+                                    <Typography variant="body2">¡Error interno!</Typography>
                                 </Box>
                             </Box>
                         </InstructionContent>
@@ -521,13 +521,13 @@ const Api = () => {
                             <SectionTitle variant="h5">Enviá Mensajes de Texto o Multimedia</SectionTitle>
                             <form onSubmit={handleSubmit}>
                                 <StyledInput
-                                    label="Token da API"
+                                    label="Token de la API"
                                     variant="outlined"
                                     size="small"
                                     fullWidth
                                     value={manualToken}
                                     onChange={(e) => setManualToken(e.target.value)}
-                                    placeholder="Insira seu token da API aqui (sem 'Bearer')"
+                                    placeholder="Ingresá tu token de la API aquí (sin 'Bearer')"
                                     helperText="Usar solo token con permiso 'create:messages'"
                                 />
                                 <StyledInput
@@ -541,7 +541,7 @@ const Api = () => {
                                     required
                                 />
                                 <StyledInput
-                                    label="Corpo da mensagem"
+                                    label="Cuerpo del mensaje"
                                     variant="outlined"
                                     size="small"
                                     fullWidth
@@ -576,7 +576,7 @@ const Api = () => {
                                     <Grid item xs={12} sm={4}>
                                         <StyledInput
                                         select
-                                        label="Setor"
+                                        label="Sector"
                                         variant="outlined"
                                         size="small"
                                         fullWidth
@@ -622,7 +622,7 @@ const Api = () => {
                                             startIcon={<AttachFileIcon />}
                                             sx={{ mr: 1 }}
                                         >
-                                            Selecionar Arquivo
+                                            Seleccionar Archivo
                                         </Button>
                                     </label>
                                     <FileInput
@@ -647,13 +647,13 @@ const Api = () => {
                                     fullWidth
                                     endIcon={<SendIcon />}
                                 >
-                                    Enviar Mensagem
+                                    Enviar Mensaje
                                 </StyledButton>
                             </form>
                             
                             <Box sx={{ mt: 4, pt: 3, borderTop: '1px dashed', borderColor: 'divider' }}>
                                 <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                                    Gerador de Snippets
+                                    Generador de Snippets
                                 </Typography>
                                 <CodeSnippetGenerator
                                     number={number}

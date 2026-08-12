@@ -171,7 +171,7 @@ const MemoryUsage = () => {
         setMemoryInfo(safeData);
         setError(null);
       } catch (err) {
-        console.error('Erro ao obter dados de memória:', err);
+        console.error('Error al obtener los datos de memoria:', err);
         setError(err.message || 'Error al cargar la información de uso de memoria');
         toastError(err, t);
         

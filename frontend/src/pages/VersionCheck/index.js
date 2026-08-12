@@ -147,7 +147,7 @@ const VersionCheck = () => {
       const notes = await getReleaseNotes(version);
       setReleaseNotes(notes);
     } catch (err) {
-      console.error('Erro ao buscar release notes:', err);
+      console.error('Error al buscar las notas de versión:', err);
     } finally {
       setLoadingReleaseNotes(false);
     }
@@ -313,7 +313,7 @@ const VersionCheck = () => {
             const data = await getVersionInfo();
             setVersionInfo(data);
           } catch (versionError) {
-            console.error('Erro ao obter informações de versão após atualização:', versionError);
+            console.error('Error al obtener la información de versión después de la actualización:', versionError);
           }
         } else {
           toast.error(`Error al actualizar la biblioteca: ${result.error || 'Error desconocido'}`, {
@@ -324,7 +324,7 @@ const VersionCheck = () => {
       } catch (apiError) {
         toast.dismiss(prepToastId);
         
-        console.error('Erro na chamada da API:', apiError);
+        console.error('Error en la llamada a la API:', apiError);
         
         if (apiError.message && apiError.message.includes('Network Error')) {
           toast.info('El servidor se está reiniciando después de la actualización de la biblioteca...', {
@@ -343,7 +343,7 @@ const VersionCheck = () => {
         }
       }
     } catch (err) {
-      console.error('Erro geral:', err);
+      console.error('Error general:', err);
       toast.error('Ocorreu um erro inesperado. Por favor, tente novamente em alguns instantes.', {
         autoClose: false,
         position: "top-right"
@@ -396,7 +396,7 @@ const VersionCheck = () => {
             const data = await getVersionInfo();
             setVersionInfo(data);
           } catch (versionError) {
-            console.error('Erro ao obter informações de versão após atualização:', versionError);
+            console.error('Error al obtener la información de versión después de la actualización:', versionError);
           }
         } else {
           toast.error(`Error al actualizar la biblioteca desde GitHub: ${result.error || 'Error desconocido'}`, {
@@ -407,7 +407,7 @@ const VersionCheck = () => {
       } catch (apiError) {
         toast.dismiss(prepToastId);
         
-        console.error('Erro na chamada da API:', apiError);
+        console.error('Error en la llamada a la API:', apiError);
         
         if (apiError.message && apiError.message.includes('Network Error')) {
           toast.info('El servidor se está reiniciando después de la actualización de la biblioteca...', {
@@ -426,7 +426,7 @@ const VersionCheck = () => {
         }
       }
     } catch (err) {
-      console.error('Erro geral:', err);
+      console.error('Error general:', err);
       toast.error('Ocorreu um erro inesperado. Por favor, tente novamente em alguns instantes.', {
         autoClose: false,
         position: "top-right"

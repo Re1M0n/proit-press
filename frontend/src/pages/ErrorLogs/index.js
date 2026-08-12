@@ -338,7 +338,7 @@ function ErrorLogs() {
 
   useEffect(() => {
     if (!user) {
-      console.error("Usuário não autenticado");
+      console.error("Usuario no autenticado");
       return;
     }
     
@@ -404,7 +404,7 @@ function ErrorLogs() {
       .catch(error => {
         clearTimeout(loadingTimeout);
         setLogs(currentLogs);
-        toast.error('Erro ao carregar mais logs');
+        toast.error(t("errorLogs.loadMoreError", "Error al cargar más logs"));
         setHasMore(false);
       })
       .finally(() => {
@@ -560,8 +560,8 @@ function ErrorLogs() {
       setLoading(true);
       
       if (!ErrorLogService || !ErrorLogService.deleteOldLogs) {
-        console.error("ErrorLogService.deleteOldLogs não está disponível");
-        toast.error(t("errorLogs.deleteError", "Erro ao excluir logs antigos"));
+        console.error("ErrorLogService.deleteOldLogs no está disponible");
+        toast.error(t("errorLogs.deleteError", "Error al eliminar los logs antiguos"));
         setLoading(false);
         return;
       }
@@ -570,8 +570,8 @@ function ErrorLogs() {
       toast.success(t("errorLogs.deleteSuccess", "Logs antiguos eliminados con éxito"));
       fetchLogs();
     } catch (error) {
-      console.error("Erro ao excluir logs antigos:", error);
-      toast.error(t("errorLogs.deleteError", "Erro ao excluir logs antigos"));
+      console.error("Error al eliminar los logs antiguos:", error);
+      toast.error(t("errorLogs.deleteError", "Error al eliminar los logs antiguos"));
     } finally {
       setLoading(false);
       handleCloseDeleteDialog();
@@ -583,8 +583,8 @@ function ErrorLogs() {
       setLoading(true);
       
       if (!ErrorLogService || !ErrorLogService.findById) {
-        console.error("ErrorLogService.findById não está disponível");
-        toast.error(t("errorLogs.detailError", "Erro ao buscar detalhes do log"));
+        console.error("ErrorLogService.findById no está disponible");
+        toast.error(t("errorLogs.detailError", "Error al buscar los detalles del log"));
         setLoading(false);
         return;
       }
@@ -592,8 +592,8 @@ function ErrorLogs() {
       const response = await ErrorLogService.findById(logId);
       
       if (!response || !response.data) {
-        console.error("Resposta inválida do servidor");
-        toast.error(t("errorLogs.detailError", "Erro ao buscar detalhes do log"));
+        console.error("Respuesta inválida del servidor");
+        toast.error(t("errorLogs.detailError", "Error al buscar los detalles del log"));
         setLoading(false);
         return;
       }
@@ -601,18 +601,18 @@ function ErrorLogs() {
       setSelectedLog(response.data);
       setDetailDialogOpen(true);
     } catch (error) {
-      console.error("Erro ao buscar detalhes do log:", error);
-      toast.error(t("errorLogs.detailError", "Erro ao buscar detalhes do log"));
+      console.error("Error al buscar los detalles del log:", error);
+      toast.error(t("errorLogs.detailError", "Error al buscar los detalles del log"));
       
       try {
         const localLog = ErrorLogService.getLocalLogById(logId);
         if (localLog) {
           setSelectedLog(localLog);
           setDetailDialogOpen(true);
-          toast.info(t("errorLogs.usingLocalLog", "Usando log armazenado localmente"));
+          toast.info(t("errorLogs.usingLocalLog", "Usando el log almacenado localmente"));
         }
       } catch (localError) {
-        console.error("Erro ao buscar log local:", localError);
+        console.error("Error al buscar el log local:", localError);
       }
     } finally {
       setLoading(false);
@@ -628,16 +628,16 @@ function ErrorLogs() {
     if (!selectedLog) return;
 
     const logDetails = `
-Detalhes do Log    
+Detalles del Log    
 ID: ${selectedLog.id}
-Data: ${selectedLog.createdAt ? format(parseISO(selectedLog.createdAt), "dd/MM/yyyy HH:mm:ss", { locale: ptBR }) : "Data desconhecida"}
-Origem: ${selectedLog.source || "-"}
-Severidade: ${selectedLog.severity || "error"}
+Fecha: ${selectedLog.createdAt ? format(parseISO(selectedLog.createdAt), "dd/MM/yyyy HH:mm:ss", { locale: ptBR }) : "Fecha desconocida"}
+Origen: ${selectedLog.source || "-"}
+Severidad: ${selectedLog.severity || "error"}
 Componente: ${selectedLog.component || "-"}
 Usuario: ${selectedLog.user || "-"}
 URL: ${selectedLog.url || "-"}
 User Agent: ${selectedLog.userAgent || "-"}
-Mensagem: ${selectedLog.message || "-"}
+Mensaje: ${selectedLog.message || "-"}
 Stack Trace:
 ${selectedLog.stack || "-"}
     `.trim();
@@ -647,7 +647,7 @@ ${selectedLog.stack || "-"}
         toast.success("Información del log copiada al portapapeles");
       })
       .catch((error) => {
-        console.error("Erro ao copiar:", error);
+        console.error("Error al copiar:", error);
         toast.error("Error al copiar la información del log");
       });
   };
@@ -655,8 +655,8 @@ ${selectedLog.stack || "-"}
   const handleDownloadLogs = async () => {
     try {
       if (!ErrorLogService || !ErrorLogService.downloadLogs) {
-        console.error("ErrorLogService.downloadLogs não está disponível");
-        toast.error(t("errorLogs.downloadError", "Erro ao baixar logs"));
+        console.error("ErrorLogService.downloadLogs no está disponible");
+        toast.error(t("errorLogs.downloadError", "Error al descargar los logs"));
         return;
       }
       
@@ -671,8 +671,8 @@ ${selectedLog.stack || "-"}
       });
       toast.success(t("errorLogs.downloadSuccess", "Logs descargados con éxito"));
     } catch (error) {
-      console.error("Erro ao baixar logs:", error);
-      toast.error(t("errorLogs.downloadError", "Erro ao baixar logs"));
+      console.error("Error al descargar los logs:", error);
+      toast.error(t("errorLogs.downloadError", "Error al descargar los logs"));
     }
   };
 
@@ -687,7 +687,7 @@ ${selectedLog.stack || "-"}
     
     return (
       <SeverityChip 
-        label={severity || "desconhecido"}
+        label={severity || "desconocido"}
         severitytype={severityType}
         size="small"
         icon={icons[severityType] || icons.default}
@@ -704,7 +704,7 @@ ${selectedLog.stack || "-"}
     
     return (
       <SourceChip 
-        label={source || "desconhecido"}
+        label={source || "desconocido"}
         sourcetype={sourceType}
         size="small"
         icon={icons[sourceType] || icons.frontend}
@@ -829,7 +829,7 @@ ${selectedLog.stack || "-"}
                 <TableCell sx={{ width: 180, minWidth: 180 }}>{t("errorLogs.table.date", "Data")}</TableCell>
                 <TableCell sx={{ width: 130, minWidth: 130 }}>{t("errorLogs.table.source", "Fonte")}</TableCell>
                 <TableCell sx={{ width: 150, minWidth: 150 }}>{t("errorLogs.table.severity", "Severidade")}</TableCell>
-                <TableCell sx={{ minWidth: 350 }}>{t("errorLogs.table.message", "Mensagem")}</TableCell>
+                <TableCell sx={{ minWidth: 350 }}>{t("errorLogs.table.message", "Mensaje")}</TableCell>
                 <TableCell align="center" sx={{ width: 100, minWidth: 100 }}>{t("errorLogs.table.actions", "Acciones")}</TableCell>
               </TableRow>
             </StyledTableHead>
@@ -852,9 +852,9 @@ ${selectedLog.stack || "-"}
                       <TableCell sx={{ width: 180 }}>
                         {log.createdAt ? 
                           format(parseISO(log.createdAt), "dd/MM/yyyy HH:mm:ss", { locale: ptBR }) : 
-                          "Data desconhecida"}
+                          "Fecha desconocida"}
                       </TableCell>
-                      <TableCell sx={{ width: 130 }}>{renderSourceChip(log.source || "desconhecido")}</TableCell>
+                      <TableCell sx={{ width: 130 }}>{renderSourceChip(log.source || "desconocido")}</TableCell>
                       <TableCell sx={{ width: 150 }}>{renderSeverityChip(log.severity || "error")}</TableCell>
                       <TableCell sx={{ minWidth: 350, maxWidth: 600 }}>
                         <Tooltip title={log.message || ""}>
@@ -866,7 +866,7 @@ ${selectedLog.stack || "-"}
                               whiteSpace: 'nowrap'
                             }}
                           >
-                            {log.message || "Sem mensagem"}
+                            {log.message || "Sin mensaje"}
                           </Typography>
                         </Tooltip>
                       </TableCell>
@@ -890,7 +890,7 @@ ${selectedLog.stack || "-"}
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2, py: 2 }}>
                       <CircularProgress size={32} />
                       <Typography variant="body2" fontWeight={500} color="primary">
-                        {t("errorLogs.loading", "Carregando mais logs...")}
+                        {t("errorLogs.loading", "Cargando más logs...")}
                       </Typography>
                     </Box>
                   ) : logs.length > 0 && logs.length < totalCount ? (
@@ -946,7 +946,7 @@ ${selectedLog.stack || "-"}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CircularProgress size={20} />
               <Typography variant="body2" fontWeight={500}>
-                Carregando logs do sistema...
+                Cargando logs del sistema...
               </Typography>
             </Box>
           ) : (
@@ -1049,7 +1049,7 @@ ${selectedLog.stack || "-"}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleResetFilters} color="secondary">
-            {t("errorLogs.filter.reset", "Limpar")}
+            {t("errorLogs.filter.reset", "Limpiar")}
           </Button>
           <Button onClick={handleCloseFilterDialog} color="primary">
             {t("errorLogs.filter.cancel", "Cancelar")}
@@ -1111,14 +1111,14 @@ ${selectedLog.stack || "-"}
                 <Typography variant="body2">
                   {selectedLog.createdAt ? 
                     format(parseISO(selectedLog.createdAt), "dd/MM/yyyy HH:mm:ss", { locale: ptBR }) : 
-                    "Data desconhecida"}
+                    "Fecha desconocida"}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" gutterBottom>
                   {t("errorLogs.table.source", "Fonte")}:
                 </Typography>
-                {renderSourceChip(selectedLog.source || "desconhecido")}
+                {renderSourceChip(selectedLog.source || "desconocido")}
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" gutterBottom>
@@ -1152,7 +1152,7 @@ ${selectedLog.stack || "-"}
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle2" gutterBottom>
-                  {t("errorLogs.table.message", "Mensagem")}:
+                  {t("errorLogs.table.message", "Mensaje")}:
                 </Typography>
                 <Typography variant="body2">{selectedLog.message || "-"}</Typography>
               </Grid>
@@ -1167,13 +1167,13 @@ ${selectedLog.stack || "-"}
             </Grid>
           ) : (
             <Typography align="center">
-              {t("errorLogs.detail.loading", "Carregando detalhes...")}
+              {t("errorLogs.detail.loading", "Cargando detalles...")}
             </Typography>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDetailDialog} color="primary">
-            {t("errorLogs.detail.close", "Fechar")}
+            {t("errorLogs.detail.close", "Cerrar")}
           </Button>
         </DialogActions>
       </Dialog>
