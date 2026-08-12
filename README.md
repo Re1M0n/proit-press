@@ -105,6 +105,34 @@ Este sistema es ideal para empresas que buscan mejorar su atención al cliente a
 - [phpmyadmin](https://github.com/rtenorioh/Press-Ticket/blob/main/docs/INSTALL_phpmyadmin.md); y
 - [Zona Horaria](https://github.com/rtenorioh/Press-Ticket/blob/main/docs/INSTALL_horarioVPS.md).
 
+## Despliegue (Flujo de Git)
+
+`main` es la rama de despliegue: **todo el código que corre en producción sale de `main`**. Trabajá siempre sobre `main` (o sobre una rama con nombre tipo `feature/algo` que mergees a `main` al terminar) y no dejes trabajo acumulado en ramas de respaldo como `backup-antes-debug`.
+
+### Cómo actualizar el código en el servidor
+
+```bash
+cd /home/deploy/Press-Ticket
+git checkout main
+git pull origin main
+```
+
+### Compilar y reiniciar los servicios
+
+```bash
+cd backend && npm run build && cd ..
+cd frontend && npm run build && cd ..
+pm2 restart itn-backend itn-frontend
+pm2 status
+```
+
+> **Si hay una rama de backup con trabajo sin mergear** (ej. `backup-antes-debug`), mergeala a `main` antes de desplegar:
+> `git checkout main && git merge --ff-only backup-antes-debug && git push origin main`
+
+### Configurar la rama por defecto en GitHub
+
+Para que cualquier `git clone` o descarga desde GitHub baje la versión correcta, la rama por defecto del repositorio debe ser **`main`**: Settings del repo → **Branches** → **Default branch** → `main`.
+
 ## Canales disponibles:
 
 - WhatsApp (wwebjs);
