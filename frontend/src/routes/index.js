@@ -32,7 +32,6 @@ import UserMonitor from "../pages/UserMonitor";
 import DatabaseStatus from "../pages/DatabaseStatus";
 import SystemHealth from "../pages/SystemHealth";
 import SystemUpdate from "../pages/SystemUpdate";
-import Signup from "../pages/Signup/";
 import Tags from "../pages/Tags";
 import ClientStatus from "../pages/ClientStatus";
 import Tickets from "../pages/Tickets/";
@@ -51,7 +50,6 @@ const AppRoutes = ({ toggleTheme, onThemeConfigUpdate }) => {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<PublicRoute element={<Login />} />} />
-          <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
           <Route path="/forgot-password" element={<PublicRoute element={<ForgotPassword />} />} />
           <Route path="/reset-password" element={<PublicRoute element={<ResetPassword />} />} />
           

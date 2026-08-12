@@ -32,7 +32,7 @@ rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
         auth: {
           max: rateLimits.auth,
           window: "15 minutos",
-          routes: ["/auth/login", "/auth/signup", "/auth/forgot-password", "/auth/reset-password"]
+          routes: ["/auth/login", "/auth/forgot-password", "/auth/reset-password"]
         },
         api: {
           max: rateLimits.api,
@@ -43,7 +43,6 @@ rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
     },
     appliedTo: [
       "✅ /auth/login - Login (protege contra brute force)",
-      "✅ /auth/signup - Cadastro (protege contra spam)",
       "✅ /auth/forgot-password - Recuperação de senha",
       "✅ /auth/reset-password - Reset de senha",
       "✅ /v1/* - API pública (protege recursos públicos)",

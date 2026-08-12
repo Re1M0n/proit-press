@@ -865,8 +865,7 @@ const messages = {
       },
       buttons: {
         forgotPassword: "¿Olvidaste tu contraseña?",
-        submit: "Iniciar sesión",
-        register: "¿No tienes cuenta? ¡Regístrate!"
+        submit: "Iniciar sesión"
       }
     },
     mainDrawer: {
@@ -1483,22 +1482,6 @@ const messages = {
             saveDark: "Guardar tema oscuro"
           }
         }
-      }
-    },
-    signup: {
-      title: "Regístrate",
-      toasts: {
-        success: "Agente creado con éxito! Inicia sesión ahora!",
-        fail: "Error al crear el agente. Verifique los datos ingresados."
-      },
-      form: {
-        name: "Nombre",
-        email: "Correo electrónico",
-        password: "Contraseña"
-      },
-      buttons: {
-        submit: "Registrar",
-        login: "¿Ya tienes una cuenta? ¡Inicia sesión!"
       }
     },
     tags: {

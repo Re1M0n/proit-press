@@ -308,17 +308,6 @@ const Login = () => {
                     {t("login.buttons.forgotPassword")}
                   </Link>
                 </Grid>
-                <Grid item>
-                  <Link
-                    component={RouterLink}
-                    to="/signup"
-                    variant="body2"
-                    color="primary"
-                    underline="hover"
-                  >
-                    {t("login.buttons.register")}
-                  </Link>
-                </Grid>
               </LinksContainer>
             </StyledForm>
           </CardContent>
