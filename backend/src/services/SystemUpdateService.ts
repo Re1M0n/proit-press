@@ -31,6 +31,8 @@ interface UpdateStatus {
 }
 
 const REPO_URL = "https://api.github.com/repos/Re1M0n/proit-press/releases/latest";
+const REPO_TAGS_URL = "https://api.github.com/repos/Re1M0n/proit-press/tags";
+const REPO_ZIPBALL_BASE = "https://api.github.com/repos/Re1M0n/proit-press/zipball";
 const CONFIG_DIR = path.join(process.cwd(), "config");
 const UPDATE_STATUS_FILE = path.join(CONFIG_DIR, "update_status.json");
 const BACKUP_DIR = path.join(process.cwd(), "backups");
@@ -85,18 +87,39 @@ export const checkForUpdates = async (): Promise<UpdateInfo> => {
     await saveUpdateStatus();
 
     const currentVersion = await getCurrentVersion();
-    const response = await axios.get(REPO_URL);
-    const latestRelease = response.data;
-    const latestVersion = latestRelease.tag_name.replace("v", "");
+    let latestVersion: string;
+    let releaseNotes: string;
+    let downloadUrl: string;
+    let publishedAt: string | undefined;
+
+    try {
+      const response = await axios.get(REPO_URL);
+      const latestRelease = response.data;
+      latestVersion = latestRelease.tag_name.replace("v", "");
+      releaseNotes = latestRelease.body || "Ninguna nota de lanzamiento disponible";
+      downloadUrl = latestRelease.zipball_url;
+      publishedAt = latestRelease.published_at;
+    } catch (releaseError: any) {
+      const tagsResponse = await axios.get(REPO_TAGS_URL, { params: { per_page: 1 } });
+      if (!tagsResponse.data || tagsResponse.data.length === 0) {
+        throw new Error("No se encontraron versiones en el repositorio");
+      }
+      const latestTag = tagsResponse.data[0].name;
+      latestVersion = latestTag.replace("v", "");
+      releaseNotes = `Ninguna nota de lanzamiento disponible (el tag ${latestTag} no tiene release publicado)`;
+      downloadUrl = `${REPO_ZIPBALL_BASE}/${latestTag}`;
+      publishedAt = undefined;
+    }
+
     const needsUpdate = latestVersion !== currentVersion;
-    
+
     const updateInfo: UpdateInfo = {
       currentVersion,
       latestVersion,
       needsUpdate,
-      releaseNotes: latestRelease.body || "Ninguna nota de lanzamiento disponible",
-      downloadUrl: latestRelease.zipball_url,
-      publishedAt: latestRelease.published_at
+      releaseNotes,
+      downloadUrl,
+      publishedAt
     };
 
     updateStatus.status = "idle";
