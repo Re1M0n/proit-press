@@ -1,5 +1,4 @@
 import { startTelegramSession } from "../../libs/telegram";
-import { setChannelWebhook } from "../../helpers/setChannelHubWebhook";
 import { logger } from "../../utils/logger";
 import ListWhatsAppsService from "../WhatsappService/ListWhatsAppsService";
 import { StartWhatsAppSession } from "./StartWhatsAppSession";
@@ -18,8 +17,6 @@ export const StartAllWhatsAppsSessions = async (): Promise<void> => {
             }`
           );
         });
-      } else {
-        setChannelWebhook(whatsapp, whatsapp.id.toString());
       }
     });
   }

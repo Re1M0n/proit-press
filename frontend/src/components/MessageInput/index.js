@@ -366,7 +366,6 @@ const MessageInput = ({ ticketStatus }) => {
   const { user = {} } = useContext(AuthContext);
   const [settings, setSettings] = useState([]);
   const [signMessage, setSignMessage] = useLocalStorage("signOption", true);
-  const [channelType, setChannelType] = useState(null);
   const [contactId, setContactId] = useState(null);
   const [isContactBlocked, setIsContactBlocked] = useState(false);
   const [isGroup, setIsGroup] = useState(false);
@@ -434,7 +433,6 @@ const MessageInput = ({ ticketStatus }) => {
     const fetchTicketAndStatus = async () => {
       try {
         const { data } = await api.get(`/tickets/${ticketId}`);
-        setChannelType(data.whatsapp?.type);
         const cId = data.contact?.id;
         setContactId(cId || null);
         
@@ -814,11 +812,7 @@ const MessageInput = ({ ticketStatus }) => {
       
       try {
         let response;
-        if (channelType === "wwebjs" || channelType === "telegram") {
-          response = await api.post(`/messages/${ticketId}`, message);
-        } else {
-          response = await api.post(`/hub-message/${ticketId}`, message);
-        }
+        response = await api.post(`/messages/${ticketId}`, message);
         
         if (response && response.data) {
           const messageData = {
@@ -886,11 +880,7 @@ const MessageInput = ({ ticketStatus }) => {
     formData.append("fromMe", true);
 
     try {
-      if (channelType === "wwebjs" || channelType === "telegram") {
-        await api.post(`/messages/${ticketId}`, formData);
-      } else {
-        await api.post(`/hub-message/${ticketId}`, formData);
-      }
+      await api.post(`/messages/${ticketId}`, formData);
     } catch (err) {
       toastError(err, t);
     }
@@ -980,11 +970,7 @@ const MessageInput = ({ ticketStatus }) => {
           }
         }
       } else {
-        if (channelType === "wwebjs" || channelType === "telegram") {
-          response = await api.post(`/messages/${ticketId}`, message);
-        } else {
-          response = await api.post(`/hub-message/${ticketId}`, message);
-        }
+        response = await api.post(`/messages/${ticketId}`, message);
         
         if (response && response.data) {
           const messageData = {
@@ -1209,11 +1195,7 @@ const MessageInput = ({ ticketStatus }) => {
       formData.append("medias", blob, filename);
       formData.append("body", filename);
       formData.append("fromMe", true);
-      if (channelType === "wwebjs" || channelType === "telegram") {
-        await api.post(`/messages/${ticketId}`, formData);
-      } else {
-        await api.post(`/hub-message/${ticketId}`, formData);
-      }
+      await api.post(`/messages/${ticketId}`, formData);
     } catch (err) {
       toastError(err, t);
     }
