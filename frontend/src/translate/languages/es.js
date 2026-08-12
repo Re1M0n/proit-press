@@ -1470,6 +1470,7 @@ const messages = {
           url: "URL",
           light: "Tema Claro",
           dark: "Tema Oscuro",
+          suggestedColors: "Colores sugeridos",
           input: {
             primary: "Color Primario",
             secondary: "Color Secundario",

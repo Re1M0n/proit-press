@@ -7,6 +7,7 @@ import {
     Tab, 
     Tabs, 
     TextField, 
+    Tooltip,
     Typography,
     Paper
 } from "@mui/material";
@@ -169,6 +170,44 @@ const PreviewThumbnail = styled('img')(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(0.5),
     backgroundColor: theme.palette.background.paper,
+}));
+
+const PRESET_COLORS = {
+    light: [
+        { name: "Verde Esmeralda", primary: "#059669", secondary: "#A7F3D0" },
+        { name: "Azul", primary: "#2563EB", secondary: "#BFDBFE" },
+        { name: "Violeta", primary: "#7C3AED", secondary: "#DDD6FE" },
+        { name: "Rojo", primary: "#DC2626", secondary: "#FECACA" },
+        { name: "Naranja", primary: "#EA580C", secondary: "#FED7AA" },
+        { name: "Celeste", primary: "#0891B2", secondary: "#A5F3FC" },
+        { name: "Rosa", primary: "#DB2777", secondary: "#FBCFE8" },
+        { name: "Ámbar", primary: "#D97706", secondary: "#FDE68A" },
+    ],
+    dark: [
+        { name: "Verde Esmeralda", primary: "#34D399", secondary: "#6EE7B7" },
+        { name: "Azul", primary: "#60A5FA", secondary: "#93C5FD" },
+        { name: "Violeta", primary: "#A78BFA", secondary: "#C4B5FD" },
+        { name: "Rojo", primary: "#F87171", secondary: "#FCA5A5" },
+        { name: "Naranja", primary: "#FB923C", secondary: "#FDBA74" },
+        { name: "Celeste", primary: "#22D3EE", secondary: "#67E8F9" },
+        { name: "Rosa", primary: "#F472B6", secondary: "#F9A8D4" },
+        { name: "Ámbar", primary: "#FBBF24", secondary: "#FDE68A" },
+    ],
+};
+
+const PresetSwatch = styled(Box)(({ theme }) => ({
+    width: 34,
+    height: 34,
+    borderRadius: "50%",
+    cursor: "pointer",
+    border: "2px solid",
+    borderColor: theme.palette.background.paper,
+    boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+    transition: "all 0.15s ease",
+    "&:hover": {
+        transform: "scale(1.12)",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+    },
 }));
 
 const TabPanel = (props) => {
@@ -406,8 +445,27 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
         }));
     };
 
-    const handleSaveColors = async (theme) => {
-        const colorsToSave = colors[theme === "light" ? "themeLight" : "themeDark"];
+    const handlePresetClick = (theme, preset) => {
+        const stateKey = theme === "light" ? "themeLight" : "themeDark";
+        const presetColors = {
+            primaryColor: preset.primary,
+            secondaryColor: preset.secondary,
+            backgroundDefault: colors[stateKey].backgroundDefault,
+            backgroundPaper: colors[stateKey].backgroundPaper,
+        };
+        setColors((prevState) => ({
+            ...prevState,
+            [stateKey]: {
+                ...prevState[stateKey],
+                primaryColor: preset.primary,
+                secondaryColor: preset.secondary,
+            },
+        }));
+        handleSaveColors(theme, presetColors);
+    };
+
+    const handleSaveColors = async (theme, colorsOverride) => {
+        const colorsToSave = colorsOverride || colors[theme === "light" ? "themeLight" : "themeDark"];
         const payload = {
             primaryColor: colorsToSave.primaryColor,
             secondaryColor: colorsToSave.secondaryColor,
@@ -937,6 +995,19 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                             {t("settings.personalize.tabpanel.button.saveLight")}
                         </ActionButton>
                     </TitleContainer>
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>{t("settings.personalize.tabpanel.suggestedColors")}</Typography>
+                        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                            {PRESET_COLORS.light.map((preset) => (
+                                <Tooltip key={preset.name} title={preset.name} arrow>
+                                    <PresetSwatch
+                                        sx={{ backgroundColor: preset.primary }}
+                                        onClick={() => handlePresetClick("light", preset)}
+                                    />
+                                </Tooltip>
+                            ))}
+                        </Box>
+                    </Box>
                     <Grid container spacing={5}>
                         <Grid item xs={12} md={3}>
                             <StyledTextField
@@ -989,6 +1060,19 @@ const PersonalizeSettings = ({ toggleTheme, onThemeConfigUpdate }) => {
                             {t("settings.personalize.tabpanel.button.saveDark")}
                         </ActionButton>
                     </TitleContainer>
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>{t("settings.personalize.tabpanel.suggestedColors")}</Typography>
+                        <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                            {PRESET_COLORS.dark.map((preset) => (
+                                <Tooltip key={preset.name} title={preset.name} arrow>
+                                    <PresetSwatch
+                                        sx={{ backgroundColor: preset.primary }}
+                                        onClick={() => handlePresetClick("dark", preset)}
+                                    />
+                                </Tooltip>
+                            ))}
+                        </Box>
+                    </Box>
                     <Grid container spacing={5}>
                         <Grid item xs={12} md={3}>
                             <StyledTextField

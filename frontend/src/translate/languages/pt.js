@@ -1390,6 +1390,7 @@ const messages = {
             url: "URL",
             light: "Tema Claro",
             dark: "Tema Escuro",
+            suggestedColors: "Cores sugeridas",
             input: {
               primary: "Cor Primária",
               secondary: "Cor Secundária",
