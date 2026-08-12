@@ -87,3 +87,7 @@ pm2 status
 ### Configurar la rama por defecto en GitHub
 
 Para que cualquier `git clone` o descarga desde GitHub baje la versión correcta, la rama por defecto del repositorio debe ser **`main`**: Settings del repo → **Branches** → **Default branch** → `main`.
+
+## Créditos
+
+ProIT CRM está basado en el proyecto de código abierto [Press-Ticket](https://github.com/rtenorioh/Press-Ticket), desarrollado originalmente por Robson Tenório, y este a su vez en el [Sistema Whaticket Community](https://github.com/canove/whaticket-community), creado por [Cassio Santos](https://github.com/canove). Gracias a esos proyectos y a su comunidad por la base sobre la que está construido este sistema.
