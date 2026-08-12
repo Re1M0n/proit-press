@@ -26,14 +26,21 @@ import api from "../../services/api";
 
 const Copyright = ({ companyName, companyUrl }) => {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {new Date().getFullYear()}
-      {" - "}
-      <Link color="inherit" href={companyUrl || "https://github.com/Re1M0n/proit-press"}>
-        {companyName || "ProIT CRM®"}
-      </Link>
-      {"."}
-    </Typography>
+    <div style={{ textAlign: 'center' }}>
+      <img
+        src="/proit-logo.png"
+        alt="ProIT"
+        style={{ maxHeight: 32, maxWidth: 160, width: 'auto', marginBottom: 8 }}
+      />
+      <Typography variant="body2" color="textSecondary" align="center">
+        {new Date().getFullYear()}
+        {" - "}
+        <Link color="inherit" href={companyUrl || "https://github.com/Re1M0n/proit-press"}>
+          {companyName || "ProIT CRM®"}
+        </Link>
+        {"."}
+      </Typography>
+    </div>
   );
 };
 
