@@ -14,7 +14,7 @@ fi
 echo "Verificação de memória: OK (${FREE_MEM}MB livre)"
 
 # Obter a versão automaticamente
-VERSION=$(git ls-remote --tags https://github.com/rtenorioh/Press-Ticket.git | awk -F/ '{print $NF}' | sort -V | tail -n1 || echo "unknown")
+VERSION=$(git ls-remote --tags https://github.com/Re1M0n/proit-press.git | awk -F/ '{print $NF}' | sort -V | tail -n1 || echo "unknown")
 
 # Registro do início da execução
 START_TIME=$(date +%s)
