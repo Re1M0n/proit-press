@@ -227,10 +227,6 @@ const messages = {
             title: "N8N",
             urlApiN8N: "N8N API-URL",
           },
-          hub: {
-            title: "Notificame Hub",
-            hubToken: "Token",
-          },
           maps: {
             title: "Google Maps API",
             apiMaps: "API-Schlüssel",

@@ -1,5 +1,5 @@
 import { IconButton, Tooltip, useTheme } from "@mui/material";
-import { Email, Facebook, Instagram, Sms, Telegram } from "@mui/icons-material";
+import { Email, Telegram } from "@mui/icons-material";
 import React from "react";
 
 const ContactChannels = ({ contact, handleSaveTicket, setContactTicket, setNewTicketModalOpen }) => {
@@ -13,34 +13,10 @@ const ContactChannels = ({ contact, handleSaveTicket, setContactTicket, setNewTi
             action: () => handleSaveTicket(contact.id),
         },
         {
-            id: contact.messengerId,
-            label: "Facebook",
-            color: theme.palette.mode === 'dark' ? theme.palette.primary.light : "#3b5998",
-            Icon: Facebook,
-            action: () => handleSaveTicket(contact.id),
-        },
-        {
-            id: contact.instagramId,
-            label: "Instagram",
-            color: theme.palette.mode === 'dark' ? theme.palette.secondary.light : "#cd486b",
-            Icon: Instagram,
-            action: () => {
-                setContactTicket(contact);
-                setNewTicketModalOpen(true);
-            },
-        },
-        {
             id: contact.email,
             label: "Email",
             color: theme.palette.mode === 'dark' ? theme.palette.info.main : "#004f9f",
             Icon: Email,
-            action: () => handleSaveTicket(contact.id),
-        },
-        {
-            id: contact.webchatId,
-            label: "WebChat",
-            color: theme.palette.mode === 'dark' ? theme.palette.warning.light : "#EB6D58",
-            Icon: Sms,
             action: () => handleSaveTicket(contact.id),
         },
     ];

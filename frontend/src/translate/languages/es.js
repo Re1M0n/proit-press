@@ -198,7 +198,6 @@ const messages = {
         wwebjs: "Agregar",
         addChannel: "Agregar canal",
         addTelegram: "Agregar Telegram",
-        hub: "Hub",
         shutdown: "Eliminar sesión",
         restart: "Reiniciar",
         disconnect: "Desconectar",
@@ -771,10 +770,6 @@ const messages = {
         n8n: {
           title: "N8N",
           urlApiN8N: "URL API N8N"
-        },
-        hub: {
-          title: "Notificame Hub",
-          hubToken: "Token"
         },
         maps: {
           title: "Api Google Maps",
@@ -1792,14 +1787,6 @@ const messages = {
         typeTelegram: "Telegram (bot)",
         tokenTelegram: "Token del bot de Telegram",
         tokenTelegramHelp: "Creá un bot con @BotFather y pegá acá el token que te da."
-      },
-      integration: {
-        title: "Integración de canales",
-        description: "Para activar <strong>Facebook</strong>, <strong>Instagram</strong>, <strong>Telegram</strong> y <strong>WebChat</strong>, regístrese con el botón de abajo, luego adquiera los canales deseados usando el cupón. Ingrese el token de su <strong>Account</strong> en la página de Integraciones para finalizar la integración.",
-        discount: "¡Use el cupón de abajo para obtener <strong>50% de descuento</strong> en la compra de los canales!",
-        copied: "¡Copiado!",
-        copy: "Copiar cupón",
-        register: "REGÍSTRESE AQUÍ"
       },
       buttons: {
         okAdd: "Agregar",

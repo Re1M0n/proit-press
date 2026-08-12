@@ -1,6 +1,6 @@
 import React from "react";
 import { ListItemText, MenuItem, Typography, Box, Divider, Button, useTheme, Chip, IconButton } from "@mui/material";
-import { Check, SyncAlt, WhatsApp, Email, Instagram, Telegram, Sms, Facebook, ClearAll } from "@mui/icons-material";
+import { Check, SyncAlt, WhatsApp, Email, Telegram, ClearAll } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 
 const ChannelMenuItems = ({
@@ -38,16 +38,10 @@ const ChannelMenuItems = ({
 
   const getChannelIcon = (channel) => {
     switch (channel.channel) {
-      case "facebook":
-        return <Facebook fontSize="small" sx={{ color: "#3b5998" }} />;
-      case "instagram":
-        return <Instagram fontSize="small" sx={{ color: "#cd486b" }} />;
       case "telegram":
         return <Telegram fontSize="small" sx={{ color: "#85b2ff" }} />;
       case "email":
         return <Email fontSize="small" sx={{ color: "#004f9f" }} />;
-      case "webchat":
-        return <Sms fontSize="small" sx={{ color: "#EB6D58" }} />;
       case "wwebjs":
         return <WhatsApp fontSize="small" sx={{ color: "#075e54" }} />;
       default:

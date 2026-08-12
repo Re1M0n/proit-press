@@ -11,12 +11,9 @@ import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import ClearOutlined from '@mui/icons-material/ClearOutlined';
 import Done from '@mui/icons-material/Done';
-import Facebook from '@mui/icons-material/Facebook';
 import Group from '@mui/icons-material/Group';
-import Instagram from '@mui/icons-material/Instagram';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import Replay from '@mui/icons-material/Replay';
-import Sms from '@mui/icons-material/Sms';
 import Telegram from '@mui/icons-material/Telegram';
 import Visibility from '@mui/icons-material/Visibility';
 import WhatsApp from '@mui/icons-material/WhatsApp';
@@ -703,21 +700,6 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 							{ticket.contact.telegramId && (
 								<Tooltip title="Telegram" arrow placement="right" >
 									<Telegram sx={{ fontSize: '0.9rem', color: theme.palette.mode === 'dark' ? theme.palette.info.light : "#85b2ff", marginRight: theme.spacing(0.5) }} />
-								</Tooltip>
-							)}
-							{ticket.contact.messengerId && (
-								<Tooltip title="Facebook" arrow placement="right" >
-									<Facebook sx={{ fontSize: '0.9rem', color: theme.palette.mode === 'dark' ? theme.palette.primary.light : "#3b5998", marginRight: theme.spacing(0.5) }} />
-								</Tooltip>
-							)}
-							{ticket.contact.instagramId && (
-								<Tooltip title="Instagram" arrow placement="right" >
-									<Instagram sx={{ fontSize: '0.9rem', color: theme.palette.mode === 'dark' ? theme.palette.secondary.light : "#cd486b", marginRight: theme.spacing(0.5) }} />
-								</Tooltip>
-							)}
-							{ticket.contact.webchatId && (
-								<Tooltip title="Webchat" arrow placement="right" >
-									<Sms sx={{ fontSize: '0.9rem', color: theme.palette.mode === 'dark' ? theme.palette.warning.light : "#EB6D58", marginRight: theme.spacing(0.5) }} />
 								</Tooltip>
 							)}
 							{ticket.contact.number && (

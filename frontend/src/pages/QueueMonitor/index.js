@@ -29,11 +29,8 @@ import ErrorIcon from "@mui/icons-material/Error";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import TodayIcon from "@mui/icons-material/Today";
 import {
-  Facebook,
-  Instagram,
   Telegram,
-  Email,
-  Sms
+  Email
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -274,16 +271,10 @@ const QueueMonitor = () => {
 
   const getChannelIcon = (channel) => {
     switch (channel) {
-      case "facebook":
-        return <Facebook sx={{ color: "#3b5998" }} />;
-      case "instagram":
-        return <Instagram sx={{ color: "#cd486b" }} />;
       case "telegram":
         return <Telegram sx={{ color: "#85b2ff" }} />;
       case "email":
         return <Email sx={{ color: "#004f9f" }} />;
-      case "webchat":
-        return <Sms sx={{ color: "#EB6D58" }} />;
       case null:
       case "wwebjs":
       default:

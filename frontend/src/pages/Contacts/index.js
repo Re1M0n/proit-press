@@ -461,19 +461,9 @@ const Contacts = () => {
     if (contact.telegramId) {
       channels.push({ id: contact.telegramId, name: 'Telegram', type: 'telegram', color: '#0088cc' });
     }
-    if (contact.messengerId) {
-      channels.push({ id: contact.messengerId, name: 'Facebook', type: 'messenger', color: '#3b5998' });
-    }
-    if (contact.instagramId) {
-      channels.push({ id: contact.instagramId, name: 'Instagram', type: 'instagram', color: '#cd486b' });
-    }
     if (contact.email) {
       channels.push({ id: contact.email, name: 'Email', type: 'email', color: '#004f9f' });
     }
-    if (contact.webchatId) {
-      channels.push({ id: contact.webchatId, name: 'WebChat', type: 'webchat', color: '#EB6D58' });
-    }
-    
     setSelectedChannels(channels);
     setChannelsModalOpen(true);
   };

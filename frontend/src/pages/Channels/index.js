@@ -29,16 +29,13 @@ import {
 	DeleteOutline,
 	Edit,
 	Email,
-	Facebook,
 	GridView,
-	Instagram,
 	PlayCircleOutline,
 	QrCode2,
 	Replay,
 	SignalCellular4Bar,
 	SignalCellularConnectedNoInternet0Bar,
 	SignalCellularConnectedNoInternet2Bar,
-	Sms,
 	SyncOutlined,
 	TableRows,
 	Telegram,
@@ -403,16 +400,10 @@ const Channels = () => {
 
 	const getChannelIcon = (channel) => {
 		switch (channel) {
-			case "facebook":
-				return <Facebook sx={{ color: "#3b5998" }} />;
-			case "instagram":
-				return <Instagram sx={{ color: "#cd486b" }} />;
 			case "telegram":
 				return <Telegram sx={{ color: "#85b2ff" }} />;
 			case "email":
 				return <Email sx={{ color: "#004f9f" }} />;
-			case "webchat":
-				return <Sms sx={{ color: "#EB6D58" }} />;
 			case "wwebjs":
 				return <WhatsApp sx={{ color: "#25D366" }} />;
 			default:
