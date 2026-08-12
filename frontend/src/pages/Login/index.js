@@ -217,7 +217,11 @@ const Login = () => {
         <LoginCard elevation={0}>
           <CardContent sx={{ padding: 0 }}>
             <LogoContainer>
-              <img src={getImageUrl(companyData.logo)} alt="logo" />
+              <img
+                src={companyData.logo ? getImageUrl(companyData.logo) : "/proit-logo.png"}
+                alt="logo"
+                style={{ maxWidth: "100%", height: "auto", maxHeight: 100 }}
+              />
             </LogoContainer>
             
             <Typography component="h1" variant="h5" align="center" fontWeight="600" gutterBottom>
