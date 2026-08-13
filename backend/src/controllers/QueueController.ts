@@ -5,8 +5,8 @@ import DeleteQueueService from "../services/QueueService/DeleteQueueService";
 import ListQueuesService from "../services/QueueService/ListQueuesService";
 import ShowQueueService from "../services/QueueService/ShowQueueService";
 import UpdateQueueService from "../services/QueueService/UpdateQueueService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
   const queues = await ListQueuesService();
@@ -29,12 +29,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     breakMessage 
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Setor ${queue.name} criado`,
     entityType: EntityTypes.QUEUE,
@@ -71,12 +66,8 @@ export const update = async (
   const { queueId } = req.params;
 
   const queue = await UpdateQueueService(queueId, req.body);
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Setor ${queue.name} atualizado`,
     entityType: EntityTypes.QUEUE,
@@ -102,12 +93,8 @@ export const remove = async (
   const queueToDelete = await ShowQueueService(queueId);
   
   await DeleteQueueService(queueId);
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Setor ${queueToDelete.name} excluído`,
     entityType: EntityTypes.QUEUE,

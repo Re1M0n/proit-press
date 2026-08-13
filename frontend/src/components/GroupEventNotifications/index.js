@@ -3,7 +3,6 @@ import {
   Badge,
   IconButton,
   Menu,
-  MenuItem,
   Typography,
   List,
   ListItem,

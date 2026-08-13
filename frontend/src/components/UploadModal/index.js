@@ -220,14 +220,6 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
     return FILE_LIMITS[fileType] || FILE_LIMITS.default;
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
   const validateFile = (file) => {
     const fileSizeMB = file.size / (1024 * 1024);
     const limit = getFileSizeLimit(file);
@@ -396,7 +388,6 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
       }
     }
 
-    const successCount = results.filter(r => r.status === 'success').length;
     const errorCount = results.filter(r => r.status === 'error').length;
     
     if (errorCount > 0) {
@@ -830,7 +821,8 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
                         const initial = participant.name ? participant.name.charAt(0).toUpperCase() : '?';
                         return (
                           <li key={index}>
-                            <a onClick={() => handleMentionClick(participant)}>
+                            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                            <a href="#" onClick={(e) => { e.preventDefault(); handleMentionClick(participant); }}>
                               {participant.avatar ? (
                                 <img 
                                   src={participant.avatar} 

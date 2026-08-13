@@ -1768,7 +1768,6 @@ const messages = {
         rows: "Linhas",
         dataSize: "Tamanho de Dados",
         indexSize: "Tamanho de Índices",
-        totalSize: "Tamanho Total",
         noTables: "Nenhuma tabela encontrada",
         slowQueriesTitle: "Consultas Lentas (últimas 24h)",
         startTime: "Hora de Início",

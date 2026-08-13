@@ -171,6 +171,7 @@ const GroupActionsPanel = ({ groupId }) => {
     } finally { setLoading(false); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadParticipants(); }, [groupId]);
   useEffect(() => { setPage(1); }, [search, rowsPerPage]);
 

@@ -277,11 +277,10 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 	const [settings, setSettings] = useState([]);
 	const [spy, setSpy] = useState([]);
 	const [currentTicket, setCurrentTicket] = useState(ticket);
-	const defaultImage = '/default-profile.png';
-	
-	useEffect(() => {
-		setCurrentTicket(ticket);
-	}, [ticket.id, ticket.lastMessage, ticket.unreadMessages, ticket.status, ticket.userId]);
+	const defaultImage = '/default-profile.png';  useEffect(() => {
+    setCurrentTicket(ticket);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticket.id, ticket.lastMessage, ticket.unreadMessages, ticket.status, ticket.userId]);
 
 	useEffect(() => {
 		const socket = openSocket();

@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { getVersionInfo, updateWhatsappLib, updateWhatsappLibFromGit, getReleaseNotes } from "../../services/versionService";
 import { 
   Container, 
@@ -22,7 +21,6 @@ import ErrorIcon from "@mui/icons-material/Error";
 import SystemUpdateIcon from "@mui/icons-material/SystemUpdate";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import { AuthContext } from "../../context/Auth/AuthContext";
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper";
@@ -104,7 +102,6 @@ const MessageBox = styled(Paper)(({ theme, type }) => ({
 
 const VersionCheck = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [updatingLib, setUpdatingLib] = useState(false);
   const [updatingLibFromGit, setUpdatingLibFromGit] = useState(false);
@@ -268,6 +265,7 @@ const VersionCheck = () => {
         countdownController.cancelCountdown();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countdown]);
 
   const handleUpdateWhatsappLib = async () => {

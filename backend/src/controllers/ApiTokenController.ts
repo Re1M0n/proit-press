@@ -7,8 +7,8 @@ import FindByNameService from "../services/ApiTokenService/FindByNameService";
 import ListApiTokenService from "../services/ApiTokenService/ListApiTokenService";
 import ListPermissionsService from "../services/ApiTokenService/ListPermissionsService";
 import ShowApiTokenService from "../services/ApiTokenService/ShowApiTokenService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
     const { pageNumber, pageSize } = req.query;
@@ -54,16 +54,11 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
         permissions: JSON.stringify(permissions)
     });
 
-    const logUserId = req.user?.id || 1;
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
         action: ActivityActions.CREATE,
         description: `Token de API "${token.name}" criado`,
         entityType: EntityTypes.APITOKEN,
         entityId: token.id,
-        ip: clientIp,
         additionalData: {
             name: token.name,
             permissions: permissions
@@ -88,16 +83,11 @@ export const remove = async (req: Request, res: Response): Promise<Response> => 
     
     await DeleteApiTokenService(+id);
     
-    const logUserId = req.user?.id || 1;
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
         action: ActivityActions.DELETE,
         description: `Token de API "${tokenToDelete.name}" excluído`,
         entityType: EntityTypes.APITOKEN,
         entityId: +id,
-        ip: clientIp,
         additionalData: {
             name: tokenToDelete.name
         }

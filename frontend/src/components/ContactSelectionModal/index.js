@@ -28,7 +28,6 @@ import {
   Send,
   ContactPhone
 } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -78,7 +77,6 @@ const SelectedContactsContainer = styled(Box)(({ theme }) => ({
 }));
 
 const ContactSelectionModal = ({ open, onClose, onSendContacts }) => {
-  const { t } = useTranslation();
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState([]);

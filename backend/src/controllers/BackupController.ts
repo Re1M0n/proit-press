@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
 import { logger } from "../utils/logger";
 import { createBackup, listBackups, restoreBackup, deleteBackup, uploadBackup } from "../services/BackupService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 interface BackupRequest {
   name?: string;
@@ -26,12 +26,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     
     const backupInfo = await createBackup(name);
     
-    const logUserId = req.user?.id || 1;
-    
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.CREATE,
       description: `Backup "${backupInfo.filename}" criado`,
       entityType: EntityTypes.BACKUP,
@@ -81,12 +76,7 @@ export const update = async (req: Request, res: Response): Promise<Response> => 
     const { filename } = req.params;
     const backupInfo = await restoreBackup(filename);
     
-    const logUserId = req.user?.id || 1;
-    
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.UPDATE,
       description: `Backup "${filename}" restaurado`,
       entityType: EntityTypes.BACKUP,
@@ -119,10 +109,7 @@ export const upload = async (req: Request, res: Response): Promise<Response> => 
 
     const backupInfo = await uploadBackup(req.file);
     
-    const logUserId = req.user?.id || 1;
-    
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.CREATE,
       description: `Backup "${backupInfo.filename}" importado`,
       entityType: EntityTypes.BACKUP,
@@ -151,12 +138,7 @@ export const remove = async (req: Request, res: Response): Promise<Response> => 
     const { filename } = req.params;
     const result = await deleteBackup(filename);
     
-    const logUserId = req.user?.id || 1;
-    
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.DELETE,
       description: `Backup "${filename}" excluído`,
       entityType: EntityTypes.BACKUP,

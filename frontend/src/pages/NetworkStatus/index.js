@@ -20,20 +20,14 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Divider,
-  Chip,
-  IconButton,
-  Tooltip,
-  LinearProgress
+  Chip
 } from "@mui/material";
 
 import {
   Refresh,
-  SignalCellularAlt,
   SignalCellularConnectedNoInternet0Bar,
   CheckCircle,
   Cancel,
-  Speed,
   NetworkCheck,
   Router,
   Dns,
@@ -41,7 +35,6 @@ import {
 } from "@mui/icons-material";
 
 import { makeStyles } from "@mui/styles";
-import { green, red, yellow, blue, grey } from "@mui/material/colors";
 
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
@@ -183,6 +176,7 @@ const NetworkStatus = () => {
   
   useEffect(() => {
     fetchNetworkStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   const fetchNetworkStatus = async () => {

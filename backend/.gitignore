@@ -6,6 +6,7 @@ dist
 .env.test
 .wwebjs_auth
 .wwebjs_cache
+backups/
 sequelizeData.json
 
 yarn.lock

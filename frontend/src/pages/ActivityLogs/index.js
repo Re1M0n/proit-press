@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { parseISO, format } from "date-fns";
-import { pt } from "date-fns/locale";
+import { format } from "date-fns";
 
 import {
   Button,
@@ -30,11 +29,8 @@ import {
   DialogActions,
   Chip,
   Card,
-  CardContent,
   TablePagination,
-  InputAdornment,
-  Collapse,
-  Divider
+  InputAdornment
 } from "@mui/material";
 
 import {
@@ -48,16 +44,12 @@ import {
   TrendingUp,
   People,
   Assessment,
-  ExpandMore,
-  ExpandLess,
   Language,
   Computer
 } from "@mui/icons-material";
 
 import { makeStyles } from "@mui/styles";
 import { green, red, blue, orange, grey } from "@mui/material/colors";
-
-import { AuthContext } from "../../context/Auth/AuthContext";
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper";
@@ -221,12 +213,10 @@ const getActionColor = (action) => {
 const ActivityLogs = () => {
   const { t } = useTranslation();
   const classes = useStyles();
-  const { user } = useContext(AuthContext);
-
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
   const [count, setCount] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [, setHasMore] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filters, setFilters] = useState({
@@ -252,7 +242,6 @@ const ActivityLogs = () => {
     todayLogs: 0
   });
   const [entityTypes, setEntityTypes] = useState([]);
-  const [expandedRow, setExpandedRow] = useState(null);
 
   useEffect(() => {
     loadLogs();

@@ -4,7 +4,6 @@ import { getBackendUrl } from "../config";
 let socketInstance = null;
 let healthCheckInterval = null;
 let lastPongTime = Date.now();
-let isSocketHealthy = true;
 
 const connectToSocket = () => {
     if (socketInstance) {
@@ -155,7 +154,6 @@ const startHealthCheck = (socket) => {
     
     socket.on("pong", () => {
         lastPongTime = Date.now();
-        isSocketHealthy = true;
     });
     
     healthCheckInterval = setInterval(() => {
@@ -163,8 +161,6 @@ const startHealthCheck = (socket) => {
         
         const now = Date.now();
         if (now - lastPongTime > 15000) {
-            isSocketHealthy = false;
-            
             if (socket && !socket.connected) {
                 socket.connect();
             }

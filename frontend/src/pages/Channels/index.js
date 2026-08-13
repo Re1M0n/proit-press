@@ -32,7 +32,6 @@ import {
 	GridView,
 	PlayCircleOutline,
 	QrCode2,
-	Replay,
 	SignalCellular4Bar,
 	SignalCellularConnectedNoInternet0Bar,
 	SignalCellularConnectedNoInternet2Bar,
@@ -408,41 +407,6 @@ const Channels = () => {
 				return <WhatsApp sx={{ color: "#25D366" }} />;
 			default:
 				return null;
-		}
-	};
-
-	const handleStartWhatsAppSession = async whatsAppId => {
-		try {
-			setLoadingActions(prev => ({ ...prev, [whatsAppId]: 'startSession' }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: 'Iniciando sesión...' }));
-			
-			const startSessionToastId = toast.info('Iniciando sesión de WhatsApp...', {
-				autoClose: false,
-				closeButton: false,
-				draggable: false,
-			});
-			
-			await api.post(`/whatsappsession/${whatsAppId}`);
-			
-			toast.update(startSessionToastId, {
-				render: '¡Sesión iniciada con éxito! Esperá...',
-				type: toast.TYPE.SUCCESS,
-			});
-			
-			setTimeout(() => {
-				setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
-				setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
-				
-				toast.dismiss(startSessionToastId);
-				
-				toast.success('¡Sesión iniciada con éxito!');
-				
-				fetchWhatsApps();
-			}, 3000);
-		} catch (err) {
-			toastError(err);
-			setLoadingActions(prev => ({ ...prev, [whatsAppId]: undefined }));
-			setActionMessages(prev => ({ ...prev, [whatsAppId]: undefined }));
 		}
 	};
 

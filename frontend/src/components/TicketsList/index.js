@@ -203,8 +203,8 @@ const TicketsList = (props) => {
         const [pageNumber, setPageNumber] = useState(1);
         const [ticketsList, dispatch] = useReducer(reducer, []);
         const { user } = useContext(AuthContext);
-        const { profile, queues } = user || {};
-        const [settings, setSettings] = useState([]);
+        const { queues } = user || {};
+        const [, setSettings] = useState([]);
         const [filteredTags, setFilteredTags] = useState([]);
 
         const statusRef = useRef(status);
@@ -275,7 +275,6 @@ const TicketsList = (props) => {
                         const currentUser = userRef.current;
                         const currentQueueIds = selectedQueueIdsRef.current;
                         const currentIsGroup = isGroupRef.current;
-                        const currentShowAll = showAllRef.current;
 
                         if (currentStatus !== ticket.status) {
                                 return false;
@@ -453,6 +452,7 @@ const TicketsList = (props) => {
                         socket.off("contact");
                         socket.off("ticketList");
                 };
+                // eslint-disable-next-line react-hooks/exhaustive-deps
         }, []);
 
         useEffect(() => {

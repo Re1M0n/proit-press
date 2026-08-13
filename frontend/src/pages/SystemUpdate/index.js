@@ -12,7 +12,6 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -26,7 +25,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
-import Badge from "@mui/material/Badge";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import WhatsMarked from "react-whatsmarked";
@@ -82,20 +80,6 @@ const Root = styled('div')(({ theme }) => ({
   overflow: "auto",
 }));
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  display: "flex",
-  overflow: "auto",
-  flexDirection: "column",
-  background: theme.palette.mode === 'dark' 
-    ? `linear-gradient(135deg, ${alpha(theme.palette.primary.dark, 0.1)} 0%, ${alpha(theme.palette.background.paper, 0.9)} 100%)`
-    : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.05)} 0%, ${theme.palette.background.paper} 100%)`,
-  backdropFilter: 'blur(10px)',
-  borderRadius: theme.spacing(2),
-  boxShadow: theme.palette.mode === 'dark'
-    ? `0 8px 32px 0 ${alpha('#000', 0.37)}`
-    : `0 8px 32px 0 ${alpha(theme.palette.primary.main, 0.15)}`,
-}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -160,42 +144,8 @@ const RefreshButtonStyled = styled(Button)(({ theme }) => ({
   },
 }));
 
-const VersionInfo = styled('div')(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  marginBottom: theme.spacing(2),
-}));
 
-const VersionText = styled(Typography)(({ theme }) => ({
-  marginRight: theme.spacing(2),
-}));
 
-const ReleaseNotes = styled('div')(({ theme }) => ({
-  maxHeight: 400,
-  overflow: "auto",
-  marginTop: theme.spacing(2),
-  padding: theme.spacing(3),
-  backgroundColor: theme.palette.mode === 'dark'
-    ? alpha(theme.palette.background.default, 0.6)
-    : alpha(theme.palette.background.default, 0.8),
-  borderRadius: theme.spacing(2),
-  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-  backdropFilter: 'blur(10px)',
-  '&::-webkit-scrollbar': {
-    width: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: alpha(theme.palette.background.default, 0.1),
-    borderRadius: '4px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: alpha(theme.palette.primary.main, 0.3),
-    borderRadius: '4px',
-    '&:hover': {
-      background: alpha(theme.palette.primary.main, 0.5),
-    },
-  },
-}));
 
 const ProgressContainer = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(2),
@@ -213,11 +163,6 @@ const ProgressContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-const ProgressText = styled('div')(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  marginTop: theme.spacing(0.5),
-}));
 
 const BackupList = styled(List)(({ theme }) => ({
   maxHeight: 400,
@@ -269,16 +214,7 @@ const BackupItem = styled(ListItem)(({ theme }) => ({
   },
 }));
 
-const UpdateAvailableChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: theme.palette.success.light,
-  color: theme.palette.success.contrastText,
-  fontWeight: "bold",
-}));
 
-const UpdateNotAvailableChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: theme.palette.info.light,
-  color: theme.palette.info.contrastText,
-}));
 
 const MarkdownStyled = styled(WhatsMarked)(({ theme }) => ({
   "& p": {
@@ -486,7 +422,7 @@ const ActionButton = styled(Button)(({ theme, variant: buttonVariant }) => ({
 
 const SystemUpdate = () => {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [installingUpdate, setInstallingUpdate] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({
@@ -566,7 +502,7 @@ const SystemUpdate = () => {
     } finally {
       setCheckingUpdate(false);
     }
-  }, []);
+  }, [t]);
 
   const getUpdateStatus = useCallback(async () => {
     try {
@@ -591,7 +527,7 @@ const SystemUpdate = () => {
       console.error(err);
       setLoading(false);
     }
-  }, [statusPolling]);
+  }, [statusPolling, t]);
 
   const getBackups = useCallback(async () => {
     setLoadingBackups(true);
@@ -603,7 +539,7 @@ const SystemUpdate = () => {
     } finally {
       setLoadingBackups(false);
     }
-  }, []);
+  }, [t]);
 
   const startUpdate = async () => {
     setInstallingUpdate(true);

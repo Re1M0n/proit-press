@@ -24,9 +24,7 @@ import {
   Tooltip,
   Chip,
   CircularProgress,
-  Box,
-  Card,
-  CardContent
+  Box
 } from "@mui/material";
 import { styled, alpha, keyframes } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
@@ -53,12 +51,6 @@ import Title from "../../components/Title";
 import { useTranslation } from "react-i18next";
 import ErrorLogService from "../../services/ErrorLogService";
 import useAuth from "../../hooks/useAuth";
-
-// Animações
-const shimmer = keyframes`
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
-`;
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -283,24 +275,6 @@ const LogDetailContainer = styled(Box)(({ theme }) => ({
   '&::-webkit-scrollbar-thumb': {
     background: alpha(theme.palette.primary.main, 0.3),
     borderRadius: 4,
-  }
-}));
-
-const StatsCard = styled(Card)(({ theme }) => ({
-  background: theme.palette.mode === 'dark'
-    ? `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)}, ${alpha(theme.palette.background.default, 0.6)})`
-    : `linear-gradient(135deg, ${alpha('#fff', 0.9)}, ${alpha(theme.palette.grey[50], 0.8)})`,
-  backdropFilter: 'blur(10px)',
-  borderRadius: theme.spacing(2),
-  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-  padding: theme.spacing(2),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  transition: 'all 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.15)}`,
   }
 }));
 

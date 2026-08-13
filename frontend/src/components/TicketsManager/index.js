@@ -19,7 +19,6 @@ import {
   HourglassEmptyRounded,
   MoveToInbox,
   Search,
-  FilterList,
   Add,
   Close,
   Refresh,
@@ -195,7 +194,6 @@ const TicketsManager = () => {
   const [openCount, setOpenCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [openGroupsCount, setOpenGroupsCount] = useState(0);
-  const userQueueIds = user?.queues?.map((q) => q.id);
   const [settings, setSettings] = useState([]);
   const [selectedQueueIds, setSelectedQueueIds] = useState([]);
   const [selectedChannelIds, setSelectedChannelIds] = useState([]);
@@ -315,6 +313,7 @@ const TicketsManager = () => {
       socket.off("ticket", handleTicketUpdate);
       socket.off("appMessage", handleAppMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedQueueIds, showAllTickets]);
   
   const handleSearch = (e) => {

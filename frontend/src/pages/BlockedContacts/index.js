@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
   Typography,
@@ -15,7 +15,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Button,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -27,7 +26,6 @@ import {
 import { toast } from "react-toastify";
 import api from "../../services/api";
 import toastError from "../../errors/toastError";
-import { AuthContext } from "../../context/Auth/AuthContext";
 import MainContainer from "../../components/MainContainer";
 import MainHeader from "../../components/MainHeader";
 import MainHeaderButtonsWrapper from "../../components/MainHeaderButtonsWrapper";
@@ -36,7 +34,6 @@ import { useTranslation } from "react-i18next";
 
 const BlockedContacts = () => {
   const { t } = useTranslation();
-  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [blockedContacts, setBlockedContacts] = useState([]);
   const [whatsapps, setWhatsapps] = useState([]);
@@ -44,12 +41,14 @@ const BlockedContacts = () => {
 
   useEffect(() => {
     loadWhatsapps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (selectedWhatsappId) {
       loadBlockedContacts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWhatsappId]);
 
   const loadWhatsapps = async () => {

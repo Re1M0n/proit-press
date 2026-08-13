@@ -5,8 +5,8 @@ import { getIO } from "../libs/socket";
 
 import ListSettingsService from "../services/SettingServices/ListSettingsService";
 import UpdateSettingService from "../services/SettingServices/UpdateSettingService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 import EmailService from "../services/EmailService";
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -34,17 +34,12 @@ export const update = async (
     value
   });
 
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
-  
   if (setting) {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.UPDATE,
       description: `Configuração "${key}" atualizada`,
       entityType: EntityTypes.SETTING,
       entityId: setting.id,
-      ip: clientIp,
       additionalData: {
         key: setting.key,
         value: setting.value

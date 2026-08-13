@@ -56,7 +56,6 @@ import WhatsMarked from "react-whatsmarked";
 
 import { Can } from "../../components/Can";
 import ConfirmationModal from "../../components/ConfirmationModal/";
-import ContactChannels from "../../components/ContactChannels";
 import ContactModal from "../../components/ContactModal";
 import ContactAdvancedInfoModal from "../../components/ContactAdvancedInfoModal";
 import ExportFieldsModal from "../../components/ExportFieldsModal";
@@ -178,7 +177,7 @@ const Contacts = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [newTicketModalOpen, setNewTicketModalOpen] = useState(false);
-  const [contactTicket, setContactTicket] = useState({});
+  const [contactTicket] = useState({});
   const [filteredTags, setFilteredTags] = useState([]);
   const [blockLoadingId, setBlockLoadingId] = useState(null);
   const [blockedStatus, setBlockedStatus] = useState({});

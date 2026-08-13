@@ -1,5 +1,6 @@
 import Contact from "../models/Contact";
 import CacheService from "../services/CacheService";
+import CacheHelper from "./CacheHelper";
 import { logger } from "../utils/logger";
 
 interface ContactCacheOptions {
@@ -7,9 +8,9 @@ interface ContactCacheOptions {
   forceRefresh?: boolean;
 }
 
-class ContactCacheHelper {
+class ContactCacheHelper extends CacheHelper {
+  protected readonly DEFAULT_TTL = 600;
   private readonly CACHE_PREFIX = "contact:";
-  private readonly DEFAULT_TTL = 600;
 
   private getCacheKey(identifier: string | number): string {
     return `${this.CACHE_PREFIX}${identifier}`;
@@ -20,24 +21,7 @@ class ContactCacheHelper {
     options: ContactCacheOptions = {}
   ): Promise<Contact | null> {
     const cacheKey = this.getCacheKey(contactId);
-    const { ttl = this.DEFAULT_TTL, forceRefresh = false } = options;
-
-    if (!forceRefresh) {
-      const cached = CacheService.get<Contact>(cacheKey);
-      if (cached) {
-        logger.debug(`Contact ${contactId} retrieved from cache`);
-        return cached;
-      }
-    }
-
-    const contact = await Contact.findByPk(contactId);
-    
-    if (contact) {
-      CacheService.set(cacheKey, contact, ttl);
-      logger.debug(`Contact ${contactId} cached`);
-    }
-
-    return contact;
+    return this.getOrSet(cacheKey, () => Contact.findByPk(contactId), options);
   }
 
   async getContactByNumber(
@@ -45,21 +29,14 @@ class ContactCacheHelper {
     options: ContactCacheOptions = {}
   ): Promise<Contact | null> {
     const cacheKey = this.getCacheKey(`number:${number}`);
-    const { ttl = this.DEFAULT_TTL, forceRefresh = false } = options;
+    const contact = await this.getOrSet(
+      cacheKey,
+      () => Contact.findOne({ where: { number } }),
+      options
+    );
 
-    if (!forceRefresh) {
-      const cached = CacheService.get<Contact>(cacheKey);
-      if (cached) {
-        logger.debug(`Contact with number ${number} retrieved from cache`);
-        return cached;
-      }
-    }
-
-    const contact = await Contact.findOne({ where: { number } });
-    
     if (contact) {
-      CacheService.set(cacheKey, contact, ttl);
-      CacheService.set(this.getCacheKey(contact.id), contact, ttl);
+      CacheService.set(this.getCacheKey(contact.id), contact, this.DEFAULT_TTL);
       logger.debug(`Contact with number ${number} cached`);
     }
 
@@ -67,28 +44,20 @@ class ContactCacheHelper {
   }
 
   invalidateContact(contactId: number): void {
-    const cacheKey = this.getCacheKey(contactId);
-    CacheService.del(cacheKey);
-    logger.debug(`Contact ${contactId} cache invalidated`);
+    this.delKey(this.getCacheKey(contactId));
   }
 
   invalidateContactByNumber(number: string): void {
-    const cacheKey = this.getCacheKey(`number:${number}`);
-    CacheService.del(cacheKey);
-    logger.debug(`Contact with number ${number} cache invalidated`);
+    this.delKey(this.getCacheKey(`number:${number}`));
   }
 
   invalidateAll(): void {
-    const keys = CacheService.keys().filter(key => 
-      key.startsWith(this.CACHE_PREFIX)
-    );
-    CacheService.del(keys);
-    logger.info(`Invalidated ${keys.length} contact cache entries`);
+    this.delKeysMatching(key => key.startsWith(this.CACHE_PREFIX));
   }
 
   async warmupCache(contactIds: number[]): Promise<void> {
     logger.info(`Warming up cache for ${contactIds.length} contacts`);
-    
+
     const contacts = await Contact.findAll({
       where: { id: contactIds }
     });
@@ -108,13 +77,7 @@ class ContactCacheHelper {
   }
 
   getCacheStats() {
-    const allKeys = CacheService.keys();
-    const contactKeys = allKeys.filter(key => key.startsWith(this.CACHE_PREFIX));
-    
-    return {
-      totalCached: contactKeys.length,
-      cacheStats: CacheService.getStats()
-    };
+    return this.getStats(key => key.startsWith(this.CACHE_PREFIX));
   }
 }
 

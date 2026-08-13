@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as Yup from "yup";
 import { getIO } from "../libs/socket";
+import { logger } from "../utils/logger";
 
 import CreateContactService from "../services/ContactServices/CreateContactService";
 import DeleteAllContactService from "../services/ContactServices/DeleteAllContactService";
@@ -20,10 +21,10 @@ import CheckIsValidContact from "../services/WbotServices/CheckIsValidContact";
 import CheckContactNumber from "../services/WbotServices/CheckNumber";
 import GetProfilePicUrl from "../services/WbotServices/GetProfilePicUrl";
 import SyncTagsService from "../services/TagServices/SyncTagsService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
 import Whatsapp from "../models/Whatsapp";
 import { getWbot } from "../libs/wbot";
-import GetClientIp from "../helpers/GetClientIp";
+import logActivity from "../helpers/logActivity";
 
 type IndexQuery = {
   searchParam: string;
@@ -107,15 +108,11 @@ export const blockContact = async (
     return res.status(500).json({ error: "Erro ao bloquear contato no WhatsApp" });
   }
 
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Contato ${contact.name} (${contact.number}) bloqueado no WhatsApp (sessão ${sessionId})`,
     entityType: EntityTypes.CONTACT,
     entityId: contact.id,
-    ip: clientIp,
     additionalData: { whatsappId: sessionId }
   });
 
@@ -159,9 +156,7 @@ export const unblockContact = async (
     return res.status(500).json({ error: "Erro ao desbloquear contato no WhatsApp" });
   }
 
-  const logUserId = req.user?.id || 1;
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Contato ${contact.name} (${contact.number}) desbloqueado no WhatsApp (sessão ${sessionId})`,
     entityType: EntityTypes.CONTACT,
@@ -329,10 +324,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     cpf
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Contato ${contact.name} (${contact.number}) criado`,
     entityType: EntityTypes.CONTACT,
@@ -386,10 +378,8 @@ export const update = async (
   const { contactId } = req.params;
 
   const contact = await UpdateContactService({ contactData, contactId });
-  const logUserId = req.user?.id || 1;
   
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Contato ${contact.name} (${contact.number}) atualizado`,
     entityType: EntityTypes.CONTACT,
@@ -415,10 +405,8 @@ export const remove = async (
   const contactToDelete = await ShowContactService(contactId);
   
   await DeleteContactService(contactId);
-  const logUserId = req.user?.id || 1;
   
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Contato ${contactToDelete.name} (${contactToDelete.number}) excluído`,
     entityType: EntityTypes.CONTACT,
@@ -444,16 +432,12 @@ export const removeAll = async (
   res: Response
 ): Promise<Response> => {
   await DeleteAllContactService();
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
   
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Todos os contatos foram excluídos`,
     entityType: EntityTypes.CONTACT,
     entityId: 0,
-    ip: clientIp,
     additionalData: {
       massDelete: true
     }
@@ -488,11 +472,8 @@ export const updateTags = async (
     contactId: +contactId
   });
   
-  const logUserId = req.user?.id || 1;
-  
   if (contact) {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.UPDATE,
       description: `Tags do contato ${contact.name} atualizadas`,
       entityType: EntityTypes.CONTACT,
@@ -518,8 +499,6 @@ export const exportContacts = async (
   res: Response
 ): Promise<Response> => {
   const { searchParam, tags, isGroup, status } = req.query as IndexQuery;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   const tagIds = tags ? tags.split(",").map(tag => Number(tag)) : [];
 
@@ -572,13 +551,11 @@ export const exportContacts = async (
 
     // LOG: Exportar contatos
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.EXPORT,
         description: `${contacts.length} contato(s) exportado(s)`,
         entityType: EntityTypes.CONTACT,
         entityId: 0,
-        ip: clientIp,
         additionalData: {
           contactCount: contacts.length,
           hasSearchParam: !!searchParam,
@@ -593,7 +570,7 @@ export const exportContacts = async (
 
     return res.status(200).json(exportData);
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

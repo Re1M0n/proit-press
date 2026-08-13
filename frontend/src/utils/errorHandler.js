@@ -1,4 +1,4 @@
-import ErrorLogService from "../services/SafeErrorLogService";
+import ErrorLogService from "../services/ErrorLogService";
 
 export const setupGlobalErrorHandlers = () => {
   window.addEventListener("unhandledrejection", (event) => {

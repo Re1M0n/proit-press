@@ -22,8 +22,8 @@ import SerializeWbotMsgId from "../helpers/SerializeWbotMsgId";
 import Contact from "../models/Contact";
 import MessageReaction from "../models/MessageReaction";
 import ReactToWhatsAppMessage from "../services/WbotServices/ReactToWhatsAppMessage";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 import getProfilePicUrlSafe from "../helpers/GetProfilePicUrlSafe";
 
 type IndexQuery = {
@@ -391,8 +391,6 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
   let { body, quotedMsg, mentions, sendAsDocument, compressVideo }: any = req.body;
   const medias = req.files as Express.Multer.File[];
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (mentions && typeof mentions === 'string') {
     try {
@@ -440,13 +438,11 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
     // LOG: Mensagem com mídia enviada
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.SEND,
         description: `Mensaje con ${medias.length} archivo(s) multimedia enviado en el ticket #${ticketId}`,
         entityType: EntityTypes.TICKET,
         entityId: ticket.id,
-        ip: clientIp,
         additionalData: {
           ticketId: parseInt(ticketId),
           messageType: 'media',
@@ -470,13 +466,11 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 
     // LOG: Mensagem de texto enviada
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.SEND,
         description: `Mensagem enviada no ticket #${ticketId}`,
         entityType: EntityTypes.TICKET,
         entityId: ticket.id,
-        ip: clientIp,
         additionalData: {
           ticketId: parseInt(ticketId),
           messageType: 'text',
@@ -497,8 +491,6 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
 export const edit = async (req: Request, res: Response): Promise<Response> => {
   const { messageId } = req.params;
   const { body }: MessageData = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   // Buscar mensagem antes de editar para comparar
   const messageToEdit = await Message.findByPk(messageId);
@@ -524,13 +516,11 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
 
   // LOG: Mensagem editada
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.EDIT,
       description: `Mensagem editada no ticket #${message.ticketId}`,
       entityType: EntityTypes.TICKET,
       entityId: message.ticketId,
-      ip: clientIp,
       additionalData: {
         ticketId: message.ticketId,
         oldBody: messageToEdit?.body?.substring(0, 100), // Primeiros 100 caracteres
@@ -557,8 +547,6 @@ export const remove = async (
   res: Response
 ): Promise<Response> => {
   const { messageId } = req.params;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   // Buscar mensagem antes de deletar para log
   const messageToDelete = await Message.findByPk(messageId);
@@ -584,13 +572,11 @@ export const remove = async (
 
   // LOG: Mensagem excluída
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.DELETE,
       description: `Mensagem excluída do ticket #${message.ticketId}`,
       entityType: EntityTypes.TICKET,
       entityId: message.ticketId,
-      ip: clientIp,
       additionalData: {
         ticketId: message.ticketId,
         messageBody: messageToDelete?.body?.substring(0, 50), // Primeiros 50 caracteres
@@ -635,8 +621,6 @@ export const markAsRead = async (req: Request, res: Response): Promise<Response>
 export const sendContacts = async (req: Request, res: Response): Promise<Response> => {
   const { ticketId } = req.params;
   const { contacts } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!contacts || !Array.isArray(contacts) || contacts.length === 0) {
     return res.status(400).json({ error: "Los contactos son obligatorios" });
@@ -658,13 +642,11 @@ export const sendContacts = async (req: Request, res: Response): Promise<Respons
 
     // LOG: Contatos enviados
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.SEND,
         description: `${contacts.length} contato(s) enviado(s) no ticket #${ticketId}`,
         entityType: EntityTypes.TICKET,
         entityId: ticket.id,
-        ip: clientIp,
         additionalData: {
           ticketId: parseInt(ticketId),
           messageType: 'vcard',

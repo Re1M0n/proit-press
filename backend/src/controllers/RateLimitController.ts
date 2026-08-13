@@ -1,10 +1,7 @@
-import { Router, Request, Response } from "express";
-import { rateLimits, authLimiter, apiLimiter } from "../config/rateLimiter";
+import { Request, Response } from "express";
+import { rateLimits } from "../config/rateLimiter";
 
-const rateLimitRoutes = Router();
-
-// Endpoint para verificar status do rate limit
-rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
+export const status = (req: Request, res: Response) => {
   const isDevelopment = process.env.NODE_ENV !== 'production';
   const isStrictMode = process.env.RATE_LIMIT_STRICT === 'true';
   
@@ -74,10 +71,9 @@ rateLimitRoutes.get("/rate-limit-status", (req: Request, res: Response) => {
   };
   
   return res.json(response);
-});
+};
 
-// Endpoint para testar rate limit de autenticação (com headers reais)
-rateLimitRoutes.get("/rate-limit-test-auth", authLimiter, (req: Request, res: Response) => {
+export const testAuth = (req: Request, res: Response) => {
   // Pegar headers do rate limit
   const limit = res.getHeader('RateLimit-Limit');
   const remaining = res.getHeader('RateLimit-Remaining');
@@ -156,10 +152,9 @@ rateLimitRoutes.get("/rate-limit-test-auth", authLimiter, (req: Request, res: Re
   };
   
   return res.json(response);
-});
+};
 
-// Endpoint para testar rate limit da API pública (com headers reais)
-rateLimitRoutes.get("/rate-limit-test-api", apiLimiter, (req: Request, res: Response) => {
+export const testApi = (req: Request, res: Response) => {
   // Pegar headers do rate limit
   const limit = res.getHeader('RateLimit-Limit');
   const remaining = res.getHeader('RateLimit-Remaining');
@@ -238,10 +233,9 @@ rateLimitRoutes.get("/rate-limit-test-api", apiLimiter, (req: Request, res: Resp
   };
   
   return res.json(response);
-});
+};
 
-// Endpoint para resetar rate limit (apenas desenvolvimento)
-rateLimitRoutes.post("/rate-limit-reset", (req: Request, res: Response) => {
+export const reset = (req: Request, res: Response) => {
   const isDevelopment = process.env.NODE_ENV !== 'production';
   
   if (!isDevelopment) {
@@ -261,6 +255,4 @@ rateLimitRoutes.post("/rate-limit-reset", (req: Request, res: Response) => {
     note: "O rate limit é armazenado em memória, então reiniciar o servidor limpa todos os contadores",
     alternative: "Ou aguarde 15 minutos para o reset automático"
   });
-});
-
-export default rateLimitRoutes;
+};

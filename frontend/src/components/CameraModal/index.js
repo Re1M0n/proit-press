@@ -67,7 +67,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
   const [error, setError] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [facingMode, setFacingMode] = useState('user'); 
-  const [recordedChunks, setRecordedChunks] = useState([]);
+  const [, setRecordedChunks] = useState([]);
 
   useEffect(() => {
     if (open) {
@@ -81,6 +81,7 @@ const CameraModal = ({ open, onClose, onCapture }) => {
     return () => {
       stopCamera();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, facingMode]);
 
   const startCamera = async () => {

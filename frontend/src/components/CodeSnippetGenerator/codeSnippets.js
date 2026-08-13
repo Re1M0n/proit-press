@@ -56,7 +56,7 @@ $.ajax(settings).done(function (response) {
 });
         `,
   NODEjs_Request: (number, body, userId, queueId, whatsappId, token) => `
-        const request = require('request');
+        const axios = require('axios');
         const options = {
             method: 'POST',
             url: '${process.env.REACT_APP_BACKEND_URL}/api/messages/v1/send',
@@ -65,21 +65,22 @@ $.ajax(settings).done(function (response) {
                 'x-api-token': '${token}',
                 'Content-Type': 'application/json',
             },
-            body: {
+            data: {
                 number: '${number}',
                 body: '${body}',
                 userId: '${userId}',
                 queueId: '${queueId}',
                 whatsAppId: '${whatsappId}',
-            },
-            json: true
+            }
         };
         
-        request(options, function (error, response, body) {
-            if (error) throw new Error(error);
-
-            console.log('Response:', body);
-        });`,
+        axios(options)
+            .then(response => {
+                console.log('Response:', response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });`,
   PHP_cURL: (number, body, userId, queueId, whatsappId, token) => `
         <?php
 

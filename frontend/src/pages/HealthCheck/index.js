@@ -21,7 +21,6 @@ import {
   Speed,
   Message,
   Schedule,
-  SignalCellular4Bar,
   SignalCellularConnectedNoInternet0Bar,
 } from "@mui/icons-material";
 import { format } from "date-fns";

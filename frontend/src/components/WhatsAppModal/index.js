@@ -30,7 +30,6 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
-import openSocket from "../../services/socket-io";
 import QueueSelect from "../QueueSelect";
 
 const Root = styled('div')(({ theme }) => ({

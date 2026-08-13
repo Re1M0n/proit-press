@@ -63,6 +63,7 @@ export function TagsContainer({ contact }) {
             }
             fetchData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contact]);
 
     const onChange = async (event, value, reason) => {

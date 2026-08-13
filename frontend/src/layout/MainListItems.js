@@ -39,10 +39,8 @@ import DatabaseIcon from "@mui/icons-material/Storage";
 import BackupIcon from "@mui/icons-material/Backup";
 import HistoryIcon from "@mui/icons-material/History";
 import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
-import QueueIcon from "@mui/icons-material/Queue";
 import QueueMonitorIcon from '@mui/icons-material/Assessment';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import SystemHealthIcon from '@mui/icons-material/HealthAndSafety';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import GroupIcon from '@mui/icons-material/Group';
@@ -169,7 +167,7 @@ function ListItemLink(props) {
 }
 
 function ListItemLinkWithDropdown(props) {
-  const { icon, primary, to, active, drawerClose, open, onToggle, children } = props;
+  const { icon, primary, to, active, open, onToggle, children } = props;
   const navigate = (e) => {
     // Navega para a página
     window.location.href = to;

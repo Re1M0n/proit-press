@@ -12,8 +12,8 @@ import ShowService from "../services/TagServices/ShowService";
 import SimpleListService from "../services/TagServices/SimpleListService";
 import SyncTagService from "../services/TagServices/SyncTagsService";
 import UpdateService from "../services/TagServices/UpdateService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 type IndexQuery = {
   searchParam?: string;
@@ -53,12 +53,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     color
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Tag ${tag.name} criada`,
     entityType: EntityTypes.TAG,
@@ -106,12 +101,7 @@ export const update = async (
 
     const tag = await UpdateService({ tagData, id: tagId });
 
-    const logUserId = req.user?.id || 1;
-    
-    const clientIp = GetClientIp(req);
-    
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.UPDATE,
       description: `Tag ${tag.name} atualizada`,
       entityType: EntityTypes.TAG,
@@ -145,12 +135,7 @@ export const remove = async (
   
   await DeleteService(tagId);
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Tag ${tagToDelete.name} excluída`,
     entityType: EntityTypes.TAG,
@@ -177,18 +162,11 @@ export const removeAll = async (
 
   await DeleteAllService();
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Todas as tags foram excluídas`,
     entityType: EntityTypes.TAG,
     entityId: 0,
-    ip: clientIp,
-
     additionalData: {
       massDelete: true
     }

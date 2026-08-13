@@ -14,7 +14,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Divider,
   Chip,
   IconButton
 } from '@mui/material';
@@ -160,6 +159,7 @@ const DatabaseStatus = () => {
     const interval = setInterval(fetchDatabaseStatus, 5 * 60 * 1000); 
     
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
   const handleRefresh = () => {
@@ -169,13 +169,6 @@ const DatabaseStatus = () => {
   const getStatusColor = (status) => {
     if (status === 'online') return 'success';
     return 'error';
-  };
-
-  const getStatusIcon = (status) => {
-    if (status === 'online') {
-      return <CheckCircleIcon className={classes.healthyIcon} />;
-    }
-    return <ErrorIcon className={classes.criticalIcon} />;
   };
 
   if (loading) {

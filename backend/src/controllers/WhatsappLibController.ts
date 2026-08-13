@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { logger } from "../utils/logger";
 import { updateWhatsappLib } from "../services/WhatsappLibService/UpdateWhatsappLibService";
 import { updateWhatsappLibFromGit } from "../services/WhatsappLibService/UpdateWhatsappLibFromGitService";
 import { restartBackend } from "../services/WhatsappLibService/RestartService";
@@ -29,7 +30,7 @@ export const updateWhatsappLibrary = async (req: Request, res: Response): Promis
       });
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     return res.status(500).json({ 
       success: false, 
       message: "Erro ao atualizar a biblioteca whatsapp-web.js", 
@@ -65,7 +66,7 @@ export const updateWhatsappLibraryFromGit = async (req: Request, res: Response):
       });
     }
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     return res.status(500).json({ 
       success: false, 
       message: "Erro ao atualizar a biblioteca whatsapp-web.js via Git", 

@@ -11,8 +11,8 @@ import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsServi
 import RestartWhatsAppService from "../services/WhatsappService/RestartWhatsAppService";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 interface WhatsappData {
   name: string;
@@ -71,12 +71,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     StartWhatsAppSession(whatsapp);
   }
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Conexión de WhatsApp ${whatsapp.name} creada`,
     entityType: EntityTypes.WHATSAPP,
@@ -124,12 +119,7 @@ export const update = async (
     whatsappId
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Conexión de WhatsApp ${whatsapp.name} actualizada`,
     entityType: EntityTypes.WHATSAPP,
@@ -165,12 +155,7 @@ export const remove = async (
   await DeleteWhatsAppService(whatsappId);
   removeWbot(+whatsappId);
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Conexión de WhatsApp ${whatsappToDelete.name} eliminada`,
     entityType: EntityTypes.WHATSAPP,

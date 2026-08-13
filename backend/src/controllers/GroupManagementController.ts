@@ -3,8 +3,8 @@ import GroupManagementService from "../services/WbotServices/GroupManagementServ
 import GroupEventsService from "../services/WbotServices/GroupEventsService";
 import AppError from "../errors/AppError";
 import { getWbot } from "../libs/wbot";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 export const createGroup = async (
   req: Request,
@@ -12,8 +12,6 @@ export const createGroup = async (
 ): Promise<Response> => {
   const { whatsappId } = req.params;
   const { name, participants } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!name || !participants || !Array.isArray(participants)) {
     throw new AppError("Nombre y participantes son obligatorios");
@@ -27,13 +25,11 @@ export const createGroup = async (
 
   // LOG: Grupo creado
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.CREATE,
       description: `Grupo "${name}" creado`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupName: name,
         participantCount: participants.length,
@@ -99,8 +95,6 @@ export const addParticipants = async (
 ): Promise<Response> => {
   const { whatsappId, groupId } = req.params;
   const { participants } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!participants || !Array.isArray(participants)) {
     throw new AppError("Los participantes deben ser un array");
@@ -132,13 +126,11 @@ export const addParticipants = async (
 
   // LOG: Participantes adicionados
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.JOIN,
       description: `${participants.length} participante(s) adicionado(s) al grupo ${groupId}`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupId,
         participantCount: participants.length,
@@ -161,8 +153,6 @@ export const removeParticipants = async (
 ): Promise<Response> => {
   const { whatsappId, groupId } = req.params;
   const { participants } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!participants || !Array.isArray(participants)) {
     throw new AppError("Los participantes deben ser un array");
@@ -194,13 +184,11 @@ export const removeParticipants = async (
 
   // LOG: Participantes removidos
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.LEAVE,
       description: `${participants.length} participante(s) removido(s) del grupo ${groupId}`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupId,
         participantCount: participants.length,
@@ -220,8 +208,6 @@ export const promoteParticipants = async (
 ): Promise<Response> => {
   const { whatsappId, groupId } = req.params;
   const { participants } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!participants || !Array.isArray(participants)) {
     throw new AppError("Los participantes deben ser un array");
@@ -253,13 +239,11 @@ export const promoteParticipants = async (
 
   // LOG: Participantes promovidos
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.PROMOTE,
       description: `${participants.length} participante(s) promovido(s) a admin en el grupo ${groupId}`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupId,
         participantCount: participants.length,
@@ -279,8 +263,6 @@ export const demoteParticipants = async (
 ): Promise<Response> => {
   const { whatsappId, groupId } = req.params;
   const { participants } = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   if (!participants || !Array.isArray(participants)) {
     throw new AppError("Los participantes deben ser un array");
@@ -312,13 +294,11 @@ export const demoteParticipants = async (
 
   // LOG: Participantes rebaixados
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.DEMOTE,
       description: `${participants.length} participante(s) degradado(s) en el grupo ${groupId}`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupId,
         participantCount: participants.length,
@@ -362,8 +342,6 @@ export const revokeGroupInviteLink = async (
   res: Response
 ): Promise<Response> => {
   const { whatsappId, groupId } = req.params;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   const newInviteLink = await GroupManagementService.revokeGroupInviteLink(
     Number(whatsappId),
@@ -372,13 +350,11 @@ export const revokeGroupInviteLink = async (
 
   // LOG: Link de invitación revocado
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.REVOKE,
       description: `Link de invitación del grupo ${groupId} revocado`,
       entityType: EntityTypes.GROUP,
       entityId: Number(whatsappId),
-      ip: clientIp,
       additionalData: {
         groupId,
         whatsappId: Number(whatsappId)

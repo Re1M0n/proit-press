@@ -14,9 +14,9 @@ import ShowTicketService from "../services/TicketServices/ShowTicketService";
 import UpdateTicketService from "../services/TicketServices/UpdateTicketService";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
 import CountTicketsService from "../services/TicketServices/CountTicketsService";
-import GetClientIp from "../helpers/GetClientIp";
+import logActivity from "../helpers/logActivity";
 
 interface AuthenticatedRequest extends Request {
   user: {
@@ -142,11 +142,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     whatsappId
   });
 
-  const logUserId = req.user?.id || 1;
   const contact = await Contact.findByPk(contactId);
   
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Ticket #${ticket.id} criado para o contato ${contact?.name || contactId}`,
     entityType: EntityTypes.TICKET,
@@ -180,8 +178,6 @@ export const update = async (
 ): Promise<Response> => {
   const { ticketId } = req.params;
   const ticketData: TicketData = req.body;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   // Buscar ticket antes da atualização para comparar
   const ticketBefore = await Ticket.findByPk(ticketId, {
@@ -196,16 +192,14 @@ export const update = async (
   // LOG: Aceitar ticket (pending → open)
   if (ticketBefore && ticketBefore.status === 'pending' && ticketData.status === 'open') {
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.ACCEPT,
         description: `Ticket #${ticketId} aceito`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           previousUserId: ticketBefore.userId,
-          newUserId: ticketData.userId || logUserId,
+          newUserId: ticketData.userId || (req.user?.id || 1),
           contactId: ticket.contactId
         }
       });
@@ -222,13 +216,11 @@ export const update = async (
       const oldUser = await User.findByPk(ticketBefore.userId);
       const newUser = await User.findByPk(ticketData.userId);
       
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.TRANSFER,
         description: `Ticket #${ticketId} transferido de ${oldUser?.name || 'N/A'} para ${newUser?.name || 'N/A'}`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           fromUserId: ticketBefore.userId,
           toUserId: ticketData.userId,
@@ -249,13 +241,11 @@ export const update = async (
       const oldQueue = ticketBefore.queueId ? await ShowQueueService(ticketBefore.queueId) : null;
       const newQueue = ticketData.queueId ? await ShowQueueService(ticketData.queueId) : null;
       
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.TRANSFER,
         description: `Ticket #${ticketId} transferido de ${oldQueue?.name || 'Sem setor'} para ${newQueue?.name || 'Sem setor'}`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           fromQueueId: ticketBefore.queueId,
           toQueueId: ticketData.queueId,
@@ -272,13 +262,11 @@ export const update = async (
   // LOG: Mover para aguardando
   if (ticketBefore && ticketBefore.status !== 'pending' && ticketData.status === 'pending') {
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.UPDATE,
         description: `Ticket #${ticketId} movido para aguardando`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           previousStatus: ticketBefore.status,
           previousUserId: ticketBefore.userId,
@@ -293,13 +281,11 @@ export const update = async (
   // LOG: Fechar ticket
   if (ticket.status === "closed" && (!ticketBefore || ticketBefore.status !== "closed")) {
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.CLOSE,
         description: `Ticket #${ticketId} fechado`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           previousStatus: ticketBefore?.status,
           contactId: ticket.contactId
@@ -313,13 +299,11 @@ export const update = async (
   // LOG: Reabrir ticket
   if (ticketBefore && ticketBefore.status === "closed" && ticketData.status === "open") {
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.REOPEN,
         description: `Ticket #${ticketId} reaberto`,
         entityType: EntityTypes.TICKET,
         entityId: parseInt(ticketId),
-        ip: clientIp,
         additionalData: {
           contactId: ticket.contactId
         }
@@ -362,16 +346,12 @@ export const remove = async (
   const ticketToDelete = await ShowTicketService(ticketId);
   
   const ticket = await DeleteTicketService(ticketId);
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
   
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Ticket #${ticketId} excluído`,
     entityType: EntityTypes.TICKET,
     entityId: parseInt(ticketId),
-    ip: clientIp,
     additionalData: {
       contactId: ticketToDelete.contactId,
       status: ticketToDelete.status,
@@ -499,15 +479,13 @@ export const closeTickets = async (
     });
 
     // LOG: Fechar múltiplos tickets
-    const clientIp = GetClientIp(req);
     try {
-      await createActivityLog({
+      await logActivity(req, {
         userId,
         action: ActivityActions.CLOSE,
         description: `${tickets.length} ticket(s) fechado(s) em massa`,
         entityType: EntityTypes.TICKET,
         entityId: 0,
-        ip: clientIp,
         additionalData: {
           ticketCount: tickets.length,
           statusFilter: status || 'all',

@@ -10,8 +10,8 @@ import DeleteQuickAnswerService from "../services/QuickAnswerService/DeleteQuick
 import DeleteAllQuickAnswerService from "../services/QuickAnswerService/DeleteAllQuickAnswerService";
 
 import AppError from "../errors/AppError";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 type IndexQuery = {
   searchParam: string;
@@ -58,12 +58,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     ...newQuickAnswer
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Resposta rápida "${quickAnswer.shortcut}" criada`,
     entityType: EntityTypes.QUICKANSWER,
@@ -120,12 +115,7 @@ export const update = async (
     quickAnswerId
   });
 
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.UPDATE,
     description: `Resposta rápida "${quickAnswer.shortcut}" atualizada`,
     entityType: EntityTypes.QUICKANSWER,
@@ -152,12 +142,7 @@ export const remove = async (
   
   await DeleteQuickAnswerService(quickAnswerId);
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Resposta rápida "${quickAnswerToDelete.shortcut}" excluída`,
     entityType: EntityTypes.QUICKANSWER,
@@ -183,18 +168,11 @@ export const removeAll = async (
 ): Promise<Response> => {
   await DeleteAllQuickAnswerService();
   
-  const logUserId = req.user?.id || 1;
-  
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Todas as respostas rápidas foram excluídas`,
     entityType: EntityTypes.QUICKANSWER,
     entityId: 0,
-    ip: clientIp,
-
     additionalData: {
       massDelete: true
     }

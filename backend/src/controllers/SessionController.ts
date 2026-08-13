@@ -9,25 +9,23 @@ import User from "../models/User";
 import UserSession from "../models/UserSession";
 import { RefreshTokenService } from "../services/AuthServices/RefreshTokenService";
 import AuthUserService from "../services/UserServices/AuthUserService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const { email, password } = req.body;
-  const clientIp = GetClientIp(req);
 
   const { token, serializedUser, refreshToken } = await AuthUserService({
     email,
     password
   });
 
-  await createActivityLog({
+  await logActivity(req, {
     userId: serializedUser.id,
     action: ActivityActions.LOGIN,
     description: `Usuario ${serializedUser.name} realizó login en el sistema`,
     entityType: EntityTypes.USER,
     entityId: serializedUser.id,
-    ip: clientIp,
     additionalData: { email: serializedUser.email }
   });
 
@@ -64,7 +62,6 @@ export const remove = async (
   res: Response
 ): Promise<Response> => {
   const { id } = req.user;
-  const clientIp = GetClientIp(req);
   
   if (id) {
     const user = await User.findByPk(id);
@@ -85,13 +82,12 @@ export const remove = async (
       
       // LOG: Logout
       try {
-        await createActivityLog({
+        await logActivity(req, {
           userId: user.id,
           action: ActivityActions.LOGOUT,
           description: `Usuario ${user.name} realizó logout del sistema`,
           entityType: EntityTypes.USER,
           entityId: user.id,
-          ip: clientIp,
           additionalData: {}
         });
       } catch (error) {
@@ -155,15 +151,13 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
   }
 
   // LOG: Solicitud de restablecimiento de contraseña
-  const clientIp = GetClientIp(req);
   try {
-    await createActivityLog({
+    await logActivity(req, {
       userId: user.id,
       action: ActivityActions.UPDATE,
       description: `Usuario ${user.name} solicitó restablecimiento de contraseña`,
       entityType: EntityTypes.USER,
       entityId: user.id,
-      ip: clientIp,
       additionalData: {
         email: user.email,
         action: 'forgot_password'
@@ -196,15 +190,13 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
   await user.save();
 
   // LOG: Senha redefinida
-  const clientIp = GetClientIp(req);
   try {
-    await createActivityLog({
+    await logActivity(req, {
       userId: user.id,
       action: ActivityActions.UPDATE,
       description: `Usuario ${user.name} restableció la contraseña`,
       entityType: EntityTypes.USER,
       entityId: user.id,
-      ip: clientIp,
       additionalData: {
         email: user.email,
         action: 'reset_password'

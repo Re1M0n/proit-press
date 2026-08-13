@@ -1,23 +1,20 @@
 import { Request, Response } from "express";
 import ImportContactsService from "../services/WbotServices/ImportContactsService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 export const store = async (req: Request, res: Response): Promise<Response> => {
   const userId:number = parseInt(req.user.id);
-  const clientIp = GetClientIp(req);
   
   await ImportContactsService(userId);
 
   // LOG: Importar contatos do telefone
   try {
-    await createActivityLog({
-      userId,
+    await logActivity(req, {
       action: ActivityActions.IMPORT,
       description: `Contatos do telefone importados`,
       entityType: EntityTypes.CONTACT,
       entityId: 0,
-      ip: clientIp,
       additionalData: {
         source: 'phone',
         userId

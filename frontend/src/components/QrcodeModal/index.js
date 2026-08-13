@@ -2,7 +2,6 @@ import {
 	Dialog, 
 	DialogContent, 
 	DialogTitle,
-	Paper, 
 	Typography, 
 	Box,
 	CircularProgress,
@@ -12,7 +11,6 @@ import {
 import { Close as CloseIcon, CheckCircle } from "@mui/icons-material";
 import { QRCodeSVG } from "qrcode.react";
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
@@ -22,7 +20,6 @@ const QrcodeModal = ({ open, onClose, whatsAppId }) => {
 	const [qrCode, setQrCode] = useState("");
 	const [status, setStatus] = useState("");
 	const [isConnecting, setIsConnecting] = useState(false);
-	const { t } = useTranslation();
 
 	useEffect(() => {
 		if (open) {

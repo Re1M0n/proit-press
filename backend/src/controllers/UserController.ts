@@ -8,8 +8,8 @@ import DeleteUserService from "../services/UserServices/DeleteUserService";
 import ListUsersService from "../services/UserServices/ListUsersService";
 import ShowUserService from "../services/UserServices/ShowUserService";
 import UpdateUserService from "../services/UserServices/UpdateUserService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 type IndexQuery = {
   searchParam: string;
@@ -64,16 +64,11 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     active
   });
 
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+  await logActivity(req, {
     action: ActivityActions.CREATE,
     description: `Usuário ${user.name} (${user.email}) criado com perfil ${user.profile}`,
     entityType: EntityTypes.USER,
     entityId: user.id,
-    ip: clientIp,
     additionalData: {
       email: user.email,
       profile: user.profile
@@ -117,17 +112,13 @@ export const update = async (
   const userData = req.body;
 
   const user = await UpdateUserService({ userData, userId });
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
   
   if (user) {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.UPDATE,
       description: `Usuário ${user.name} (${user.email}) atualizado`,
       entityType: EntityTypes.USER,
       entityId: user.id,
-      ip: clientIp,
       additionalData: userData
     });
   }
@@ -158,16 +149,12 @@ export const remove = async (
   const userToDelete = await ShowUserService(userId);
   
   await DeleteUserService(userId);
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
-  
-  await createActivityLog({
-    userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+
+  await logActivity(req, {
     action: ActivityActions.DELETE,
     description: `Usuário ${userToDelete.name} (${userToDelete.email}) excluído`,
     entityType: EntityTypes.USER,
     entityId: parseInt(userId),
-    ip: clientIp,
     additionalData: {
       email: userToDelete.email,
       profile: userToDelete.profile

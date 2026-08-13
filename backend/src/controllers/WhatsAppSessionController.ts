@@ -4,26 +4,22 @@ import { stopTelegramSession } from "../libs/telegram";
 import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
-import { createActivityLog, ActivityActions, EntityTypes } from "../services/ActivityLogService";
-import GetClientIp from "../helpers/GetClientIp";
+import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
+import logActivity from "../helpers/logActivity";
 
 const store = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
   const whatsapp = await ShowWhatsAppService(whatsappId);
 
   StartWhatsAppSession(whatsapp);
 
   // LOG: Sessão iniciada
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.START,
       description: `Sesión de WhatsApp "${whatsapp.name}" iniciada`,
       entityType: EntityTypes.WHATSAPP,
       entityId: whatsapp.id,
-      ip: clientIp,
       additionalData: {
         whatsappName: whatsapp.name,
         status: whatsapp.status
@@ -38,8 +34,6 @@ const store = async (req: Request, res: Response): Promise<Response> => {
 
 const update = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
-  const logUserId = req.user?.id || 1;
-  const clientIp = GetClientIp(req);
 
   const { whatsapp } = await UpdateWhatsAppService({
     whatsappId,
@@ -50,13 +44,11 @@ const update = async (req: Request, res: Response): Promise<Response> => {
 
   // LOG: Sessão reconectada
   try {
-    await createActivityLog({
-      userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+    await logActivity(req, {
       action: ActivityActions.CONNECT,
       description: `Sesión de WhatsApp "${whatsapp.name}" reconectada`,
       entityType: EntityTypes.WHATSAPP,
       entityId: whatsapp.id,
-      ip: clientIp,
       additionalData: {
         whatsappName: whatsapp.name,
         action: 'reconnect'
@@ -72,8 +64,6 @@ const update = async (req: Request, res: Response): Promise<Response> => {
 const remove = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { whatsappId } = req.params;
-    const logUserId = req.user?.id || 1;
-    const clientIp = GetClientIp(req);
     const whatsapp = await ShowWhatsAppService(whatsappId);
 
     try {
@@ -100,13 +90,11 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
 
     // LOG: Sessão desconectada
     try {
-      await createActivityLog({
-        userId: typeof logUserId === 'string' ? parseInt(logUserId) : logUserId,
+      await logActivity(req, {
         action: ActivityActions.DISCONNECT,
         description: `Sesión de WhatsApp "${whatsapp.name}" desconectada`,
         entityType: EntityTypes.WHATSAPP,
         entityId: whatsapp.id,
-        ip: clientIp,
         additionalData: {
           whatsappName: whatsapp.name,
           previousStatus: whatsapp.status,

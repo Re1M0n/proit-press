@@ -79,6 +79,7 @@ const ManageParticipantsModal = ({ open, onClose, whatsappId, group, onSuccess }
     if (open && group) {
       loadGroupInfo();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, group]);
 
   const loadGroupInfo = async () => {

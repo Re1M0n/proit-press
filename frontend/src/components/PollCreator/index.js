@@ -13,7 +13,6 @@ import {
   Switch,
   List,
   ListItem,
-  ListItemText,
   ListItemSecondaryAction,
   Paper
 } from "@mui/material";

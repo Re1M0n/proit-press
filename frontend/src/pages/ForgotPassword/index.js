@@ -149,7 +149,7 @@ const ForgotPassword = () => {
         setTheme(savedTheme);
 
         fetchCompanyData();
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         const fetchLogo = async () => {
@@ -184,7 +184,7 @@ const ForgotPassword = () => {
         };
 
         fetchLogo();
-    }, [theme]);
+    }, [theme, t]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

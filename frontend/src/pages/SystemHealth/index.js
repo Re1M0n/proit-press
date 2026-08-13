@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -11,14 +10,9 @@ import Button from "@mui/material/Button";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +22,6 @@ import DnsIcon from "@mui/icons-material/Dns";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import WarningIcon from "@mui/icons-material/Warning";
 import ErrorIcon from "@mui/icons-material/Error";
-import InfoIcon from "@mui/icons-material/Info";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
@@ -43,7 +36,6 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 
 import api from "../../services/api";
-import { i18n } from "../../translate/i18n";
 import MainHeader from "../../components/MainHeader";
 import MainContainer from "../../components/MainContainer";
 import Title from "../../components/Title";
@@ -302,18 +294,6 @@ const SystemHealth = () => {
     );
   };
 
-  const renderAlertIcon = (level) => {
-    switch (level) {
-      case "critical":
-        return <ErrorIcon color="error" />;
-      case "warning":
-        return <WarningIcon color="warning" />;
-      case "info":
-        return <InfoIcon color="info" />;
-      default:
-        return <InfoIcon />;
-    }
-  };
 
   return (
     <MainContainer>

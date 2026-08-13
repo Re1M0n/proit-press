@@ -19,11 +19,9 @@ import {
   Add as AddIcon,
   Search as SearchIcon,
   People as PeopleIcon,
-  Edit as EditIcon,
   ExitToApp as ExitIcon,
   Link as LinkIcon,
-  Settings as SettingsIcon,
-  History as HistoryIcon
+  Settings as SettingsIcon
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
@@ -85,7 +83,7 @@ const HeaderCell = styled(TableCell)(({ theme }) => ({
 const GroupManagement = () => {
   
   const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [searchParam, setSearchParam] = useState("");
   const [selectedWhatsappId, setSelectedWhatsappId] = useState(null);
   const [whatsapps, setWhatsapps] = useState([]);
@@ -103,6 +101,7 @@ const GroupManagement = () => {
     if (selectedWhatsappId) {
       loadGroups();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWhatsappId]);
 
   const loadWhatsapps = async () => {

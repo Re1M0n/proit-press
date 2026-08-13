@@ -41,6 +41,7 @@ const TimestampCell = styled(TableCell)(({ theme }) => ({
 
 const MessageCell = styled(TableCell)(({ theme }) => ({
   fontSize: '0.95rem',
+  fontWeight: 500,
   padding: theme.spacing(2),
   borderBottom: '1px solid #e0e0e0',
 }));

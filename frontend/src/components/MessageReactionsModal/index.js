@@ -43,6 +43,7 @@ const MessageReactionsModal = ({ open, onClose, messageId, t }) => {
       setTab(0);
       load();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, messageId]);
 
   const emojis = useMemo(() => reactions.map(r => ({ emoji: r.aggregateEmoji || r.id, count: r.senders?.length || 0, hasMe: !!r.hasReactionByMe })), [reactions]);

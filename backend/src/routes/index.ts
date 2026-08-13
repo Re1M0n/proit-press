@@ -1,81 +1,20 @@
 import { Router } from "express";
-
-import activityLogRoutes from "./activityLogRoutes";
-import videoRoutes from "./videoRoutes";
-import apiRoutes from "./apiRoutes";
-import versionRoutes from "./versionRoutes";
-import apiTokenRoutes from "./apiTokenRoutes";
-import authRoutes from "./authRoutes";
-import backupRoutes from "./backupRoutes";
-import networkMonitorRoutes from "./networkMonitorRoutes";
-import systemCleanupRoutes from "./systemCleanupRoutes";
-import queueMonitorRoutes from "./queueMonitorRoutes";
-import userMonitorRoutes from "./userMonitorRoutes";
-import systemHealthRoutes from "./systemHealthRoutes";
-import systemUpdateRoutes from "./systemUpdateRoutes";
-import contactRoutes from "./contactRoutes";
-import errorLogRoutes from "./errorLogRoutes";
-import integrationRoutes from "./integrationRoutes";
-import messageRoutes from "./messageRoutes";
-import personalizationRoutes from "./personalizationRoutes";
-import queueRoutes from "./queueRoutes";
-import quickAnswerRoutes from "./quickAnswerRoutes";
-import settingRoutes from "./settingRoutes";
-import systemRoutes from "./systemRoutes";
-import tagRoutes from "./tagRoutes";
-import clientStatusRoutes from "./clientStatusRoutes";
-import ticketRoutes from "./ticketRoutes";
-import userRoutes from "./userRoutes";
-import whatsappRoutes from "./whatsappRoutes";
-import whatsappSessionRoutes from "./whatsappSessionRoutes";
-import whatsappNotificationRoutes from "./whatsappNotificationRoutes";
-import groupRoutes from "./groupRoutes";
-import healthCheckRoutes from "./healthCheckRoutes";
-import cacheRoutes from "./cacheRoutes";
-import groupEventRoutes from "./groupEventRoutes";
-import groupManagementRoutes from "./groupManagementRoutes";
-import pollVoteRoutes from "./pollVoteRoutes";
-import rateLimitRoutes from "./rateLimitRoutes";
-import fileManagerRoutes from "./fileManagerRoutes";
+import { routeRegistry } from "./routeRegistry";
 
 const routes = Router();
 
-routes.use(userRoutes);
-routes.use("/auth", authRoutes);
-routes.use(settingRoutes);
-routes.use(contactRoutes);
-routes.use(ticketRoutes);
-routes.use(whatsappRoutes);
-routes.use(messageRoutes);
-routes.use(whatsappSessionRoutes);
-routes.use(queueRoutes);
-routes.use(quickAnswerRoutes);
-routes.use("/api/messages", apiRoutes);
-routes.use(tagRoutes);
-routes.use(clientStatusRoutes);
-routes.use(integrationRoutes);
-routes.use(whatsappNotificationRoutes);
-routes.use(systemRoutes);
-routes.use(personalizationRoutes);
-routes.use(apiTokenRoutes);
-routes.use("/error-logs", errorLogRoutes);
-routes.use(versionRoutes);
-routes.use(backupRoutes);
-routes.use(activityLogRoutes);
-routes.use(networkMonitorRoutes);
-routes.use(systemCleanupRoutes);
-routes.use(queueMonitorRoutes);
-routes.use(userMonitorRoutes);
-routes.use(systemHealthRoutes);
-routes.use(systemUpdateRoutes);
-routes.use(videoRoutes);
-routes.use(groupRoutes);
-routes.use(healthCheckRoutes);
-routes.use(cacheRoutes);
-routes.use(groupEventRoutes);
-routes.use(groupManagementRoutes);
-routes.use(pollVoteRoutes);
-routes.use(rateLimitRoutes);
-routes.use(fileManagerRoutes);
+// Registro declarativo: cada grupo del routeRegistry define su mount path
+// (o "/" si no se especifica) y sus rutas como datos. El orden de los grupos
+// y de las rutas dentro de cada grupo se conserva tal cual estaba antes.
+routeRegistry.forEach(group => {
+  const mountPath = group.path ?? "/";
+  const subRouter = Router();
+
+  group.routes.forEach(({ method, path, middlewares = [], handler }) => {
+    subRouter[method](path, ...middlewares, handler);
+  });
+
+  routes.use(mountPath, subRouter);
+});
 
 export default routes;

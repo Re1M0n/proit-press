@@ -23,7 +23,6 @@ import WhatsMarked from "react-whatsmarked";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
-import openSocket from "../../services/socket-io";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import ContactModal from "../ContactModal";
 

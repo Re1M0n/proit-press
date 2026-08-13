@@ -369,7 +369,7 @@ const MessageInput = ({ ticketStatus }) => {
   const [contactId, setContactId] = useState(null);
   const [isContactBlocked, setIsContactBlocked] = useState(false);
   const [isGroup, setIsGroup] = useState(false);
-  const [groupId, setGroupId] = useState(null);
+  const [, setGroupId] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [initialCaption, setInitialCaption] = useState("");
   const [showPollCreator, setShowPollCreator] = useState(false);
@@ -470,7 +470,7 @@ const MessageInput = ({ ticketStatus }) => {
     };
 
     fetchTicketAndStatus();
-  }, [ticketId]);
+  }, [ticketId, t]);
 
   const refreshBlockedStatus = useCallback(async () => {
     if (!contactId || isGroup) return;
@@ -785,9 +785,6 @@ const MessageInput = ({ ticketStatus }) => {
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       
-      const textBeforePart = originalMessage.substring(0, originalMessage.indexOf(part));
-      const pipeCount = (textBeforePart.match(/\|/g) || []).length;
-      
       if (i > 0) {
         const previousPart = parts[i - 1];
         const textBetween = originalMessage.substring(
@@ -815,16 +812,6 @@ const MessageInput = ({ ticketStatus }) => {
         response = await api.post(`/messages/${ticketId}`, message);
         
         if (response && response.data) {
-          const messageData = {
-            ...message,
-            id: response.data.id || new Date().getTime().toString(),
-            ticketId: parseInt(ticketId),
-            createdAt: new Date().toISOString(),
-            userId: user?.id,
-            fromMe: true,
-            read: 1
-          };
-          
           // Esperar el appMessage emitido por el backend.
         }
       } catch (err) {
@@ -973,16 +960,6 @@ const MessageInput = ({ ticketStatus }) => {
         response = await api.post(`/messages/${ticketId}`, message);
         
         if (response && response.data) {
-          const messageData = {
-            ...message,
-            id: response.data.id || new Date().getTime().toString(),
-            ticketId: parseInt(ticketId),
-            createdAt: new Date().toISOString(),
-            userId: user?.id,
-            fromMe: true,
-            read: 1
-          };
-          
           // Esperar el appMessage emitido por el backend.
         }
       }
@@ -1658,9 +1635,9 @@ const MessageInput = ({ ticketStatus }) => {
                     .slice(0, 10)
                     .map((participant, index) => {
                       const initial = participant.name ? participant.name.charAt(0).toUpperCase() : '?';
-                      return (
-                        <li key={index}>
-                          <a onClick={() => handleMentionClick(participant)}>
+                      return (                          <li key={index}>
+                          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                          <a href="#" onClick={(e) => { e.preventDefault(); handleMentionClick(participant); }}>
                             {participant.avatar ? (
                               <img 
                                 src={participant.avatar} 

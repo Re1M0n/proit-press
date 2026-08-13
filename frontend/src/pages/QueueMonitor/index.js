@@ -55,10 +55,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: theme.spacing(1),
 }));
 
-const FixedHeightPaper = styled(StyledPaper)(({ theme }) => ({
-  minHeight: 150,
-}));
-
 const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
   paddingBottom: 0,
 }));
@@ -99,12 +95,6 @@ const TicketInfo = styled('div')(({ theme }) => ({
   alignItems: "center",
   marginRight: theme.spacing(2),
   gap: theme.spacing(0.5),
-}));
-
-const TicketInfoIcon = styled('span')(({ theme }) => ({
-  marginRight: theme.spacing(0.5),
-  display: "flex",
-  alignItems: "center",
 }));
 
 const RefreshButton = styled(Button)(({ theme }) => ({
@@ -151,12 +141,6 @@ const TimeInfo = styled('div')(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing(0.5),
-}));
-
-const TimeIcon = styled('span')(({ theme }) => ({
-  marginRight: theme.spacing(0.5),
-  display: "flex",
-  alignItems: "center",
 }));
 
 const SummaryCard = styled(Card)(({ theme }) => ({

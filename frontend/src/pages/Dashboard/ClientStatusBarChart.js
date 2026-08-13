@@ -11,7 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  Legend,
 } from "recharts";
 import api from "../../services/api";
 import Title from "./Title";

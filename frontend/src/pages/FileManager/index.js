@@ -40,7 +40,6 @@ import {
   CheckCircle as CheckCircleIcon
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next';
 
 import MainContainer from '../../components/MainContainer';
 import MainHeader from '../../components/MainHeader';
@@ -49,8 +48,6 @@ import api from '../../services/api';
 import toastError from '../../errors/toastError';
 
 const FileManager = () => {
-  const { t } = useTranslation();
-
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -63,6 +60,7 @@ const FileManager = () => {
 
   useEffect(() => {
     loadStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   // Limpar blob URL quando fechar o preview

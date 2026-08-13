@@ -54,12 +54,14 @@ const SelectContactsModal = ({ open, onClose, onConfirm, excludeIds = [], title 
     setContacts([]);
     setPageNumber(1);
     fetchContacts(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
     const h = setTimeout(() => fetchContacts(true), 400);
     return () => clearTimeout(h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParam]);
 
   useEffect(() => {

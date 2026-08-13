@@ -1,8 +1,6 @@
 import {
   Box,
-  Button,
   CircularProgress,
-  Divider,
   IconButton,
   styled,
 } from "@mui/material";
@@ -245,8 +243,9 @@ const ContactImage = styled("img")(({ theme }) => ({
 const MessageItem = styled("div")(({ theme, message }) => ({
   overflowWrap: "break-word",
   padding: "3px 80px 6px 6px",
-  lineHeight: "19px",
+  lineHeight: "1.5",
   fontSize: "14px",
+  fontWeight: 500,
   display: "block",
   width: "100%",
   ...(message.isDeleted && {
@@ -484,7 +483,6 @@ const reducer = (state, action) => {
   }
 
   if (action.type === "UPDATE_MESSAGE") {
-    const timestamp = new Date().toISOString();
     const messageToUpdate = action.payload;
     
     if (!messageToUpdate || !messageToUpdate.id) {
@@ -686,7 +684,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
     return () => {
       clearTimeout(delayDebounceFn);
     };
-  }, [pageNumber, ticketId]);
+  }, [pageNumber, ticketId, t]);
 
   const scrollToBottom = useCallback((force = false) => {
     
@@ -708,7 +706,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
         lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }
-  }, [shouldAutoScroll, isViewingOldMessages, lastMessageRef, lastScrollUpTime, setIsViewingOldMessages]);
+  }, [shouldAutoScroll, isViewingOldMessages, lastMessageRef, setIsViewingOldMessages]);
 
   useEffect(() => {
     const processMessage = (data) => {
@@ -861,7 +859,6 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
           
           if (data && data.messages && data.messages.length > 0) {
             let hasNewMessages = false;
-            let updatedMessages = 0;
             
             data.messages.forEach(message => {
               const existingMessageIndex = messagesList.findIndex(m => m.id === message.id);
@@ -871,7 +868,6 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
                 hasNewMessages = true;
               } else if (messagesList[existingMessageIndex].ack !== message.ack) {
                 dispatch({ type: "UPDATE_MESSAGE", payload: message });
-                updatedMessages++;
               }
             });
             
