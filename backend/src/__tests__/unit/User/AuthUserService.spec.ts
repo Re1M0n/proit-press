@@ -1,8 +1,17 @@
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 import AppError from "../../../errors/AppError";
 import AuthUserService from "../../../services/UserServices/AuthUserService";
 import CreateUserService from "../../../services/UserServices/CreateUserService";
 import { disconnect, truncate } from "../../utils/database";
+
+// En el entorno de test no hay servidor de socket inicializado; mockeamos getIO
+// para que el login pueda emitir sin depender del server real.
+jest.mock("../../../libs/socket", () => ({
+  getIO: () => ({
+    emit: jest.fn(),
+    to: () => ({ emit: jest.fn() })
+  })
+}));
 
 describe("Auth", () => {
   beforeEach(async () => {
@@ -22,7 +31,7 @@ describe("Auth", () => {
     const email = faker.internet.email();
 
     await CreateUserService({
-      name: faker.name.findName(),
+      name: faker.person.fullName(),
       email,
       password
     });
@@ -50,7 +59,7 @@ describe("Auth", () => {
 
   it("should not be able to login with incorret password", async () => {
     await CreateUserService({
-      name: faker.name.findName(),
+      name: faker.person.fullName(),
       email: "mail@test.com",
       password: faker.internet.password()
     });
