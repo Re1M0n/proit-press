@@ -10,11 +10,14 @@
 #
 # Opcional: si la key no está en la ruta por defecto, pasarla con -k:
 #   sudo bash scripts/open-admin-tunnel.sh -k /root/.ssh/tunnel_testing 30
+#
+# NOTA puerto: se usa 2223 (no 2222) porque en la red del operador hay un túnel
+# automático (IP telecom.net.ar 181.105.199.111) que pelea por el 2222.
 set -e
 
 PROMETHEUS_HOST=186.182.214.12
 PROMETHEUS_USER=deploy
-TUNNEL_PORT=2222
+TUNNEL_PORT=2223
 MINUTES=30
 KEY_ARGS=()
 
