@@ -10,6 +10,7 @@ interface TicketData {
   userId?: number;
   queueId?: number | null;
   whatsappId?: number;
+  pinned?: boolean;
 }
 
 interface Request {
@@ -27,7 +28,7 @@ const UpdateTicketService = async ({
   ticketData,
   ticketId
 }: Request): Promise<Response> => {
-  const { status, userId, queueId, whatsappId } = ticketData;
+  const { status, userId, queueId, whatsappId, pinned } = ticketData;
 
   const ticket = await ShowTicketService(ticketId);
   if (ticket.status === "open") {
@@ -50,6 +51,7 @@ const UpdateTicketService = async ({
    if (status !== undefined) updateData.status = status;
    if (queueId !== undefined) updateData.queueId = queueId;
    if (userId !== undefined) updateData.userId = userId;
+   if (pinned !== undefined) updateData.pinned = pinned;
 
    await ticket.update(updateData);
 

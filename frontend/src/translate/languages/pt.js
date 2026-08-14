@@ -1576,7 +1576,10 @@ const messages = {
           user: "Atendente",
           queue: "Setor",
           tags: "Tags",
-          ticket: "Ticket ID"
+          ticket: "Ticket ID",
+          pin: "Fixar",
+          unpin: "Desafixar",
+          pinned: "Chat fixado"
         },
         buttons: {
           accept: "Responder",

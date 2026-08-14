@@ -52,6 +52,11 @@ const NoTicketsDiv = styled('div')(({ theme }) => ({
         justifyContent: "center",
 }));
 
+const sortByPinned = (list) => {
+        // Estable: los chats anclados primero, el resto conserva su orden relativo
+        return [...list.filter((t) => t.pinned), ...list.filter((t) => !t.pinned)];
+};
+
 const reducer = (state, action) => {
         if (action.type === "LOAD_TICKETS") {
                 const newTickets = action.payload;
@@ -82,10 +87,9 @@ const reducer = (state, action) => {
                           }
                         } else {
                                 state.push(incoming);
-                        }
-                });
+                        }				});
 
-                return [...state];
+                return sortByPinned([...state]);
         }
 
         if (action.type === "RESET_UNREAD") {
@@ -116,12 +120,11 @@ const reducer = (state, action) => {
 
                           if ((newDate && oldDate && newDate > oldDate) || merged.unreadMessages > 0) {
                                   state.unshift(state.splice(ticketIndex, 1)[0]);
-                          }
-                } else {
-                        state.unshift(incoming);
-                }
+                          }				} else {
+						state.unshift(incoming);
+				}
 
-                return [...state];
+                return sortByPinned([...state]);
         }
 
         if (action.type === "UPDATE_TICKET_UNREAD_MESSAGES") {
@@ -144,12 +147,11 @@ const reducer = (state, action) => {
 
                         if (ticket.lastMessage && newMsg !== oldMsg) {
                                 state.unshift(state.splice(ticketIndex, 1)[0]);
-                        }
-                } else {
-                        state.unshift(ticket);
-                }
+                        }				} else {
+						state.unshift(ticket);
+				}
 
-                return [...state];
+                return sortByPinned([...state]);
         }
 
         if (action.type === "UPDATE_TICKET_CONTACT") {
@@ -174,12 +176,11 @@ const reducer = (state, action) => {
         if (action.type === "ADD_TICKET") {
                 const ticket = action.payload;
 
-                const ticketIndex = state.findIndex((t) => t.id === ticket.id);
-                if (ticketIndex === -1) {
-                        state.unshift(ticket);
-                }
+                const ticketIndex = state.findIndex((t) => t.id === ticket.id);				if (ticketIndex === -1) {
+						state.unshift(ticket);
+				}
 
-                return [...state];
+                return sortByPinned([...state]);
         }
 
         if (action.type === "RESET") {

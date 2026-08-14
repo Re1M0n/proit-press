@@ -13,6 +13,8 @@ import ClearOutlined from '@mui/icons-material/ClearOutlined';
 import Done from '@mui/icons-material/Done';
 import Group from '@mui/icons-material/Group';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import PushPin from '@mui/icons-material/PushPin';
+import PushPinOutlined from '@mui/icons-material/PushPinOutlined';
 import Replay from '@mui/icons-material/Replay';
 import Telegram from '@mui/icons-material/Telegram';
 import Visibility from '@mui/icons-material/Visibility';
@@ -506,6 +508,14 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 		setConfirmationOpen(true);
 	};
 
+	const handleTogglePin = async () => {
+		try {
+			await api.put(`/tickets/${ticket.id}`, { pinned: !ticket.pinned });
+		} catch (err) {
+			toastError(err);
+		}
+	};
+
 	const handleConfirmClose = () => {
 		handleClosedTicket(ticket.id, "closed");
 	};
@@ -706,6 +716,11 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 									<WhatsApp sx={{ fontSize: '0.9rem', color: theme.palette.mode === 'dark' ? theme.palette.success.light : "#075e54", marginRight: theme.spacing(0.5) }} />
 								</Tooltip>
 							)}
+							{ticket.pinned && (
+								<Tooltip title={t("ticketsList.items.pinned")} arrow placement="right">
+									<PushPin sx={{ fontSize: '0.8rem', color: theme.palette.primary.main, marginRight: theme.spacing(0.3) }} />
+								</Tooltip>
+							)}
 							<Typography
 								noWrap
 								component="span"
@@ -816,6 +831,16 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 					}
 				/>
 				<ButtonContainer>
+					{(ticket.status === "open" || ticket.status === "closed") && (
+						<Tooltip title={t(ticket.pinned ? "ticketsList.items.unpin" : "ticketsList.items.pin")} placement="bottom" arrow>
+							<BottomButton
+								color="primary"
+								onClick={handleTogglePin} >
+								{ticket.pinned ? <PushPin /> : <PushPinOutlined />}
+							</BottomButton>
+						</Tooltip>
+					)}
+
 					{(ticket.status === "pending" && (ticket.queue === null || ticket.queue === undefined)) && (
 						<Tooltip title={t("ticketsList.items.accept")} placement="bottom" arrow>
 							<BottomButton

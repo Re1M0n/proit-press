@@ -1666,7 +1666,10 @@ const messages = {
         user: "Agente",
         queue: "Sector",
         tags: "Etiquetas",
-        ticket: "Ticket ID"
+        ticket: "Ticket ID",
+        pin: "Anclar",
+        unpin: "Desanclar",
+        pinned: "Chat anclado"
       },
       buttons: {
         accept: "Responder",
