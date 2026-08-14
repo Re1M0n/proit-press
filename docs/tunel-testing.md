@@ -77,8 +77,9 @@ público). Los commits/pushes intermedios a `main` **no** disparan deploy.
   (testing los usa para apuntar a `/home/deploy/proit-press` y su `deploy.sh`
   adaptado en `/home/deploy/.autodeploy/`).
 - Migración (una vez, dentro de testing):
-  `bash scripts/migrate-testing-releases.sh` — pasa a release-based y activa
-  la auto-respuesta de Telegram (quita el hotfix `telegram-noreply.patch`).
+  `bash scripts/migrate-testing-releases.sh` — pasa a release-based y elimina
+  el hotfix local de Telegram (la auto-respuesta de saludo está **desactivada**
+  en `main`; el parche `telegram-noreply.patch` quedó obsoleto).
 
 ### Flujo de actualización recomendado
 
