@@ -10,6 +10,9 @@ export const StartAllWhatsAppsSessions = async (): Promise<void> => {
       if (whatsapp.type === "wwebjs") {
         StartWhatsAppSession(whatsapp);
       } else if (whatsapp.type === "telegram") {
+        if (whatsapp.status === "DISCONNECTED") {
+          return;
+        }
         startTelegramSession(whatsapp).catch(err => {
           logger.error(
             `[Telegram] Error iniciando sesión ${whatsapp.id}: ${
