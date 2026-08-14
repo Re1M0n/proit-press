@@ -310,7 +310,7 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
                   <ListItemIcon>
                     <EditIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText primary={t("messageOptionsMenu.edit")} />
+                  <ListItemText primary={t("messageOptionsMenu.edit.label")} />
                 </MenuItem>
               )}
               

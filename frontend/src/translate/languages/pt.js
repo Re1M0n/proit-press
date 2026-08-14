@@ -266,6 +266,8 @@ const messages = {
       },
       contacts: {
         title: "Contatos",
+        name: "Nome",
+        number: "Número",
         toasts: {
           deleted: "Contato excluído com sucesso!",
           deletedAll: "Todos contatos excluídos com sucesso!",
@@ -404,6 +406,9 @@ const messages = {
       groupActions: {
         selectContacts: "Selecionar contatos",
         title: "Ações do Grupo",
+        confirm: {
+          leave: "Tem certeza que deseja sair do grupo?"
+        },
         buttons: {
           add: "Adicionar participantes",
           remove: "Remover participantes",
@@ -482,7 +487,10 @@ const messages = {
       },
       copyToClipboard: {
         copy: "Copiar",
-        copied: "Copiado"
+        copied: "Copiado",
+        failed: "Falha ao copiar",
+        notSupported: "Seu navegador não suporta copiar para a área de transferência",
+        ariaLabel: "Copiar para a área de transferência"
       },
       cpuUsage: {
         title: "Uso de CPU",
@@ -846,7 +854,12 @@ const messages = {
       },
       messageOptionsMenu: {
         react: "Reagir (beta)",
-        edit: "Editar",
+        edit: {
+          label: "Editar",
+          error: {
+            timeExceeded: "Tempo limite excedido para editar esta mensagem"
+          }
+        },
         history: "Histórico",
         delete: "Deletar",
         reply: "Responder",
@@ -937,9 +950,12 @@ const messages = {
           emoji: "Adicionar emoji",
           attach: "Anexar arquivo",
           record: "Gravar áudio",
-          send: "Enviar mensagem"
-        },  
-        clearReply: "Limpar resposta"
+          send: "Enviar mensagem",
+          clearReply: "Limpar resposta"
+        },
+        emoji: {
+          searchPlaceholder: "Buscar emoji..."
+        }
       },
       attachmentMenu: {
         document: "Documento",
@@ -1051,6 +1067,8 @@ const messages = {
         noTickets: "Nenhuma notificação.",
         permissionGranted: "Permissão concedida.",
         permissionDenied: "Permissão negada.",
+        unsupported: "Seu navegador não suporta notificações",
+        error: "Não foi possível enviar a notificação"
       },
       qrCode: {
         message: "Leia o QrCode para iniciar a sessão",
@@ -1511,6 +1529,7 @@ const messages = {
       },
       ticketsQueueSelect: {
         placeholder: "Setores",
+        noQueues: "Sem setores"
       },
       tickets: {
         toasts: {
@@ -1552,6 +1571,7 @@ const messages = {
         fieldLabel: "Digite para buscar um atendente",
         fieldConnectionLabel: "Selecionar Canal",
         fieldQueueLabel: "Transferir para o Setor",
+        fieldQueuePlaceholder: "Selecione um setor",
         fieldConnectionPlaceholder: "Selecione um Canal",
         noOptions: "Nenhum atendente encontrado com esse nome",
         buttons: {
@@ -2101,6 +2121,7 @@ const messages = {
         whatsappLibUpdateMessage: "Uma nova versão da biblioteca WhatsApp Web JS está disponível."
       },
       backendErrors: {
+        genericError: "Ocorreu um erro. Tente novamente.",
         ERR_CREATING_MESSAGE: "Erro ao criar mensagem no banco de dados.",          ERR_CREATING_TICKET: "Erro ao criar ticket no banco de dados.",
           ERR_CHAT_NOT_FOUND: "Chat não encontrado na sessão do WhatsApp.",
         ERR_CONNECTION_CREATION_COUNT: "Limite de canais atingido, para alterar entre em contato com o suporte.",

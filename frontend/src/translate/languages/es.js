@@ -266,6 +266,8 @@ const messages = {
     },
     contacts: {
       title: "Contactos",
+      name: "Nombre",
+      number: "Número",
       toasts: {
         deleted: "¡Contacto eliminado con éxito!",
         deletedAll: "¡Todos los contactos eliminados con éxito!",
@@ -409,6 +411,9 @@ const messages = {
     groupActions: {
       selectContacts: "Seleccionar contactos",
       title: "Acciones del grupo",
+      confirm: {
+        leave: "¿Seguro que querés salir del grupo?"
+      },
       buttons: {
         add: "Agregar participantes",
         remove: "Quitar participantes",
@@ -487,7 +492,10 @@ const messages = {
     },
     copyToClipboard: {
       copy: "Copiar",
-      copied: "Copiado"
+      copied: "Copiado",
+      failed: "Error al copiar",
+      notSupported: "Tu navegador no admite copiar al portapapeles",
+      ariaLabel: "Copiar al portapapeles"
     },
     cpuUsage: {
       title: "Uso de CPU",
@@ -925,7 +933,12 @@ const messages = {
     },
     messageOptionsMenu: {
       react: "Reaccionar (beta)",
-      edit: "Editar",
+      edit: {
+        label: "Editar",
+        error: {
+          timeExceeded: "Se superó el límite de tiempo para editar este mensaje"
+        }
+      },
       history: "Historial",
       delete: "Eliminar",
       reply: "Responder",
@@ -1016,9 +1029,12 @@ const messages = {
         emoji: "Agregar emoji",
         attach: "Adjuntar archivo",
         record: "Grabar audio",
-        send: "Enviar mensaje"
+        send: "Enviar mensaje",
+        clearReply: "Limpiar respuesta"
       },
-      clearReply: "Limpiar respuesta"
+      emoji: {
+        searchPlaceholder: "Buscar emoji..."
+      }
     },
     attachmentMenu: {
       document: "Documento",
@@ -1129,7 +1145,9 @@ const messages = {
       allow: "¿Permitir notificaciones en el navegador?",
       noTickets: "Sin notificaciones.",
       permissionGranted: "Permiso concedido.",
-      permissionDenied: "Permiso denegado."
+      permissionDenied: "Permiso denegado.",
+      unsupported: "Tu navegador no admite notificaciones",
+      error: "No se pudo enviar la notificación"
     },
     qrCode: {
       message: "Escanea el código QR para iniciar sesión"
@@ -1590,7 +1608,8 @@ const messages = {
       }
     },
     ticketsQueueSelect: {
-      placeholder: "Sectores"
+      placeholder: "Sectores",
+      noQueues: "Sin sectores"
     },
     tickets: {
       toasts: {
@@ -1642,6 +1661,7 @@ const messages = {
       fieldLabel: "Escribe para buscar un agente",
       fieldConnectionLabel: "Seleccionar canal",
       fieldQueueLabel: "Transferir al sector",
+      fieldQueuePlaceholder: "Selecciona un sector",
       fieldConnectionPlaceholder: "Selecciona un canal",
       noOptions: "No se encontró ningún agente con ese nombre",
       buttons: {
@@ -2191,6 +2211,7 @@ const messages = {
       whatsappLibUpdateMessage: "Hay una nueva versión de la librería WhatsApp Web JS disponible."
     },
     backendErrors: {
+      genericError: "Ocurrió un error. Intentá nuevamente.",
       ERR_CREATING_MESSAGE: "Error al crear el mensaje en la base de datos.",
       ERR_CREATING_TICKET: "Error al crear el ticket en la base de datos.",
       ERR_CHAT_NOT_FOUND: "No se encontró el chat en la sesión de WhatsApp.",
