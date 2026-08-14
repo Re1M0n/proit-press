@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-build:
+    name: Backend (tsc)
+    runs-on: ubuntu-latest
+    env:
+      # El build (tsc) no necesita Chromium; evita fallos/descargas lentas de puppeteer
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Node 22 (misma major que producción)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci --no-audit --no-fund
+
+      - name: Compilar (tsc)
+        working-directory: backend
+        run: npm run build
+
+  frontend-build:
+    name: Frontend (react-scripts build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Node 22 (misma major que producción)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Compilar (build)
+        working-directory: frontend
+        env:
+          # Igual que en producción: los warnings no rompen el build
+          CI: "false"
+        run: npm run build
