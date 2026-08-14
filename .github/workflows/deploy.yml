@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Servidor de destino"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy a prometheus
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    steps:
+      - name: Ejecutar deploy en el servidor
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          # Host key del servidor (evita host key checking deshabilitado)
+          host_key: ${{ secrets.DEPLOY_HOST_KEY }}
+          port: 22
+          script: |
+            set -e
+            cd /home/deploy/Press-Ticket
+            echo "== Actualizando desde main =="
+            git fetch origin
+            git reset --hard origin/main
+            echo "== HEAD: $(git rev-parse --short HEAD) =="
+
+            echo "== Backend: dependencias + compilación =="
+            cd backend
+            npm install --no-audit --no-fund
+            npx tsc
+            pm2 restart itn-backend --update-env
+
+            echo "== Frontend: dependencias + build =="
+            cd ../frontend
+            npm install --no-audit --no-fund
+            CI=false npm run build
+
+            echo "== Verificación =="
+            sleep 5
+            pm2 list | grep itn-
+            curl -s -o /dev/null -w "frontend HTTP %{http_code}\n" https://wa.itn.com.ar/
+            echo "== DEPLOY OK =="
