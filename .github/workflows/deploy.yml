@@ -10,51 +10,47 @@ on:
         type: choice
         options:
           - production
+          - testing
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-prod
+  group: deploy-${{ github.event.inputs.environment || 'production' }}
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Deploy a prometheus
+    name: Deploy a ${{ github.event.inputs.environment || 'production' }}
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.event.inputs.environment || 'production' }}
     timeout-minutes: 30
     steps:
-      - name: Ejecutar deploy en el servidor
+      - uses: actions/checkout@v4
+
+      - name: Deploy a producción (prometheus, directo)
+        if: github.event.inputs.environment == 'production'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
-          # Host key del servidor (evita host key checking deshabilitado)
-          host_key: ${{ secrets.DEPLOY_HOST_KEY }}
+          fingerprint: ${{ secrets.DEPLOY_HOST_FINGERPRINT }}
           port: 22
-          script: |
-            set -e
-            cd /home/deploy/Press-Ticket
-            echo "== Actualizando desde main =="
-            git fetch origin
-            git reset --hard origin/main
-            echo "== HEAD: $(git rev-parse --short HEAD) =="
+          script_path: scripts/deploy.sh
 
-            echo "== Backend: dependencias + compilación =="
-            cd backend
-            npm install --no-audit --no-fund
-            npx tsc
-            pm2 restart itn-backend --update-env
-
-            echo "== Frontend: dependencias + build =="
-            cd ../frontend
-            npm install --no-audit --no-fund
-            CI=false npm run build
-
-            echo "== Verificación =="
-            sleep 5
-            pm2 list | grep itn-
-            curl -s -o /dev/null -w "frontend HTTP %{http_code}\n" https://wa.itn.com.ar/
-            echo "== DEPLOY OK =="
+      - name: Deploy a testing (vía túnel inverso por prometheus)
+        if: github.event.inputs.environment == 'testing'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.TESTING_HOST }}
+          port: ${{ secrets.TESTING_PORT }}
+          username: ${{ secrets.TESTING_USER }}
+          key: ${{ secrets.TESTING_KEY }}
+          fingerprint: ${{ secrets.TESTING_HOST_FINGERPRINT }}
+          proxy_host: ${{ secrets.PROXY_HOST }}
+          proxy_port: 22
+          proxy_username: ${{ secrets.PROXY_USER }}
+          proxy_key: ${{ secrets.PROXY_KEY }}
+          proxy_fingerprint: ${{ secrets.PROXY_HOST_FINGERPRINT }}
+          script_path: scripts/deploy.sh
