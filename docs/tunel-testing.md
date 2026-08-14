@@ -70,3 +70,44 @@ testing **no** necesita el túnel para actualizarse: un cron corre
 `scripts/auto-deploy.sh` cada 3 minutos, que hace `git fetch` y aplica
 `scripts/deploy.sh` solo cuando `main` cambió. Kill-switch: `touch .autodeploy-off`.
 Instalación (una vez, dentro de testing): `bash scripts/setup-auto-deploy.sh`.
+
+## Mantenimiento de disco
+
+### Layout real del disco (agosto 2026)
+
+La VM de testing tiene **40 GiB** (`/dev/sda`, QEMU), pero la instalación de Ubuntu
+creó el LV raíz con solo **19 GiB** — el resto (~19 GiB) quedó **sin asignar** en el
+volumen group. Por eso la raíz llegaba al 94–96% con tan poco uso real.
+
+```
+/dev/sda1  1M   BIOS boot
+/dev/sda2  2G   Linux filesystem (boot)
+/dev/sda3  38G  Linux filesystem (PV de LVM → VG ubuntu-vg)
+LV raíz:   19G  /dev/mapper/ubuntu--vg-ubuntu--lv   ← había que extenderlo
+```
+
+### Extender la raíz a todo el disco (lvextend)
+
+Correr en testing con sudo:
+
+```bash
+sudo vgs                                                          # confirmar ~19G libres en el VG
+sudo lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv      # LV → todo el VG
+sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv                  # agrandar el filesystem
+df -h /                                                           # verificar: raíz → ~38G
+```
+
+### Liberar espacio (si vuelve a faltar)
+
+- Cache de npm (a veces 300–400M): `npm cache clean --force`.
+- Backups de la app en `/home/deploy/proit-press/backups/` (un dump completo de BD
+  + `public` + sesiones puede pesar 2+ GiB). Si ya no se necesita el más viejo,
+  comprimirlo o borrarlo: `tar czf backups/<nombre>.tar.gz backups/<carpeta> && rm -rf backups/<carpeta>`.
+- Sesiones de WhatsApp en `backend/.wwebjs_auth/` (varios GiB con el tiempo) — solo
+  borrar sesiones que ya no se usan.
+
+### Alerta de disco
+
+El deploy de React necesita ~1–2 GiB libres durante el build. Si la raíz queda
+por debajo de ~2 GiB, el auto-deploy puede fallar a mitad del build (build parcial
+que ocupa espacio sin liberar). Monitorear `df -h /` después de cada deploy.
