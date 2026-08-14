@@ -71,7 +71,7 @@ const TicketHeader = ({ loading, children }) => {
         <TicketHeaderSkeleton />
       ) : (
         <TicketHeaderCard square elevation={0}>
-          <Tooltip title="Voltar para a lista de tickets" arrow placement="right">
+          <Tooltip title="Volver a la lista de tickets" arrow placement="right">
             <BackButton color="primary" onClick={handleBack} size={isMobile ? "small" : "medium"}>
               <ArrowBackIosIcon fontSize={isMobile ? "small" : "medium"} />
             </BackButton>

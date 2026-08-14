@@ -369,7 +369,7 @@ const QuickAnswers = () => {
                   <TableCell align="center">{quickAnswer.message}</TableCell>
                   <TableCell align="center">
                     {quickAnswer.mediaPath && (
-                      <Tooltip title="Possui anexo">
+                      <Tooltip title="Tiene adjunto">
                         <AttachFileIcon color="primary" fontSize="small" />
                       </Tooltip>
                     )}

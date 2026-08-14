@@ -598,7 +598,7 @@ const TicketsManager = () => {
             )}
           />
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Tooltip title="Canais" placement="top" arrow>
+            <Tooltip title="Canales" placement="top" arrow>
               <ActionButton
                 onClick={(event) => setChannelMenuAnchorEl(event.currentTarget)}
                 sx={{

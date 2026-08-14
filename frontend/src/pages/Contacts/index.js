@@ -838,7 +838,7 @@ const Contacts = () => {
                         <AllInclusive fontSize="small" />
                       </ToggleButton>
                     </Tooltip>
-                    <Tooltip title="Individuais" arrow>
+                    <Tooltip title="Individuales" arrow>
                       <ToggleButton value="individual" aria-label="individuais">
                         <Person fontSize="small" />
                       </ToggleButton>
@@ -898,7 +898,7 @@ const Contacts = () => {
                             </span>
                           </Tooltip>
                         ) : (
-                          <Tooltip title="Contato individual" arrow>
+                          <Tooltip title="Contacto individual" arrow>
                             <span>
                               <Person color="secondary" />
                             </span>

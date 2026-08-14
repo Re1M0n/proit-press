@@ -301,7 +301,7 @@ const GroupManagement = () => {
                       </ActionButton>
                     </Tooltip>
                     
-                    <Tooltip title="Copiar Link de Convite">
+                    <Tooltip title="Copiar enlace de invitación">
                       <ActionButton
                         size="small"
                         onClick={() => handleGetInviteLink(group)}
@@ -310,7 +310,7 @@ const GroupManagement = () => {
                       </ActionButton>
                     </Tooltip>
                     
-                    <Tooltip title="Sair do Grupo">
+                    <Tooltip title="Salir del grupo">
                       <ActionButton
                         size="small"
                         onClick={() => handleLeaveGroup(group)}

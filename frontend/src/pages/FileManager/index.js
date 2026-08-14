@@ -459,7 +459,7 @@ const FileManager = () => {
                             <DownloadIcon />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Deletar">
+                        <Tooltip title="Eliminar">
                           <IconButton
                             size="small"
                             onClick={() => {

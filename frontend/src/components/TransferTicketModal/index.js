@@ -37,7 +37,6 @@ const TransferTicketModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId })
   const [queues, setQueues] = useState([]);
   const [allQueues, setAllQueues] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchParam, setSearchParam] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedQueue, setSelectedQueue] = useState('');
   const [selectedWhatsapp, setSelectedWhatsapp] = useState(ticketWhatsappId);
@@ -57,33 +56,26 @@ const TransferTicketModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId })
   }, []);
 
   useEffect(() => {
-    if (!modalOpen || searchParam.length < 3) {
-      setLoading(false);
+    if (!modalOpen) {
+      setOptions([]);
       return;
     }
-    setLoading(true);
-    const delayDebounceFn = setTimeout(() => {
-      const fetchUsers = async () => {
-        try {
-          const { data } = await api.get("/users/", {
-            params: { searchParam },
-          });
-          setOptions(data.users);
-          setLoading(false);
-        } catch (err) {
-          setLoading(false);
-          toastError(err);
-        }
-      };
-
-      fetchUsers();
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchParam, modalOpen]);
+    const loadUsers = async () => {
+      setLoading(true);
+      try {
+        const { data } = await api.get("/users/");
+        setOptions(data.users);
+      } catch (err) {
+        toastError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUsers();
+  }, [modalOpen]);
 
   const handleClose = () => {
     onClose();
-    setSearchParam("");
     setSelectedUser(null);
   };
 
@@ -143,8 +135,8 @@ const TransferTicketModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId })
             }}
             options={options}
             filterOptions={filterOptions}
-            freeSolo
             autoHighlight
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             noOptionsText={t("transferTicketModal.noOptions")}
             loading={loading}
             renderInput={params => (
@@ -154,7 +146,6 @@ const TransferTicketModal = ({ modalOpen, onClose, ticketid, ticketWhatsappId })
                 variant="outlined"
                 required
                 autoFocus
-                onChange={e => setSearchParam(e.target.value)}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (

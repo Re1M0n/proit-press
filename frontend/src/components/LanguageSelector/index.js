@@ -42,8 +42,8 @@ const LanguageSelector = () => {
 
     const handleLanguageChange = (language) => {
         i18n.changeLanguage(language)
-            .then(() => console.log("Idioma alterado com sucesso:", language))
-            .catch((err) => console.error("Erro ao alterar idioma:", err));
+            .then(() => console.log("Idioma cambiado con éxito:", language))
+            .catch((err) => console.error("Error al cambiar el idioma:", err));
         localStorage.setItem("i18nextLng", language);
         handleCloseMenu();
     };
@@ -67,7 +67,7 @@ const LanguageSelector = () => {
 
     return (
         <>
-            <Tooltip title="Selecionar idioma">
+            <Tooltip title="Seleccionar idioma">
                 <IconButton
                     color="inherit"
                     onClick={handleOpenMenu}
