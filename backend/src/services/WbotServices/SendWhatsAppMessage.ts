@@ -60,6 +60,85 @@ const recoverSentMessageId = async (
   payload: string,
   sentMessage: any
 ): Promise<any> => {
+  // Tras la migración a LID, el chat puede estar keyed por el LID real del
+  // contacto, que no se puede derivar del número. WWebJS.getChat resuelve
+  // ese LID con Chat.get(wid) || findOrCreateLatestChat(wid); se replica ese
+  // mecanismo y se busca el mensaje enviado directo en el Store de la página.
+  try {
+    const recovered = await (wbot as any).pupPage.evaluate(
+      (chatIdArg: string, payloadArg: string) => {
+        const waw: any = window as any;
+        const scan = (chat: any): any => {
+          if (!chat || !chat.id) return null;
+          const msgs =
+            (chat.msgs && chat.msgs.getModelsArray
+              ? chat.msgs.getModelsArray()
+              : chat.msgs && chat.msgs.models) || [];
+          for (let i = msgs.length - 1; i >= 0; i--) {
+            const m = msgs[i];
+            const s = m && m.serialize ? m.serialize() : null;
+            if (!s || s.body !== payloadArg) continue;
+            // En el modelo del Store el fromMe vive en el id del mensaje
+            // (m.id.fromMe), no en la raíz del serialize.
+            const mid = m.id || {};
+            const fromMe = mid.fromMe || (s.id && s.id.fromMe);
+            if (!fromMe) continue;
+            const serialized =
+              mid._serialized || mid["$1"] || `${fromMe}_${mid.remote}_${mid.id}`;
+            return {
+              id: mid.id || null,
+              serialized,
+              remote: mid.remote || mid["$2"] || null
+            };
+          }
+          return null;
+        };
+        try {
+          const wid = waw.require("WAWebWidFactory").createWid(chatIdArg);
+          const chatDirect = waw.require("WAWebCollections").Chat.get(wid);
+          if (chatDirect) {
+            return scan(chatDirect);
+          }
+          return waw
+            .require("WAWebFindChatAction")
+            .findOrCreateLatestChat(wid)
+            .then((res: any) => {
+              const chat = res && res.chat ? res.chat : res;
+              return chat ? scan(chat) : null;
+            })
+            .catch(() => null);
+        } catch (e) {
+          return null;
+        }
+      },
+      chatId,
+      payload
+    );
+
+    if (recovered && recovered.id) {
+      logger.info(
+        `[SEND_RECOVER] Id recuperado desde el Store: ${recovered.serialized}`
+      );
+      return {
+        id: {
+          id: recovered.id,
+          _serialized: recovered.serialized,
+          remote: recovered.remote
+        },
+        body: payload,
+        fromMe: true
+      };
+    }
+  } catch (storeError) {
+    logger.warn(
+      `[SEND_RECOVER] Error recuperando el id desde el Store: ${
+        (storeError as Error)?.message || storeError
+      }`
+    );
+  }
+
+  // Fallback: getChatById con los candidatos directos (sirve para chats que
+  // todavía no migraron a LID y se siguen resolviendo por número).
   const chatIds = [chatId];
   if (chatId.endsWith("@c.us")) {
     chatIds.push(chatId.replace("@c.us", "@lid"));
