@@ -67,9 +67,24 @@ ssh deploy@prometheus "fuser -k 2223/tcp"
 ## Auto-deploy (modelo pull, sin túnel)
 
 testing **no** necesita el túnel para actualizarse: un cron corre
-`scripts/auto-deploy.sh` cada 3 minutos, que hace `git fetch` y aplica
-`scripts/deploy.sh` solo cuando `main` cambió. Kill-switch: `touch .autodeploy-off`.
-Instalación (una vez, dentro de testing): `bash scripts/setup-auto-deploy.sh`.
+`scripts/auto-deploy.sh` cada 3 minutos, que hace `git fetch --tags` y aplica
+`scripts/deploy.sh` **solo cuando aparece una release nueva** (un tag `v*`
+público). Los commits/pushes intermedios a `main` **no** disparan deploy.
+
+- Kill-switch: `touch .autodeploy-off` (dentro del repo) pausa los deploys.
+- Log: `/home/deploy/auto-deploy.log` (solo registra acciones).
+- Overrides para installs adaptados: `AUTODEPLOY_REPO` y `AUTODEPLOY_DEPLOY`
+  (testing los usa para apuntar a `/home/deploy/proit-press` y su `deploy.sh`
+  adaptado en `/home/deploy/.autodeploy/`).
+- Migración (una vez, dentro de testing):
+  `bash scripts/migrate-testing-releases.sh` — pasa a release-based y activa
+  la auto-respuesta de Telegram (quita el hotfix `telegram-noreply.patch`).
+
+### Flujo de actualización recomendado
+
+1. Push de cambios a `main` → solo compila en CI (`ci.yml`), **no despliega**.
+2. Crear una release/tag `vX.Y.Z` en GitHub → en ≤3 min testing despliega esa tag.
+3. Producción (prometheus): deploy **manual** desde Actions (`Deploy` workflow).
 
 ## Mantenimiento de disco
 
