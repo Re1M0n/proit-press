@@ -51,7 +51,7 @@ const LanguageSelector = () => {
     const languages = [
         { code: "pt", label: "Português", flag: "BR" },
         { code: "en", label: "English", flag: "US" },
-        { code: "es", label: "Español", flag: "ES" },
+        { code: "es", label: "Español", flag: "AR" },
         { code: "fr", label: "Français", flag: "FR" },
         { code: "de", label: "Deutsch", flag: "DE" },
         { code: "it", label: "Italiano", flag: "IT" },
