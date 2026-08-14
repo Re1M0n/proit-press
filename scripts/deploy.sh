@@ -13,6 +13,11 @@ echo "== Backend: dependencias + compilación =="
 cd backend
 npm install --no-audit --no-fund
 npx tsc
+# Prune: elimina compilados huérfanos (fuentes borradas) que tsc no limpia
+find dist -name "*.js" | while read -r f; do
+  src="src/${f#dist/}"
+  [ -f "${src%.js}.ts" ] || [ -f "${src%.js}.tsx" ] || rm -f "$f"
+done
 pm2 restart itn-backend --update-env
 
 echo "== Frontend: dependencias + build =="
