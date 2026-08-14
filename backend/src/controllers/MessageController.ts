@@ -84,8 +84,8 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
       const ticket = await ShowTicketService(String(message.ticketId));
       const wbot = await GetTicketWbot(ticket);
       
-      const myNumber = wbot.info?.wid?._serialized || null;
-      
+      const myWid = wbot.info?.wid?._serialized || null;
+
       const groupedReactions: any = {};
       
       for (const reaction of dbReactions) {
@@ -98,14 +98,20 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
           };
         }
         
-        const isMyReaction = myNumber && reaction.senderId === myNumber;
+        let phoneNumber: string | null = null;
+
+        // WhatsApp atribuye las reacciones de la propia línea a su LID
+        // (ej. 59687512870914@lid), no al JID por número. El match por
+        // senderId cubre los JID normales; para el LID propio se resuelve
+        // el contacto (getContactById(LID) devuelve el JID real de la línea,
+        // ej. 5491173688074@c.us) y se compara con el wid de la sesión.
+        let isMyReaction = myWid && reaction.senderId === myWid;
         if (isMyReaction) {
           groupedReactions[reaction.emoji].hasReactionByMe = true;
         }
         
         let contactName = isMyReaction ? 'Vos' : 'Contacto';
         let profilePicUrl = null;
-        let phoneNumber = null;
         
         try {
           if (reaction.senderId.includes('@lid')) {
@@ -113,6 +119,18 @@ export const getReactions = async (req: Request, res: Response): Promise<Respons
               const contact = await (wbot as any).getContactById(reaction.senderId);
               if (contact) {
                 phoneNumber = contact.number || contact.id?.user;
+                // La reacción del propio agente (vía la línea) entra con el
+                // LID de la cuenta; getContactById resuelve ese LID al JID
+                // real de la línea, que coincide con el wid de la sesión.
+                if (
+                  !isMyReaction &&
+                  myWid &&
+                  (contact as any).id?._serialized === myWid
+                ) {
+                  isMyReaction = true;
+                  contactName = "Vos";
+                  groupedReactions[reaction.emoji].hasReactionByMe = true;
+                }
                 if (!isMyReaction) {
                   contactName = contact.name || contact.pushname || contact.shortName || phoneNumber || 'Contacto';
                 }
