@@ -618,6 +618,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
   const lastScrollUpTime = useRef(0);
   const defaultImage = '/default-profile.png';
   const lastSocketEventTime = useRef(Date.now());
+  const markAsReadTimeoutRef = useRef(null);
 
   const handleExitForwardingMode = () => {
     exitForwardingMode();
@@ -729,6 +730,10 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
             try {
               dispatch({ type: "ADD_MESSAGE", payload: data.message });
               
+              if (!data.message.fromMe && document.visibilityState === "visible") {
+                scheduleMarkAsRead();
+              }
+              
               setTimeout(() => {
                 try {
                   scrollToBottom(true);
@@ -768,6 +773,17 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
       console.error(`[FRONT_SOCKET_ERRO][${timestamp}] Não foi possível conectar ao socket`);
       return;
     }
+
+    const scheduleMarkAsRead = () => {
+      clearTimeout(markAsReadTimeoutRef.current);
+      markAsReadTimeoutRef.current = setTimeout(async () => {
+        try {
+          await api.post(`/messages/${ticketId}/read`);
+        } catch (err) {
+          console.warn(`[FRONT_READ_SKIPPED] No se pudo marcar como leído el ticket ${ticketId}:`, err?.response?.data?.error || err?.message);
+        }
+      }, 500);
+    };
 
     const handleAppMessage = (data) => {
       try {
@@ -892,6 +908,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
       socket.off("appMessage", handleAppMessage);
       socket.off("messageReaction", handleMessageReaction);
       socket.off("connect");
+      clearTimeout(markAsReadTimeoutRef.current);
       document.removeEventListener('newMessage', handleNewMessage);
       document.removeEventListener('updateMessage', handleUpdateMessage);
       clearInterval(refreshInterval);

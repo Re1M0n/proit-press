@@ -55,6 +55,7 @@ const NotificationsPopOver = () => {
 	const anchorEl = useRef();
 	const [isOpen, setIsOpen] = useState(false);
 	const [notifications, setNotifications] = useState([]);
+	const recentlyReadRef = useRef(new Set());
 	const [isAudioEnabled, setIsAudioEnabled] = useState(
 		localStorage.getItem("userAudioEnabled") !== "false"
 	);
@@ -70,7 +71,12 @@ const NotificationsPopOver = () => {
 	}, [play]);
 
 	useEffect(() => {
-		setNotifications((tickets || []).filter(t => t.status !== "closed"));
+		if (!tickets) return;
+		setNotifications(
+			tickets
+				.filter(t => t.status !== "closed")
+				.filter(t => !recentlyReadRef.current.has(t.id))
+		);
 	}, [tickets]);
 
 	const requestNotificationPermission = () => {
@@ -166,16 +172,23 @@ const NotificationsPopOver = () => {
 					setNotifications((prevState) => prevState.filter((t) => t.id !== data.ticket.id));
 					return;
 				}
-				setNotifications((prevState) => {
-					const ticketIndex = prevState.findIndex((t) => t.id === data.ticket.id);
-					if (ticketIndex !== -1) {
-						prevState[ticketIndex] = data.ticket;
-						return [...prevState.filter(t => t.status !== "closed")];
-					}
-					return [data.ticket, ...prevState].filter(t => t.status !== "closed");
-				});
 
-				const shouldNotNotify = data.message.ticketId === ticketIdUrl && document.visibilityState === "visible";				if (shouldNotNotify) {
+				const isTicketOnScreen =
+					data.message.ticketId === ticketIdUrl &&
+					document.visibilityState === "visible";
+
+				if (!isTicketOnScreen) {
+					setNotifications((prevState) => {
+						const ticketIndex = prevState.findIndex((t) => t.id === data.ticket.id);
+						if (ticketIndex !== -1) {
+							prevState[ticketIndex] = data.ticket;
+							return [...prevState.filter(t => t.status !== "closed")];
+						}
+						return [data.ticket, ...prevState].filter(t => t.status !== "closed");
+					});
+				}
+
+				if (isTicketOnScreen) {
 					console.warn("[NOTIFICAÇÃO] Notificação bloqueada - ticket já está aberto na tela");
 					return;
 				}
@@ -198,9 +211,11 @@ const NotificationsPopOver = () => {
 
 		socket.on("ticket", (data) => {
 			if (data.action === "updateUnread" && data.ticketId) {
+				recentlyReadRef.current.add(data.ticketId);
 				setNotifications((prevState) =>
 					prevState.filter((t) => t.id !== data.ticketId)
 				);
+				setTimeout(() => recentlyReadRef.current.delete(data.ticketId), 5000);
 			}
 		});
 

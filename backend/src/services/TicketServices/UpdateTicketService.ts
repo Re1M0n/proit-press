@@ -31,6 +31,7 @@ const UpdateTicketService = async ({
   const { status, userId, queueId, whatsappId, pinned } = ticketData;
 
   const ticket = await ShowTicketService(ticketId);
+  const previousStatus = ticket.status;
   if (ticket.status === "open") {
     await SetTicketMessagesAsRead(ticket);
   }
@@ -62,6 +63,10 @@ const UpdateTicketService = async ({
   }
 
   await ticket.reload();
+
+  if (previousStatus === "pending" && ticket.status === "open") {
+    await SetTicketMessagesAsRead(ticket);
+  }
 
   const io = getIO();
 

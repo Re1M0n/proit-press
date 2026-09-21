@@ -31,6 +31,14 @@ const MarkMessagesAsReadService = async ({
   });
 
   if (unreadMessages.length === 0) {
+    const ticket = await Ticket.findByPk(ticketId);
+    if (ticket && ticket.unreadMessages > 0) {
+      await ticket.update({ unreadMessages: 0 });
+      io.to(ticket.status).to("notification").emit("ticket", {
+        action: "updateUnread",
+        ticketId: ticket.id
+      });
+    }
     return;
   }
 

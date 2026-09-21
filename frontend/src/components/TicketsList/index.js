@@ -383,6 +383,10 @@ const TicketsList = (props) => {
                                         if (data.action === "delete") {
                                                 dispatch({ type: "DELETE_TICKET", payload: data.ticketId });
                                         }
+
+                                        if (data.action === "updateUnread" && data.ticketId) {
+                                                dispatch({ type: "RESET_UNREAD", payload: data.ticketId });
+                                        }
                                 } catch (error) {
                                         console.error("Erro ao processar evento ticket:", error);
                                 }
