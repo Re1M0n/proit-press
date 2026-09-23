@@ -33,6 +33,13 @@ jobs:
         working-directory: backend
         run: npm ci --no-audit --no-fund
 
+      - name: Verificar parches de whatsapp-web.js
+        # Sin estos parches el panel no puede enviar media ni editar mensajes.
+        # El postinstall de npm ci los aplica; acá se confirma que siguen
+        # enganchando con la versión de whatsapp-web.js fijada en package.json.
+        working-directory: backend
+        run: node scripts/patch-wwebjs.js --check
+
       - name: Compilar (tsc)
         working-directory: backend
         run: npm run build

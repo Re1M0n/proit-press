@@ -168,12 +168,55 @@ export const listActiveWbotIds = (): number[] => {
   }
 };
 
+// whatsapp-web.js se parchea localmente (ver backend/scripts/patch-wwebjs.js).
+// Sin el parche de media, TODO envío de imagen/video/audio responde 400, así que
+// conviene gritarlo al arrancar la sesión y no descubrirlo con el cliente.
+const PARCHES_WWEBJS = [
+  {
+    marca: "delete message.__x_id;",
+    motivo:
+      "el envío de media (imágenes, videos y audios) falla con ERR_SENDING_WAPP_MSG"
+  }
+];
+
+const verificarParchesWwebjs = async (): Promise<void> => {
+  const ruta = path.resolve(
+    __dirname,
+    "..",
+    "..",
+    "node_modules",
+    "whatsapp-web.js",
+    "src",
+    "util",
+    "Injected",
+    "Utils.js"
+  );
+
+  try {
+    const contenido = await fs.readFile(ruta, "utf8");
+
+    PARCHES_WWEBJS.forEach(({ marca, motivo }) => {
+      if (!contenido.includes(marca)) {
+        logger.error(
+          `[PARCHES] Falta un parche de whatsapp-web.js: ${motivo}. Aplicar con: node scripts/patch-wwebjs.js`
+        );
+      }
+    });
+  } catch (err) {
+    logger.warn(
+      `[PARCHES] No se pudieron verificar los parches de whatsapp-web.js: ${(err as Error)?.message || err}`
+    );
+  }
+};
+
 export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
   return new Promise(async (resolve, reject) => {
     try {
       logger.level = "trace";
       const io = getIO();
       const sessionName = whatsapp.name;
+
+      await verificarParchesWwebjs();
 
       const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9_-]/g, '_');
       let clientSession = `${sanitize(process.env.COMPANY_NAME || '')}_${whatsapp.id}`;

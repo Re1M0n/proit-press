@@ -179,7 +179,7 @@ const getFileIcon = (file) => {
   }
 };
 
-const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) => {
+const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption, quotedMsg, onSent }) => {
   const { t } = useTranslation();
   const { ticketId } = useParams();
   const [caption, setCaption] = useState(initialCaption || '');
@@ -352,6 +352,13 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
           formData.append("mentions", JSON.stringify(selectedMentions));
         }
 
+        // La cita va sólo con el primer archivo (igual que el caption y las
+        // menciones). El backend resuelve el id contra el mensaje citado: antes
+        // esta rama no mandaba nada y la respuesta se perdía en silencio.
+        if (quotedMsg?.id && (i === 0 || localFiles.length === 1)) {
+          formData.append("quotedMsg", JSON.stringify({ id: quotedMsg.id }));
+        }
+
         if (sendAsDocument(file)) {
           formData.append("sendAsDocument", "true");
         }
@@ -398,7 +405,11 @@ const UploadModal = ({ open, onClose, files, onSend, loading, initialCaption }) 
     }
 
     setIsUploading(false);
-    
+
+    if (errorCount === 0) {
+      onSent?.();
+    }
+
     setTimeout(() => {
       setCaption('');
       setSelectedFileIndex(0);

@@ -6,6 +6,9 @@ import { promisify } from "util";
 import { MessageMedia, Message as WbotMessage } from "whatsapp-web.js";
 import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
+import GetWbotMessage from "../../helpers/GetWbotMessage";
+import idSerializado from "../../helpers/IdSerializadoMensagem";
+import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
 
@@ -29,6 +32,7 @@ interface Request {
   body?: string;
   mentions?: string[];
   sendAsDocument?: boolean;
+  quotedMsg?: Message;
 }
 
 const updateTicketLastMessage = async (
@@ -119,7 +123,8 @@ const SendWhatsAppMedia = async ({
   ticket,
   body,
   mentions,
-  sendAsDocument: forceSendAsDocument
+  sendAsDocument: forceSendAsDocument,
+  quotedMsg
 }: Request): Promise<WbotMessage> => {
   let finalMediaPath = media.path;
   let shouldDeleteCompressed = false;
@@ -142,6 +147,30 @@ const SendWhatsAppMedia = async ({
     if (state !== 'CONNECTED') {
       throw new AppError('WhatsApp não está conectado. Por favor, reconecte o WhatsApp.');
     }
+
+    // Igual que en el texto: se resuelve el id REAL del mensaje citado (en esta
+    // versión puede no haber _serialized y sí un id interno $1). Fabricarlo con
+    // @c.us hace que WhatsApp descarte la cita en silencio, así que si no se
+    // puede resolver se falla explícito en vez de mandar el archivo sin la cita
+    // que el usuario pidió.
+    let quotedMsgSerializedId: string | undefined;
+
+    if (quotedMsg) {
+      try {
+        const originalMessage = await GetWbotMessage(ticket, quotedMsg.id);
+        quotedMsgSerializedId = idSerializado(originalMessage);
+
+        if (!quotedMsgSerializedId) {
+          logger.warn(
+            `[CITA] No se pudo obtener el id del mensaje citado ${quotedMsg.id} (ticket ${ticket.id}, media)`
+          );
+        }
+      } catch (error) {
+        console.error(`Erro ao buscar mensagem citada (media): ${error}`);
+        throw new AppError("ERR_FETCH_WAPP_MSG");
+      }
+    }
+
     
     const lidChatId = `${ticket.contact.number}@lid`;
 
@@ -292,6 +321,9 @@ const SendWhatsAppMedia = async ({
         if (mentions && mentions.length > 0) {
           docOptions.mentions = mentions;
         }
+        if (quotedMsgSerializedId) {
+          docOptions.quotedMessageId = quotedMsgSerializedId;
+        }
 
         try {
           sentMessage = await sendWithLidFallback(newMedia, docOptions);
@@ -314,6 +346,10 @@ const SendWhatsAppMedia = async ({
         
         if (mentions && mentions.length > 0) {
           options.mentions = mentions;
+        }
+
+        if (quotedMsgSerializedId) {
+          options.quotedMessageId = quotedMsgSerializedId;
         }
         try {
           try {
@@ -344,6 +380,9 @@ const SendWhatsAppMedia = async ({
           };
           if (mentions && mentions.length > 0) {
             fallbackOptions.mentions = mentions;
+          }
+          if (quotedMsgSerializedId) {
+            fallbackOptions.quotedMessageId = quotedMsgSerializedId;
           }
           sentMessage = await sendWithLidFallback(newMedia, fallbackOptions);
       
@@ -439,6 +478,7 @@ const SendWhatsAppMedia = async ({
       mediaUrl: savedFilename,
       read: true,
       userId: ticket.userId,
+      quotedMsgId: quotedMsg?.id,
       remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
       fileSize: fileSize
     };

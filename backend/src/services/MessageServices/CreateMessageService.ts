@@ -1,3 +1,4 @@
+import camposDefinidos from "../../helpers/CamposDefinidos";
 import { getIO } from "../../libs/socket";
 import Message from "../../models/Message";
 import OldMessage from "../../models/OldMessage";
@@ -51,8 +52,13 @@ const CreateMessageService = async ({
     } else {
       console.info("Creando nuevo mensaje en la base de datos:", messageData.id);
     }
-    
-    await Message.upsert(messageData);
+
+    // Se filtran los undefined antes del upsert: acá es donde el listener de
+    // WhatsApp podía borrar (con NULL) la cita que el panel ya había guardado.
+    // Ver helpers/CamposDefinidos.ts.
+    await Message.upsert(
+      camposDefinidos(messageData as unknown as Record<string, unknown>)
+    );
 
     const message = await Message.findByPk(messageData.id, {
       include: [

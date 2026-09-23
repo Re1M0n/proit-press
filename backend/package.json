@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "node scripts/patch-wwebjs.js",
+    "patches:check": "node scripts/patch-wwebjs.js --check",
     "build": "tsc",
     "create": "npx sequelize-cli db:create",
     "migrate": "tsc && npx sequelize-cli db:migrate",

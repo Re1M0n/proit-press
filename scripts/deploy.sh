@@ -12,6 +12,10 @@ echo "== HEAD: $(git rev-parse --short HEAD) =="
 echo "== Backend: dependencias + compilación =="
 cd backend
 npm install --no-audit --no-fund
+# Los parches locales de whatsapp-web.js (envío de media y edición de mensajes)
+# se aplican en el postinstall. Si faltaran, el panel se queda sin poder enviar
+# imágenes/videos/audios: mejor cortar el deploy que publicar eso.
+node scripts/patch-wwebjs.js --check
 npx tsc
 # Prune: elimina compilados huérfanos (fuentes borradas) que tsc no limpia
 find dist -name "*.js" | while read -r f; do

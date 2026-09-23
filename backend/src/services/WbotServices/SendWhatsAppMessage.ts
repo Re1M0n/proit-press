@@ -2,6 +2,7 @@ import { Message as WbotMessage } from "whatsapp-web.js";
 import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import GetWbotMessage from "../../helpers/GetWbotMessage";
+import idSerializado from "../../helpers/IdSerializadoMensagem";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
@@ -212,7 +213,7 @@ const SendWhatsAppMessage = async ({
           } catch (e) {}
           const payload = formatBody(body, ticket);
           let sentMessage: any;
-          const sendOpts: any = { linkPreview: false, quotedMessageId: originalMessage.id._serialized };
+          const sendOpts: any = { linkPreview: false, quotedMessageId: idSerializado(originalMessage) };
           if (mentions && mentions.length > 0) {
             sendOpts.mentions = mentions;
           }
@@ -323,11 +324,18 @@ const SendWhatsAppMessage = async ({
 
   if (quotedMsg) {
     try {
-      // Usar el _serialized REAL del mensaje encontrado: el remote puede ser
-      // @c.us, @lid, @s.whatsapp.net... Fabricarlo con SerializeWbotMsgId
-      // (siempre @c.us) hace que WhatsApp descarte la cita en silencio.
+      // Usar el id REAL del mensaje encontrado: el remote puede ser @c.us,
+      // @lid, @s.whatsapp.net... y en esta versión el _serialized puede venir
+      // vacío, con lo que la cita se descartaba en silencio. Ver
+      // helpers/IdSerializadoMensagem.ts.
       const originalMessage = await GetWbotMessage(ticket, quotedMsg.id);
-      quotedMsgSerializedId = originalMessage.id._serialized;
+      quotedMsgSerializedId = idSerializado(originalMessage);
+
+      if (!quotedMsgSerializedId) {
+        logger.warn(
+          `[CITA] No se pudo obtener el id del mensaje citado ${quotedMsg.id} (ticket ${ticket.id})`
+        );
+      }
     } catch (error) {
       console.error(`Erro ao buscar mensagem citada: ${error}`);
       throw new AppError("ERR_FETCH_WAPP_MSG");

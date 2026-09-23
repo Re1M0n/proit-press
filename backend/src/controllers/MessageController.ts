@@ -423,6 +423,18 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     console.info('[MessageController] Mentions recebidas:', mentions, 'Tipo:', typeof mentions);
   }
 
+  // El panel manda la cita como objeto cuando el cuerpo es JSON y como string
+  // cuando el envío es multipart (con archivos). Se normaliza a objeto para que
+  // el servicio de media pueda resolver el mensaje citado.
+  if (quotedMsg && typeof quotedMsg === 'string') {
+    try {
+      quotedMsg = JSON.parse(quotedMsg);
+    } catch (e) {
+      console.error('[MessageController] Erro ao parsear quotedMsg:', e);
+      quotedMsg = undefined;
+    }
+  }
+
   const shouldSendAsDocument = sendAsDocument === 'true' || sendAsDocument === true;
   const shouldCompressVideo = compressVideo === 'true' || compressVideo === true;
 
@@ -445,13 +457,16 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
               ticket, 
               body, 
               mentions,
+              quotedMsg,
               sendAsDocument: shouldSendAsDocument
             });
         return sentMessage;
       })
     );
     if (mediaMessages && mediaMessages.length > 0) {
-      messageId = mediaMessages[0].id.id;
+      // El envío puede volver sin id cuando WhatsApp no expone el mensaje
+      // recién creado: no es motivo para cortar la respuesta con un 500.
+      messageId = mediaMessages[0]?.id?.id;
     }
 
     // LOG: Mensagem com mídia enviada
@@ -468,6 +483,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
           mediaTypes: medias.map(m => m.mimetype),
           contactId: ticket.contactId,
           sendAsDocument: shouldSendAsDocument,
+          hasQuote: !!quotedMsg,
           hasBody: !!body
         }
       });

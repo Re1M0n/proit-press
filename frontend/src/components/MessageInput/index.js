@@ -866,6 +866,10 @@ const MessageInput = ({ ticketStatus }) => {
     }
     formData.append("fromMe", true);
 
+    if (replyingMessage?.id) {
+      formData.append("quotedMsg", JSON.stringify({ id: replyingMessage.id }));
+    }
+
     try {
       await api.post(`/messages/${ticketId}`, formData);
     } catch (err) {
@@ -1771,6 +1775,8 @@ const MessageInput = ({ ticketStatus }) => {
           onSend={handleUploadMedia}
           loading={loading}
           initialCaption={initialCaption}
+          quotedMsg={replyingMessage}
+          onSent={() => setReplyingMessage(null)}
         />
       </MainWrapper>
     );
