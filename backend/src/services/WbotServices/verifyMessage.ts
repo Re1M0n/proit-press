@@ -8,6 +8,7 @@ import Integration from "../../models/Integration";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
+import remoteJidDoMensagem from "../../helpers/RemoteJidMensagem";
 import CreateMessageService from "../MessageServices/CreateMessageService";
 import { verifyQuotedMessage } from "./MessageUtils";
 import { buildMultiVCardBody } from "./processVCard";
@@ -113,7 +114,7 @@ const verifyMessage = async (
     messageType: msg.type,
     read: msg.fromMe,
     quotedMsgId: quotedMsg?.id,
-    remoteJid: (msg as any).id?.remote || (msg as any).id?._serialized?.split("_")[1] || null,
+    remoteJid: remoteJidDoMensagem(msg, "verifyMessage"),
     userId: ticket.userId
   };
 

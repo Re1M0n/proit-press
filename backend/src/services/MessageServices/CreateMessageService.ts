@@ -1,4 +1,5 @@
 import camposDefinidos from "../../helpers/CamposDefinidos";
+import { sanitizarRemoteJid } from "../../helpers/RemoteJidMensagem";
 import { getIO } from "../../libs/socket";
 import Message from "../../models/Message";
 import OldMessage from "../../models/OldMessage";
@@ -56,9 +57,28 @@ const CreateMessageService = async ({
     // Se filtran los undefined antes del upsert: acá es donde el listener de
     // WhatsApp podía borrar (con NULL) la cita que el panel ya había guardado.
     // Ver helpers/CamposDefinidos.ts.
-    await Message.upsert(
-      camposDefinidos(messageData as unknown as Record<string, unknown>)
+    const datosDelMensaje = camposDefinidos(
+      messageData as unknown as Record<string, unknown>
     );
+
+    // Última barrera para remoteJid: si llegara un Wid objeto (era LID),
+    // Sequelize aborta TODO el guardado con "remoteJid cannot be an array or an
+    // object" y el mensaje se pierde del panel. Si no se puede representar como
+    // texto, se omite la columna en vez de escribir NULL encima de lo que ya
+    // había. Ver helpers/RemoteJidMensagem.ts.
+    if (
+      typeof datosDelMensaje.remoteJid === "object" &&
+      datosDelMensaje.remoteJid !== null
+    ) {
+      const remoteJid = sanitizarRemoteJid(datosDelMensaje.remoteJid);
+      if (remoteJid) {
+        datosDelMensaje.remoteJid = remoteJid;
+      } else {
+        delete datosDelMensaje.remoteJid;
+      }
+    }
+
+    await Message.upsert(datosDelMensaje);
 
     const message = await Message.findByPk(messageData.id, {
       include: [

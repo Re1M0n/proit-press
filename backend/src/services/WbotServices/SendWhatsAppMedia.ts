@@ -8,6 +8,7 @@ import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import GetWbotMessage from "../../helpers/GetWbotMessage";
 import idSerializado from "../../helpers/IdSerializadoMensagem";
+import remoteJidDoMensagem from "../../helpers/RemoteJidMensagem";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
@@ -479,7 +480,7 @@ const SendWhatsAppMedia = async ({
       read: true,
       userId: ticket.userId,
       quotedMsgId: quotedMsg?.id,
-      remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
+      remoteJid: remoteJidDoMensagem(sentMessage, "SendWhatsAppMedia"),
       fileSize: fileSize
     };
 

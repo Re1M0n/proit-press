@@ -3,6 +3,7 @@ import AppError from "../../errors/AppError";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
 import GetWbotMessage from "../../helpers/GetWbotMessage";
 import idSerializado from "../../helpers/IdSerializadoMensagem";
+import remoteJidDoMensagem from "../../helpers/RemoteJidMensagem";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
@@ -301,7 +302,7 @@ const SendWhatsAppMessage = async ({
         mediaType: "chat",
         read: true,
         quotedMsgId: quotedMsg?.id,
-        remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
+        remoteJid: remoteJidDoMensagem(sentMessage, "SendWhatsAppMessage"),
         userId: ticket.userId
       };
 
@@ -418,7 +419,7 @@ const SendWhatsAppMessage = async ({
       mediaType: "chat",
       read: true,
       quotedMsgId: quotedMsg?.id,
-      remoteJid: (sentMessage as any).id?.remote || (sentMessage as any).id?._serialized?.split("_")[1] || null,
+      remoteJid: remoteJidDoMensagem(sentMessage, "SendWhatsAppMessage"),
       userId: ticket.userId
     };
 

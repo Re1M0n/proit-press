@@ -10,6 +10,7 @@ import Contact from "../../models/Contact";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import { logger } from "../../utils/logger";
+import remoteJidDoMensagem from "../../helpers/RemoteJidMensagem";
 import CreateMessageService from "../MessageServices/CreateMessageService";
 import { verifyQuotedMessage } from "./MessageUtils";
 
@@ -115,7 +116,7 @@ const downloaded = await msg.downloadMedia();
     filename: media.filename,
     quotedMsgId: quotedMsg?.id,
     albumId: albumId,
-    remoteJid: (msg as any).id?.remote || (msg as any).id?._serialized?.split("_")[1] || null,
+    remoteJid: remoteJidDoMensagem(msg, "verifyMediaMessage"),
     userId: ticket.userId,
     fileSize: fileSize
   };
