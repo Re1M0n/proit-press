@@ -162,6 +162,7 @@ export const routeRegistry: RouteGroup[] = [
     { method: "get", path: "/contacts/:contactId/about", middlewares: [isAuth], handler: ContactController.getAbout },
     { method: "get", path: "/contacts/:contactId/common-groups", middlewares: [isAuth], handler: ContactController.getCommonGroups },
     { method: "post", path: "/contacts/:contactId/refresh-group-pic", middlewares: [isAuth], handler: ContactController.refreshGroupProfilePic },
+    { method: "put", path: "/contacts/:contactId/message-handling", middlewares: [isAuth], handler: ContactController.updateMessageHandling },
     { method: "get", path: "/contacts/:contactId", middlewares: [isAuth], handler: ContactController.show },
     { method: "post", path: "/contacts", middlewares: [isAuth], handler: ContactController.store },
     { method: "post", path: "/contact", middlewares: [isAuth], handler: ContactController.getContact },

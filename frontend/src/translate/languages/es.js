@@ -260,7 +260,11 @@ const messages = {
         note: "Elegí cómo tratar los mensajes que llegan de este contacto.",
         normal: "Normal (crea ticket como siempre)",
         silent: "Silenciar (guarda el mensaje sin marcarlo como no leído)",
-        ignore: "Ignorar (no crea ticket ni guarda el mensaje)"
+        ignore: "Ignorar (no crea ticket ni guarda el mensaje)",
+        normalShort: "Normal",
+        silentShort: "Silenciar",
+        ignoreShort: "Ignorar",
+        saved: "Preferencia de mensajes guardada."
       },
       buttons: {
         addExtraInfo: "Agregar información",

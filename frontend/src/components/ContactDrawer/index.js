@@ -6,13 +6,19 @@ import {
   Typography, 
   Button, 
   Paper, 
-  Divider
+  Divider,
+  Box,
+  Select,
+  MenuItem,
+  Tooltip
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useContext, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { AuthContext } from "../../context/Auth/AuthContext";
+import toastError from "../../errors/toastError";
 import ContactDrawerSkeleton from "../ContactDrawerSkeleton";
 import ContactModal from "../ContactModal";
 import CopyToClipboard from "../CopyToClipboard";
@@ -101,6 +107,35 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading, isGroup, mes
     }
     return contact;
   })();
+
+  const [messageHandling, setMessageHandling] = useState("normal");
+  const [savingHandling, setSavingHandling] = useState(false);
+
+  useEffect(() => {
+    setMessageHandling(displayContact?.messageHandling || "normal");
+  }, [displayContact?.id, displayContact?.messageHandling]);
+
+  const handleMessageHandlingChange = async (event) => {
+    const valor = event.target.value;
+    const anterior = messageHandling;
+
+    setMessageHandling(valor);
+    setSavingHandling(true);
+
+    try {
+      await ContactService.updateMessageHandling(contact.id, valor);
+      toast.success(
+        t("contactModal.messageHandling.saved", {
+          defaultValue: "Preferencia de mensajes guardada."
+        })
+      );
+    } catch (err) {
+      setMessageHandling(anterior);
+      toastError(err, t);
+    } finally {
+      setSavingHandling(false);
+    }
+  };
 
   const displayName = displayContact?.name || contact?.name || "";
   const isGroupContact = Boolean(contact?.isGroup || displayContact?.isGroup || isGroup);
@@ -194,6 +229,50 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading, isGroup, mes
                 {t("contactDrawer.buttons.edit")}
               </Button>
           </ContactHeader>
+          {!isGroupContact && contact?.id && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 1,
+                mt: 2,
+                px: 1
+              }}
+            >
+              <Tooltip
+                title={t("contactModal.messageHandling.note")}
+                placement="left"
+                arrow
+              >
+                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                  {t("contactModal.messageHandling.title")}
+                </Typography>
+              </Tooltip>
+              <Select
+                size="small"
+                value={messageHandling}
+                onChange={handleMessageHandlingChange}
+                disabled={savingHandling}
+              >
+                <MenuItem value="normal">
+                  {t("contactModal.messageHandling.normalShort", {
+                    defaultValue: "Normal"
+                  })}
+                </MenuItem>
+                <MenuItem value="silent">
+                  {t("contactModal.messageHandling.silentShort", {
+                    defaultValue: "Silenciar"
+                  })}
+                </MenuItem>
+                <MenuItem value="ignore">
+                  {t("contactModal.messageHandling.ignoreShort", {
+                    defaultValue: "Ignorar"
+                  })}
+                </MenuItem>
+              </Select>
+            </Box>
+          )}
           {isGroupContact && groupJid && (
             <GroupActionsPanel groupId={groupJid} />
           )}

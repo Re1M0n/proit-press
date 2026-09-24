@@ -10,6 +10,7 @@ import ExportContactsService from "../services/ContactServices/ExportContactsSer
 import ListContactsService from "../services/ContactServices/ListContactsService";
 import ShowContactService from "../services/ContactServices/ShowContactService";
 import UpdateContactService from "../services/ContactServices/UpdateContactService";
+import UpdateContactMessageHandlingService from "../services/ContactServices/UpdateContactMessageHandlingService";
 import GetAboutService from "../services/ContactServices/GetAboutService";
 import GetCommonGroupsService from "../services/ContactServices/GetCommonGroupsService";
 import ListBlockedContactsService from "../services/ContactServices/ListBlockedContactsService";
@@ -387,6 +388,39 @@ export const update = async (
     entityType: EntityTypes.CONTACT,
     entityId: contact.id,
     additionalData: contactData
+  });
+
+  const io = getIO();
+  io.emit("contact", {
+    action: "update",
+    contact
+  });
+
+  return res.status(200).json(contact);
+};
+
+export const updateMessageHandling = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  if (req.user.profile !== "admin" && req.user.profile !== "masteradmin") {
+    throw new AppError("ERR_NO_PERMISSION", 403);
+  }
+
+  const { contactId } = req.params;
+  const { messageHandling } = req.body as { messageHandling?: string };
+
+  const contact = await UpdateContactMessageHandlingService({
+    contactId,
+    messageHandling
+  });
+
+  await logActivity(req, {
+    action: ActivityActions.UPDATE,
+    description: `Manejo de mensajes do contato ${contact.name} (${contact.number}) alterado para "${contact.messageHandling}"`,
+    entityType: EntityTypes.CONTACT,
+    entityId: contact.id,
+    additionalData: { messageHandling: contact.messageHandling }
   });
 
   const io = getIO();

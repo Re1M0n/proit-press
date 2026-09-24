@@ -89,6 +89,10 @@ const messages = {
           normal: "Normal (erstellt wie gewohnt ein Ticket)",
           silent: "Stumm (gespeichert, nicht als ungelesen gezählt)",
           ignore: "Ignorieren (kein Ticket, Nachricht wird nicht gespeichert)",
+          normalShort: "Normal empfangen",
+          silentShort: "Stumm",
+          ignoreShort: "Ignorieren",
+          saved: "Nachrichteneinstellung gespeichert.",
         },
         buttons: {
           addExtraInfo: "Information hinzufügen",

@@ -88,6 +88,10 @@ const messages = {
           normal: "Normal (creates a ticket as usual)",
           silent: "Mute (stored, not counted as unread)",
           ignore: "Ignore (no ticket, message not stored)",
+          normalShort: "Receive normally",
+          silentShort: "Mute",
+          ignoreShort: "Ignore",
+          saved: "Message preference saved.",
         },
         buttons: {
           addExtraInfo: "Add information",
