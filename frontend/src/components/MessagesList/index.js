@@ -38,7 +38,7 @@ import api from "../../services/api";
 import openSocket from "../../services/socket-io";
 import Audio from "../Audio";
 import LocationPreview from "../LocationPreview";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../WhatsMarked";
 import MessageOptionsMenu from "../MessageOptionsMenu";
 import ModalImageCors from "../ModalImageCors";
 import MultiVcardPreview from "../MultiVcardPreview";

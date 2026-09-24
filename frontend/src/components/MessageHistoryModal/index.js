@@ -9,7 +9,7 @@ import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../WhatsMarked";
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogTitle-root': {

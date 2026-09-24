@@ -16,7 +16,7 @@ import { AuthContext } from "../../context/Auth/AuthContext";
 import ContactDrawerSkeleton from "../ContactDrawerSkeleton";
 import ContactModal from "../ContactModal";
 import CopyToClipboard from "../CopyToClipboard";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../WhatsMarked";
 import { TagsContainer } from "../TagsContainer";
 import ModalImageContatc from "./ModalImage";
 import GroupActionsPanel from "./GroupActionsPanel";

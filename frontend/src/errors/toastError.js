@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../components/WhatsMarked";
 
 const toastError = (err, t) => {
 	const errorMsg =

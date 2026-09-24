@@ -54,7 +54,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../../components/WhatsMarked";
 
 import { Can } from "../../components/Can";
 import ConfirmationModal from "../../components/ConfirmationModal/";

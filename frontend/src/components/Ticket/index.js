@@ -101,6 +101,15 @@ const Ticket = () => {
   const [messageContact, setMessageContact] = useState(null);
 
   useEffect(() => {
+    // Un link relativo dentro de un mensaje (por ejemplo "Www.anydesk.com"
+    // escrito sin esquema) puede dejar la URL en /tickets/<algo>. Sin este
+    // corte el panel consulta /tickets/algo y muestra un error por un ticket
+    // que no existe; además arrastra el pedido de mensajes de ese id falso.
+    if (ticketId && !/^\d+$/.test(String(ticketId))) {
+      navigate("/tickets", { replace: true });
+      return undefined;
+    }
+
     setLoading(true);
     const delayDebounceFn = setTimeout(() => {
       const fetchTicket = async () => {

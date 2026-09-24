@@ -40,7 +40,7 @@ import api from "../../services/api";
 import AcceptTicketWithouSelectQueue from "../AcceptTicketWithoutQueueModal";
 import ConfirmationModal from "../ConfirmationModal";
 import openSocket from "../../services/socket-io";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../WhatsMarked";
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
 	position: "relative",

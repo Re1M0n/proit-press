@@ -27,7 +27,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Chip from "@mui/material/Chip";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import WhatsMarked from "react-whatsmarked";
+import WhatsMarked from "../../components/WhatsMarked";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SystemUpdateIcon from "@mui/icons-material/SystemUpdate";
