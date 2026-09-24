@@ -255,6 +255,13 @@ const messages = {
         extraName: "Nombre del campo",
         extraValue: "Valor"
       },
+      messageHandling: {
+        title: "Manejo de mensajes",
+        note: "Elegí cómo tratar los mensajes que llegan de este contacto.",
+        normal: "Normal (crea ticket como siempre)",
+        silent: "Silenciar (guarda el mensaje sin marcarlo como no leído)",
+        ignore: "Ignorar (no crea ticket ni guarda el mensaje)"
+      },
       buttons: {
         addExtraInfo: "Agregar información",
         okAdd: "Agregar",

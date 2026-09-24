@@ -1,6 +1,7 @@
 import AppError from "../../errors/AppError";
 import Contact from "../../models/Contact";
 import ContactCustomField from "../../models/ContactCustomField";
+import { normalizarMessageHandling } from "../../helpers/MessageHandling";
 
 interface ExtraInfo {
   id?: number;
@@ -25,6 +26,7 @@ interface ContactData {
   city?: string;
   state?: string;
   cpf?: string;
+  messageHandling?: string;
 }
 
 interface Request {
@@ -36,7 +38,7 @@ const UpdateContactService = async ({
   contactData,
   contactId
 }: Request): Promise<Contact> => {
-  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf } = contactData;
+  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf, messageHandling } = contactData;
 
   const contact = await Contact.findOne({
     where: { id: contactId },
@@ -58,6 +60,7 @@ const UpdateContactService = async ({
       "city",
       "state",
       "cpf",
+      "messageHandling",
       "profilePicUrl",
       "messengerId",
       "instagramId",
@@ -106,6 +109,10 @@ const UpdateContactService = async ({
     city,
     state,
     cpf,
+    messageHandling:
+      messageHandling !== undefined
+        ? normalizarMessageHandling(messageHandling)
+        : contact.messageHandling,
     nameManuallyEdited: name !== undefined && name !== contact.name ? true : contact.nameManuallyEdited
   });
 
@@ -116,6 +123,7 @@ const UpdateContactService = async ({
       "number",
       "address",
       "email",
+      "messageHandling",
       "profilePicUrl",
       "messengerId",
       "instagramId",

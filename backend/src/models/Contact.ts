@@ -115,6 +115,17 @@ class Contact extends Model<Contact> {
   @Column
   nameManuallyEdited: boolean;
 
+  /**
+   * Como o sistema trata as mensagens recebidas deste contato:
+   * "normal"  -> fluxo completo (cria/atualiza ticket, conta como não lida)
+   * "silent"  -> recebe e guarda no histórico, mas sem contador de não lidas
+   * "ignore"  -> descarta a mensagem (não cria ticket e não grava no histórico)
+   */
+  @AllowNull(false)
+  @Default("normal")
+  @Column
+  messageHandling: string;
+
   @CreatedAt
   createdAt: Date;
 

@@ -46,7 +46,9 @@ import {
   Group,
   Groups,
   Person,
-  AllInclusive
+  AllInclusive,
+  NotificationsOff as NotificationsOffIcon,
+  NotInterested as NotInterestedIcon
 } from "@mui/icons-material";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useTranslation } from "react-i18next";
@@ -872,7 +874,21 @@ const Contacts = () => {
                     <TableCell sx={{ paddingRight: 0 }}>
                       <AvatarStyled src={contact?.profilePicUrl || defaultImage} alt="contact_image" />
                     </TableCell>
-                    <TableCell>{contact.name}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <span>{contact.name}</span>
+                        {contact.messageHandling === "silent" && (
+                          <Tooltip title={t("contactModal.messageHandling.silent")} arrow>
+                            <NotificationsOffIcon fontSize="small" sx={{ color: "text.secondary" }} />
+                          </Tooltip>
+                        )}
+                        {contact.messageHandling === "ignore" && (
+                          <Tooltip title={t("contactModal.messageHandling.ignore")} arrow>
+                            <NotInterestedIcon fontSize="small" sx={{ color: "text.secondary" }} />
+                          </Tooltip>
+                        )}
+                      </Box>
+                    </TableCell>
                     <TableCell align="center">
                       {contact.number ? (
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>

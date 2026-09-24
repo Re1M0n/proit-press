@@ -83,6 +83,13 @@ const messages = {
           extraName: "Feldname",
           extraValue: "Wert",
         },
+        messageHandling: {
+          title: "Nachrichtenbehandlung",
+          note: "Wähle, wie Nachrichten dieses Kontakts behandelt werden.",
+          normal: "Normal (erstellt wie gewohnt ein Ticket)",
+          silent: "Stumm (gespeichert, nicht als ungelesen gezählt)",
+          ignore: "Ignorieren (kein Ticket, Nachricht wird nicht gespeichert)",
+        },
         buttons: {
           addExtraInfo: "Information hinzufügen",
           okAdd: "Hinzufügen",

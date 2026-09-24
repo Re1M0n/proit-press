@@ -17,6 +17,11 @@ npm install --no-audit --no-fund
 # imágenes/videos/audios: mejor cortar el deploy que publicar eso.
 node scripts/patch-wwebjs.js --check
 npx tsc
+# Migraciones antes de reiniciar: si el código nuevo espera una columna que
+# todavía no existe, el panel deja de procesar mensajes. Falla -> corta el
+# deploy sin reiniciar (el proceso viejo sigue atendiendo con la base vieja).
+echo "== Migraciones de base de datos =="
+npx sequelize-cli db:migrate
 # Prune: elimina compilados huérfanos (fuentes borradas) que tsc no limpia
 find dist -name "*.js" | while read -r f; do
   src="src/${f#dist/}"

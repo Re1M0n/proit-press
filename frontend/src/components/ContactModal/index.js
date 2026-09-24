@@ -127,6 +127,7 @@ const initialState = {
 	city: "",
 	state: "",
 	cpf: "",
+	messageHandling: "normal",
 };
 
 const ContactSchema = Yup.object().shape({
@@ -376,6 +377,27 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 												</Field>
 											</FieldContainer>
 										</FieldRow>
+										{contactId && (
+											<FieldRow>
+												<FieldContainer>
+													<FieldLabel>{t("contactModal.messageHandling.title", { defaultValue: "Manejo de mensajes" })}</FieldLabel>
+													<Field as={Select} name="messageHandling" fullWidth variant="outlined">
+														<MenuItem value="normal">
+															{t("contactModal.messageHandling.normal", { defaultValue: "Normal (crea ticket como siempre)" })}
+														</MenuItem>
+														<MenuItem value="silent">
+															{t("contactModal.messageHandling.silent", { defaultValue: "Silenciar (guardar sin marcar no leído)" })}
+														</MenuItem>
+														<MenuItem value="ignore">
+															{t("contactModal.messageHandling.ignore", { defaultValue: "Ignorar (no crear ticket ni guardar)" })}
+														</MenuItem>
+													</Field>
+													<Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
+														{t("contactModal.messageHandling.note", { defaultValue: "Elegí cómo tratar los mensajes que llegan de este contacto." })}
+													</Typography>
+												</FieldContainer>
+											</FieldRow>
+										)}
 									</>
 								)}
 

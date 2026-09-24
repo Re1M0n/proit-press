@@ -12,6 +12,10 @@ import Settings from "../../models/Setting";
 import Contact from "../../models/Contact";
 import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import formatBody from "../../helpers/Mustache";
+import {
+  contatoIgnoraMensagens,
+  noLeidasDoContato
+} from "../../helpers/MessageHandling";
 import { logger } from "../../utils/logger";
 import CreateOrUpdateContactService from "../ContactServices/CreateOrUpdateContactService";
 import FindOrCreateTicketService from "../TicketServices/FindOrCreateTicketService";
@@ -208,9 +212,20 @@ const chat = await getSafeChat(wbot, msg);
     }
     const whatsapp = await ShowWhatsAppService(wbot.id!);
 
-    const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
-
     const contact = await verifyContact(msgContact, wbot.id!);
+
+    // Contato configurado para ignorar mensajes (ej. promociones): se descarta
+    // antes de crear ticket, para no ensuciar la lista ni el historial.
+    if (contatoIgnoraMensagens(contact)) {
+      logger.info(
+        `[MSG_IGNORADA] Contato ${contact.id} (${contact.number}) está configurado para ignorar mensajes. ID=${
+          msg.id?.id || "unknown"
+        }`
+      );
+      return;
+    }
+
+    const unreadMessages = noLeidasDoContato(contact, chat.unreadCount, msg.fromMe);
 
     if (!msg.fromMe) {
       try {

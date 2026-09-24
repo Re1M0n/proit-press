@@ -199,6 +199,8 @@ interface ContactData {
   city?: string;
   state?: string;
   cpf?: string;
+  /** "normal" | "silent" | "ignore" — ver helpers/MessageHandling.ts */
+  messageHandling?: string;
 }
 
 export const index = async (req: Request, res: Response): Promise<Response> => {

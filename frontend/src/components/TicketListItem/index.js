@@ -13,6 +13,8 @@ import ClearOutlined from '@mui/icons-material/ClearOutlined';
 import Done from '@mui/icons-material/Done';
 import Group from '@mui/icons-material/Group';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import NotificationsOff from '@mui/icons-material/NotificationsOff';
+import NotInterested from '@mui/icons-material/NotInterested';
 import PushPin from '@mui/icons-material/PushPin';
 import PushPinOutlined from '@mui/icons-material/PushPinOutlined';
 import Replay from '@mui/icons-material/Replay';
@@ -719,6 +721,17 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 							{ticket.pinned && (
 								<Tooltip title={t("ticketsList.items.pinned")} arrow placement="right">
 									<PushPin sx={{ fontSize: '0.8rem', color: theme.palette.primary.main, marginRight: theme.spacing(0.3) }} />
+								</Tooltip>
+							)}
+							{(ticket.contact?.messageHandling === "silent" || ticket.contact?.messageHandling === "ignore") && (
+								<Tooltip
+									title={t(`contactModal.messageHandling.${ticket.contact.messageHandling}`)}
+									arrow
+									placement="right"
+								>
+									{ticket.contact.messageHandling === "ignore"
+										? <NotInterested sx={{ fontSize: '0.8rem', color: theme.palette.error.main, marginRight: theme.spacing(0.3) }} />
+										: <NotificationsOff sx={{ fontSize: '0.8rem', color: theme.palette.text.secondary, marginRight: theme.spacing(0.3) }} />}
 								</Tooltip>
 							)}
 							<Typography
