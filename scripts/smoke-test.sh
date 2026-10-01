@@ -44,6 +44,13 @@ WEB_ORIGIN="${WEB_ORIGIN:-$(read_env FRONTEND_URL)}"
 WEB_ORIGIN="${WEB_ORIGIN%/}"
 APP_ORIGIN="${APP_ORIGIN:-https://localhost}"
 
+# El usuario de prueba se puede dejar en backend/.env: el deploy corre este
+# script sin exportar variables, así que sin este fallback las comprobaciones
+# de refresh nativo y push se omitían.
+SMOKE_EMAIL="${SMOKE_EMAIL:-$(read_env SMOKE_EMAIL)}"
+SMOKE_PASSWORD="${SMOKE_PASSWORD:-$(read_env SMOKE_PASSWORD)}"
+SMOKE_REQUIRE_PUSH="${SMOKE_REQUIRE_PUSH:-$(read_env SMOKE_REQUIRE_PUSH)}"
+
 FAIL=0
 ok()   { echo "  OK    $1"; }
 bad()  { echo "  FALLA $1"; FAIL=1; }
