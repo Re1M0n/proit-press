@@ -1081,6 +1081,17 @@ const messages = {
         unsupported: "Seu navegador não suporta notificações",
         error: "Não foi possível enviar a notificação"
       },
+      mobileNotifications: {
+        active: "Modo móvel",
+        awayShort: "Notif. móveis",
+        pause: "Pausar o modo móvel",
+        away: "Receber no celular as mensagens novas que chegarem enquanto você não estiver na mesa",
+        enabled: "Modo móvel ativado: você vai receber as mensagens novas no celular.",
+        paused: "Modo móvel pausado.",
+        activateError: "Não foi possível ativar o modo móvel.",
+        changeError: "Não foi possível alterar o modo móvel.",
+        webModeInfo: "No navegador não dá para receber avisos em segundo plano. Instale o app para Android."
+      },
       qrCode: {
         message: "Leia o QrCode para iniciar a sessão",
       },
