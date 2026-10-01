@@ -94,6 +94,14 @@ const getDalleResponse = async (
 
 const sessions: Session[] = [];
 
+// Clientes que todavía no alcanzaron READY (o quedaron colgados antes de
+// lograrlo). Se registran apenas se crean para poder destruirlos al reintentar
+// el arranque; si no, un intento fallido deja su browser huérfano.
+const pendingSessions = new Map<number, Session>();
+
+// IDs de sesiones que alcanzaron READY y están operativas en memoria.
+const readySessions = new Set<number>();
+
 const syncUnreadMessages = async (wbot: Session) => {
   const maxRetries = 3;
   
@@ -301,8 +309,11 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
       wbot.initialize();
 
+      pendingSessions.set(whatsapp.id, wbot);
+
       wbot.on("qr", async qr => {
         logger.info("Session:", sessionName);
+        pendingSessions.delete(whatsapp.id);
         qrCode.generate(qr, { small: true });
         await whatsapp.update({ 
           qrcode: qr, 
@@ -376,6 +387,9 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
           logger.error(`[PUSH] Error notificando desconexión de WhatsApp ${whatsapp.id}: ${error.message}`);
         });
 
+        pendingSessions.delete(whatsapp.id);
+        readySessions.delete(whatsapp.id);
+
         io.emit("whatsappSession", {
           action: "update",
           session: whatsapp
@@ -386,6 +400,9 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
       wbot.on("ready", async () => {
         logger.info(`Session: ${sessionName} READY`);
+
+        pendingSessions.delete(whatsapp.id);
+        readySessions.add(whatsapp.id);
 
         initializeHealthTracking(whatsapp.id);
         updateLastActivity(whatsapp.id);
@@ -435,7 +452,10 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
       });
 
     } catch (err: any) {
+      pendingSessions.delete(whatsapp.id);
+      readySessions.delete(whatsapp.id);
       logger.error(err);
+      reject(err);
     }
   });
 };
@@ -459,11 +479,42 @@ export const removeWbot = (whatsappId: number): void => {
   } catch (err: any) {
     logger.error(err);
   }
+
+  // También destruimos un cliente que quedó a medio inicializar (nunca llegó a
+  // READY): sin esto, reintentar el arranque dejaría su browser huérfano.
+  const pending = pendingSessions.get(whatsappId);
+  if (pending) {
+    try {
+      void pending
+        .destroy()
+        .catch((err: any) =>
+          logger.warn(
+            `removeWbot: error destruyendo sesión pendiente ${whatsappId}: ${err?.message}`
+          )
+        );
+    } catch (err: any) {
+      logger.warn(
+        `removeWbot: error destruyendo sesión pendiente ${whatsappId}: ${err?.message}`
+      );
+    }
+    pendingSessions.delete(whatsappId);
+  }
+
+  readySessions.delete(whatsappId);
+};
+
+export const isSessionReady = (whatsappId: number): boolean =>
+  readySessions.has(whatsappId);
+
+export const markSessionNotReady = (whatsappId: number): void => {
+  readySessions.delete(whatsappId);
 };
 
 export const destroyAllWbots = async (): Promise<void> => {
-  const toDestroy = [...sessions];
+  const toDestroy = [...sessions, ...pendingSessions.values()];
   sessions.length = 0;
+  pendingSessions.clear();
+  readySessions.clear();
   for (const s of toDestroy) {
     try {
       await s.destroy();
