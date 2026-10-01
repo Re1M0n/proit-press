@@ -50,6 +50,7 @@ import PollCreator from "../PollCreator";
 import toastError from "../../errors/toastError";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import api from "../../services/api";
+import { getBackendUrl } from "../../services/serverConfig";
 import openSocket from "../../services/socket-io";
 import RecordingTimer from "./RecordingTimer";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
@@ -750,7 +751,7 @@ const MessageInput = ({ ticketStatus }) => {
     
     if (mediaPath) {
       try {
-        const mediaUrl = `${process.env.REACT_APP_BACKEND_URL}/public/${mediaPath}`;
+        const mediaUrl = `${getBackendUrl()}/public/${mediaPath}`;
         
         const response = await fetch(mediaUrl);
         const blob = await response.blob();

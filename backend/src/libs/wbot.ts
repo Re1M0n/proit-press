@@ -13,6 +13,7 @@ import { initializeHealthTracking, updateLastActivity } from "../services/WbotSe
 import { handleMessage } from "../services/WbotServices/wbotMessageListener";
 import { logger } from "../utils/logger";
 import { getIO } from "./socket";
+import { notifyChannelDisconnected } from "../services/PushNotificationService";
 
 interface Session extends Client {
   id?: number;
@@ -370,6 +371,9 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
           status: "DISCONNECTED",
           retries: retry + 1,
           number: ""
+        });
+        void notifyChannelDisconnected(whatsapp, "Falló la autenticación de WhatsApp").catch(error => {
+          logger.error(`[PUSH] Error notificando desconexión de WhatsApp ${whatsapp.id}: ${error.message}`);
         });
 
         io.emit("whatsappSession", {

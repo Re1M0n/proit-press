@@ -13,6 +13,7 @@ yarn.lock
 yarn-error.log
 
 /src/config/sentry.js
+/firebase-service-account.json
 
 # Ignore test-related files
 /coverage.data

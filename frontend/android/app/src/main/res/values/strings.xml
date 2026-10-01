@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ProIT Press</string>
+    <string name="title_activity_main">ProIT Press</string>
+    <string name="package_name">com.proit.press</string>
+    <string name="custom_url_scheme">com.proit.press</string>
+</resources>

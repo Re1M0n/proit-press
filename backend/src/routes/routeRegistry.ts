@@ -51,6 +51,7 @@ import * as VideoController from "../controllers/VideoController";
 import * as WhatsappNotificationController from "../controllers/WhatsappNotificationController";
 import * as WhatsAppController from "../controllers/WhatsAppController";
 import WhatsAppSessionController from "../controllers/WhatsAppSessionController";
+import * as PushNotificationController from "../controllers/PushNotificationController";
 /* eslint-disable */
 
 /* eslint-disable */
@@ -283,6 +284,16 @@ export const routeRegistry: RouteGroup[] = [
   {
     routes: [
     { method: "get", path: "/network-status", middlewares: [isAuth], handler: NetworkMonitorController.index }
+    ]
+  },
+  // pushNotification
+  {
+    path: "/push-notifications",
+    routes: [
+    { method: "get", path: "/status", middlewares: [isAuth], handler: PushNotificationController.status },
+    { method: "put", path: "/mode", middlewares: [isAuth], handler: PushNotificationController.setMode },
+    { method: "post", path: "/devices", middlewares: [isAuth], handler: PushNotificationController.registerDevice },
+    { method: "delete", path: "/devices", middlewares: [isAuth], handler: PushNotificationController.removeDevice }
     ]
   },
   // personalization

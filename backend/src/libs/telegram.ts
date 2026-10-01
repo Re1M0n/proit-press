@@ -4,6 +4,7 @@ import Whatsapp from "../models/Whatsapp";
 import { logger } from "../utils/logger";
 import { getIO } from "./socket";
 import { handleTelegramUpdate } from "../services/TelegramServices/TelegramMessageListener";
+import { notifyChannelDisconnected } from "../services/PushNotificationService";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const FormData = require("form-data") as any;
@@ -90,6 +91,12 @@ const poll = async (session: TelegramSession): Promise<void> => {
         { status: "DISCONNECTED" },
         { where: { id: session.whatsappId } }
       ).catch(() => {});
+      const whatsapp = await Whatsapp.findByPk(session.whatsappId);
+      if (whatsapp) {
+        void notifyChannelDisconnected(whatsapp, "Token de Telegram inválido o revocado").catch(error => {
+          logger.error(`[PUSH] Error notificando canal Telegram ${whatsapp.id}: ${error.message}`);
+        });
+      }
       return;
     }
     logger.warn(
@@ -108,6 +115,7 @@ export const startTelegramSession = async (
   const token = whatsapp.tokenTelegram;
   if (!token) {
     await whatsapp.update({ status: "DISCONNECTED" }).catch(() => {});
+    void notifyChannelDisconnected(whatsapp, "Falta el token del bot de Telegram").catch(() => {});
     throw new AppError(
       "No se encontró un token de bot de Telegram para este canal. Editá el canal y cargá el token de @BotFather."
     );
@@ -122,6 +130,7 @@ export const startTelegramSession = async (
   const me = await telegramApi(token, "getMe").catch(() => null);
   if (!me || !me.ok || !me.result) {
     await whatsapp.update({ status: "DISCONNECTED" }).catch(() => {});
+    void notifyChannelDisconnected(whatsapp, "Token de Telegram inválido o revocado").catch(() => {});
     throw new AppError(
       "El token de Telegram es inválido o fue revocado. Verificá el token del bot en @BotFather."
     );

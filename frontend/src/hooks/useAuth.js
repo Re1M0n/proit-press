@@ -26,6 +26,7 @@ const useAuth = () => {
             socket.disconnect();
         }
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
         setIsAuth(false);
         setUser({});
@@ -58,7 +59,9 @@ const useAuth = () => {
                         console.error("Erro ao carregar usuário do localStorage:", parseErr);
                     }
 
-                    const { data } = await api.post("/auth/refresh_token");
+                    const { data, headers } = await api.post("/auth/refresh_token");
+                    const refreshToken = headers["x-refresh-token"];
+                    if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
                     api.defaults.headers.Authorization = `Bearer ${data.token}`;
                     localStorage.setItem("token", JSON.stringify(data.token));
                     localStorage.setItem("user", JSON.stringify(data.user));
@@ -98,7 +101,9 @@ const useAuth = () => {
     const handleLogin = async (userData) => {
         setLoading(true);
         try {
-            const { data } = await api.post("/auth/login", userData);
+            const { data, headers } = await api.post("/auth/login", userData);
+            const refreshToken = headers["x-refresh-token"];
+            if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("token", JSON.stringify(data.token));
             localStorage.setItem("user", JSON.stringify(data.user));
             api.defaults.headers.Authorization = `Bearer ${data.token}`;

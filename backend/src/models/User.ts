@@ -52,6 +52,10 @@ class User extends Model<User> {
   online: boolean;
 
   @Default(false)
+  @Column(DataType.BOOLEAN)
+  mobileNotificationsEnabled: boolean;
+
+  @Default(false)
   @Column
   isTricked: boolean;
 

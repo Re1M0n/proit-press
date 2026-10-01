@@ -1,3 +1,5 @@
+import { getBackendUrl as getConfiguredBackendUrl } from "./services/serverConfig";
+
 const configCache = {};
 
 function getConfig(name, defaultValue = null, warn = true) {
@@ -16,7 +18,7 @@ function getConfig(name, defaultValue = null, warn = true) {
 }
 
 export function getBackendUrl() {
-    return getConfig("REACT_APP_BACKEND_URL", "http://localhost:4000");
+    return getConfiguredBackendUrl();
 }
 
 export function getHoursCloseTicketsAuto() {

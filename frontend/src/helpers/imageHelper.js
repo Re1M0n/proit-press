@@ -1,3 +1,5 @@
+import { getBackendUrl } from "../services/serverConfig";
+
 export const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
     
@@ -13,7 +15,7 @@ export const getImageUrl = (imagePath) => {
 
     const finalPath = cleanPath.startsWith('logos/') ? cleanPath : `logos/${cleanPath}`;
 
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || window.location.origin;
+    const backendUrl = getBackendUrl() || window.location.origin;
         
     return `${backendUrl}/public/${finalPath}`;
 };

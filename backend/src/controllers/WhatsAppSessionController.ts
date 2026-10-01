@@ -6,6 +6,7 @@ import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
 import logActivity from "../helpers/logActivity";
+import { notifyChannelDisconnected } from "../services/PushNotificationService";
 
 const store = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
@@ -86,6 +87,9 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
         session: "",
         number: ""
       }
+    });
+    void notifyChannelDisconnected(whatsapp, "El canal fue desconectado").catch(error => {
+      console.error(`[PUSH] Error notificando canal ${whatsapp.id}:`, error);
     });
 
     // LOG: Sessão desconectada

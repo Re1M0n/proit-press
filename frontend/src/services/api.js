@@ -1,9 +1,15 @@
 import axios from "axios";
+import { Capacitor } from "@capacitor/core";
+import { getBackendUrl } from "./serverConfig";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: getBackendUrl(),
   withCredentials: true
 });
+
+export const setApiBaseUrl = (url) => {
+  api.defaults.baseURL = url;
+};
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -22,14 +28,34 @@ const processQueue = (error, token = null) => {
 };
 
 const handleLogout = () => {
-  api.delete("/auth/logout").catch(() => { });
+  api.delete("/auth/logout").catch(() => {});
   localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("user");
   window.location.href = "/login";
+};
+
+const isAuthEndpoint = url =>
+  url?.includes("/auth/login") ||
+  url?.includes("/auth/refresh_token") ||
+  url?.includes("/auth/logout");
+
+const getStoredAccessToken = () => {
+  const storedToken = localStorage.getItem("token");
+  if (!storedToken) return null;
+  try {
+    return JSON.parse(storedToken);
+  } catch (_error) {
+    return storedToken;
+  }
 };
 
 const refreshToken = async () => {
   try {
-    const { data: { token, user } } = await api.post("/auth/refresh_token");
+    const { data: { token, user }, headers } = await api.post("/auth/refresh_token");
+    const nextRefreshToken = headers["x-refresh-token"];
+    if (nextRefreshToken) localStorage.setItem("refreshToken", nextRefreshToken);
+
     localStorage.setItem("token", JSON.stringify(token));
     api.defaults.headers.Authorization = `Bearer ${token}`;
     lastRefreshTime = Date.now();
@@ -51,15 +77,22 @@ const setUserInactiveFlag = (value) => {
 
 api.interceptors.request.use(
   async config => {
+    if (Capacitor.isNativePlatform()) config.headers["X-Client-App"] = "proit-press-android";
     if (userInactive && !config.url.includes("/auth/logout")) {
       return Promise.reject(new Error("User is inactive"));
     }
 
-    if (config.url.includes("/auth/refresh_token") || config.url.includes("/auth/logout")) {
+    if (config.url?.includes("/auth/refresh_token")) {
+      const nativeRefreshToken = localStorage.getItem("refreshToken");
+      if (Capacitor.isNativePlatform() && nativeRefreshToken) {
+        config.headers["X-Refresh-Token"] = nativeRefreshToken;
+      }
       return config;
     }
 
-    const token = localStorage.getItem("token");
+    if (isAuthEndpoint(config.url)) return config;
+
+    const token = getStoredAccessToken();
     if (token) {
       const now = Date.now();
       if (now - lastRefreshTime > REFRESH_THRESHOLD) {
@@ -74,13 +107,7 @@ api.interceptors.request.use(
           return Promise.reject(err);
         }
       } else {
-        try {
-          const parsedToken = JSON.parse(token);
-          config.headers.Authorization = `Bearer ${parsedToken}`;
-        } catch (err) {
-          console.error("Erro ao processar token:", err);
-          config.headers.Authorization = `Bearer ${token}`;
-        }
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
     return config;
@@ -113,7 +140,10 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error?.response?.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint(originalRequest?.url)) {
+      if (!getStoredAccessToken() && !localStorage.getItem("refreshToken")) {
+        return Promise.reject(error);
+      }
       if (isRefreshing) {
         try {
           const token = await new Promise((resolve, reject) => {

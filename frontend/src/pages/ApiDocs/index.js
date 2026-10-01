@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import React from "react";
+import { getBackendUrl } from "../../services/serverConfig";
 
 const Root = styled('div')(({ theme }) => ({
 	display: "flex",
@@ -17,9 +18,7 @@ const StyledIframe = styled('iframe')({
 });
 
 const ApiDocs = () => {
-	const back = process.env.REACT_APP_BACKEND_URL;
-	const endapi = "/api-docs";
-	const urlapi = back.concat(endapi);
+	const urlapi = `${getBackendUrl()}/api-docs`;
 
 	return (
 		<Root>

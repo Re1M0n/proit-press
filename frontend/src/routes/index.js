@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "../context/Auth/AuthContext";
@@ -43,8 +43,21 @@ import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import MasterAdminRoute from "./MasterAdminRoute";
 import PublicRoute from "./PublicRoute";
+import { getBackendUrl } from "../services/serverConfig";
+import { setApiBaseUrl } from "../services/api";
+import ServerSetup from "../components/ServerSetup";
 
 const AppRoutes = ({ toggleTheme, onThemeConfigUpdate }) => {
+  const [configured, setConfigured] = useState(Boolean(getBackendUrl()));
+
+  if (!configured) {
+    return <ServerSetup onConfigured={() => {
+      setApiBaseUrl(getBackendUrl());
+      setConfigured(true);
+      window.location.replace("/login");
+    }} />;
+  }
+
   return (
     <BrowserRouter>
       <AuthProvider>

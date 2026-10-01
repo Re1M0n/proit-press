@@ -22,6 +22,8 @@ import { getImageUrl } from '../helpers/imageHelper';
 import BackdropLoading from "../components/BackdropLoading";
 import LanguageSelector from "../components/LanguageSelector";
 import NotificationsPopOver from "../components/NotificationsPopOver";
+import MobileModeControl from "../components/MobileModeControl";
+import ServerSettingsModal from "../components/ServerSettingsModal";
 import ThemeSelector from '../components/ThemeSelector';
 import UserModal from "../components/UserModal";
 import { AuthContext } from "../context/Auth/AuthContext";
@@ -122,6 +124,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const [userModalOpen, setUserModalOpen] = useState(false);
+  const [serverSettingsOpen, setServerSettingsOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const { handleLogout, loading } = useContext(AuthContext);
@@ -254,6 +257,11 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
     handleLogout();
   };
 
+  const handleServerSettingsClose = (serverChanged) => {
+    setServerSettingsOpen(false);
+    if (serverChanged) handleLogout();
+  };
+
   const drawerClose = () => {
     setDrawerOpen(false);
   };
@@ -322,6 +330,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
         </List>
         <Divider sx={{ my: 0.5 }} />
       </Drawer>
+      <ServerSettingsModal open={serverSettingsOpen} onClose={handleServerSettingsClose} />
       <UserModal
         open={userModalOpen}
         onClose={() => setUserModalOpen(false)}
@@ -370,6 +379,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
             </Tooltip>
             <ThemeSelector toggleTheme={toggleTheme} />
             <LanguageSelector />
+            {user?.id && <MobileModeControl />}
             {user?.id && <NotificationsPopOver />}
             <IconButton
               aria-label="account of current user"
@@ -425,6 +435,9 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
             >
               <MenuItem onClick={handleOpenUserModal} sx={{ py: 1.5, px: 2.5, borderRadius: 1, mx: 0.5, my: 0.5 }}>
                 {t("mainDrawer.appBar.user.profile")}
+              </MenuItem>
+              <MenuItem onClick={() => { handleCloseMenu(); setServerSettingsOpen(true); }} sx={{ py: 1.5, px: 2.5, borderRadius: 1, mx: 0.5, my: 0.5 }}>
+                Cambiar servidor
               </MenuItem>
               <MenuItem onClick={handleClickLogout} sx={{ py: 1.5, px: 2.5, borderRadius: 1, mx: 0.5, my: 0.5 }}>
                 {t("mainDrawer.appBar.user.logout")}

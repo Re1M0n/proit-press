@@ -168,6 +168,10 @@ Para un respaldo diario automático, agregá esta línea al crontab (`crontab -e
 30 3 * * * cd /home/deploy/Press-Ticket && sudo bash backup.sh /home/deploy/backups
 ```
 
+## Compilar la app Android (APK)
+
+En Windows, desde esta copia del proyecto ejecutá `frontend/build-android-apk.bat`. El script reutiliza el JDK 21 paralelo y Android SDK locales de `C:/Users/Rei/Documents/.0-proyectos/DrApp/.toolchain`, instala Android API 36 / Build Tools 36 si faltan, genera el frontend, sincroniza Capacitor y compila el APK debug en `frontend/android/app/build/outputs/apk/debug/app-debug.apk`. El JDK 17 de DrApp permanece intacto. Si el toolchain se mueve, definí `ANDROID_TOOLCHAIN_HOME` con la ruta de su carpeta `.toolchain` antes de ejecutar el script.
+
 ## Créditos
 
 ProIT CRM está basado en el proyecto de código abierto [Press-Ticket](https://github.com/rtenorioh/Press-Ticket), desarrollado originalmente por Robson Tenório, y este a su vez en el [Sistema Whaticket Community](https://github.com/canove/whaticket-community), creado por [Cassio Santos](https://github.com/canove). Gracias a esos proyectos y a su comunidad por la base sobre la que está construido este sistema.

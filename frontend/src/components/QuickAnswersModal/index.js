@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import toastError from "../../errors/toastError";
 import api from "../../services/api";
+import { getBackendUrl } from "../../services/serverConfig";
 import ButtonWithSpinner from "../ButtonWithSpinner";
 import FormikTextField from "../FormikTextField";
 import MessageVariablesPicker from "../MessageVariablesPicker";
@@ -134,7 +135,7 @@ const QuickAnswersModal = ({
             
             if (data.mediaPath) {
               setFilePreview({
-                url: `${process.env.REACT_APP_BACKEND_URL}/public/${data.mediaPath}`,
+                url: `${getBackendUrl()}/public/${data.mediaPath}`,
                 name: data.mediaPath,
                 type: 'application/octet-stream',
                 size: 0
