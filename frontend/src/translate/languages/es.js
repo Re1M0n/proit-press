@@ -253,7 +253,12 @@ const messages = {
         email: "Correo electrónico",
         address: "Dirección",
         extraName: "Nombre del campo",
-        extraValue: "Valor"
+        extraValue: "Valor",
+        technicalInfo: "Información técnica",
+        technicalHardware: "Hardware / equipo",
+        technicalOperatingSystem: "Sistema operativo",
+        technicalApplications: "Aplicaciones especiales",
+        technicalApplicationsPlaceholder: "Indicá aplicaciones fuera de lo habitual"
       },
       messageHandling: {
         title: "Manejo de mensajes",

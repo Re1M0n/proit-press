@@ -254,6 +254,11 @@ const messages = {
           address: "Endereço",
           extraName: "Nome do campo",
           extraValue: "Valor",
+          technicalInfo: "Informações técnicas",
+          technicalHardware: "Hardware / equipamento",
+          technicalOperatingSystem: "Sistema operacional",
+          technicalApplications: "Aplicativos especiais",
+          technicalApplicationsPlaceholder: "Informe aplicativos fora do comum",
         },
         messageHandling: {
           title: "Tratamento de mensagens",

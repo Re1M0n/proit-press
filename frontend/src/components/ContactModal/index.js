@@ -128,6 +128,9 @@ const initialState = {
 	state: "",
 	cpf: "",
 	messageHandling: "normal",
+	technicalHardware: "",
+	technicalOperatingSystem: "",
+	technicalApplications: "",
 };
 
 const ContactSchema = Yup.object().shape({
@@ -312,6 +315,7 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 									<Tab label={t("contactModal.form.contact", { defaultValue: "Contato" })} />
 									<Tab label={t("contactModal.form.address")} />
 									<Tab label={t("contactModal.form.extraInfo")} />
+									<Tab label={t("contactModal.form.technicalInfo")} />
 								</Tabs>
 
 								{tab === 0 && (
@@ -604,6 +608,22 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 												</>
 											)}
 										</FieldArray>
+									</>									)}
+
+								{tab === 4 && (
+									<>
+										<FieldContainer>
+											<FieldLabel>{t("contactModal.form.technicalHardware")}</FieldLabel>
+											<Field as={StyledTextField} name="technicalHardware" multiline minRows={2} fullWidth variant="outlined" />
+										</FieldContainer>
+										<FieldContainer>
+											<FieldLabel>{t("contactModal.form.technicalOperatingSystem")}</FieldLabel>
+											<Field as={StyledTextField} name="technicalOperatingSystem" multiline minRows={2} fullWidth variant="outlined" />
+										</FieldContainer>
+										<FieldContainer>
+											<FieldLabel>{t("contactModal.form.technicalApplications")}</FieldLabel>
+											<Field as={StyledTextField} name="technicalApplications" multiline minRows={3} fullWidth variant="outlined" placeholder={t("contactModal.form.technicalApplicationsPlaceholder")} />
+										</FieldContainer>
 									</>
 								)}
 

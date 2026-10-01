@@ -277,6 +277,27 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading, isGroup, mes
             <GroupActionsPanel groupId={groupJid} />
           )}
           <TagsContainer contact={contact} sx={{ marginTop: 2 }} />
+          {(displayContact?.technicalHardware || displayContact?.technicalOperatingSystem || displayContact?.technicalApplications) && (
+            <ContactDetails square variant="outlined">
+              <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 1.5, mt: 1 }}>
+                {t("contactModal.form.technicalInfo")}
+              </Typography>
+              <Divider sx={{ mb: 1 }} />
+              {[
+                ["technicalHardware", t("contactModal.form.technicalHardware")],
+                ["technicalOperatingSystem", t("contactModal.form.technicalOperatingSystem")],
+                ["technicalApplications", t("contactModal.form.technicalApplications")]
+              ].map(([field, label]) => displayContact?.[field] && (
+                <ContactExtraInfo key={field} square variant="outlined">
+                  <InputLabel>{label}</InputLabel>
+                  <Typography component="div" sx={{ pt: 0.5, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+                    {displayContact[field]}
+                    <CopyToClipboard content={displayContact[field]} color="secondary" />
+                  </Typography>
+                </ContactExtraInfo>
+              ))}
+            </ContactDetails>
+          )}
           <ContactDetails square variant="outlined">
             <ContactModal
               open={modalOpen}

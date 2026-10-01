@@ -81,6 +81,11 @@ const messages = {
           address: "Address",
           extraName: "Field name",
           extraValue: "Value",
+          technicalInfo: "Technical information",
+          technicalHardware: "Hardware / device",
+          technicalOperatingSystem: "Operating system",
+          technicalApplications: "Special applications",
+          technicalApplicationsPlaceholder: "List any unusual applications",
         },
         messageHandling: {
           title: "Message handling",
