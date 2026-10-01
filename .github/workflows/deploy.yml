@@ -1,6 +1,16 @@
 name: Deploy
 
 on:
+  # Deploy automático: al pushear a main queda desplegado solo, siempre que el
+  # CI (tsc del backend + build del frontend) haya pasado. Antes había que
+  # dispararlo a mano desde Actions y era fácil olvidarlo: el fix quedaba en
+  # main pero el servidor seguía con el código viejo.
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  # Deploy manual: sirve para re-desplegar sin cambios de código o para un
+  # rollback puntual, y no queda atado al resultado del CI.
   workflow_dispatch:
     inputs:
       environment:
@@ -22,6 +32,10 @@ concurrency:
 jobs:
   deploy:
     name: Deploy a producción (prometheus)
+    # workflow_run se dispara con CUALQUIER conclusión del CI (success, failure,
+    # cancelled), así que acá se filtra: solo se despliega si terminó bien. Un
+    # CI cancelado lo está reemplazando el push siguiente, que hará su deploy.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment: production
     timeout-minutes: 30
