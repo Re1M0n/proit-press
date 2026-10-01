@@ -60,7 +60,10 @@ const NotificationsPopOver = () => {
 		localStorage.getItem("userAudioEnabled") !== "false"
 	);
 	const [notificationsAllowed, setNotificationsAllowed] = useState(
-		Notification.permission === "granted"
+		// En el WebView de la app Android (Capacitor) no existe `Notification`:
+		// leer `.permission` acá tiraba ReferenceError durante el render y
+		// tiraba la pantalla entera al ErrorBoundary después del login.
+		typeof Notification !== "undefined" && Notification.permission === "granted"
 	);
 	const { tickets } = useTickets({ withUnreadMessages: "true", all: true });
 	const [play, { stop }] = useSound(alertSound, { soundEnabled: isAudioEnabled });
