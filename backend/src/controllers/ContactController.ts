@@ -202,6 +202,9 @@ interface ContactData {
   cpf?: string;
   /** "normal" | "silent" | "ignore" — ver helpers/MessageHandling.ts */
   messageHandling?: string;
+  technicalHardware?: string;
+  technicalOperatingSystem?: string;
+  technicalApplications?: string;
 }
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -303,7 +306,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     neighborhood,
     city,
     state,
-    cpf
+    cpf,
+    technicalHardware,
+    technicalOperatingSystem,
+    technicalApplications
   } = newContact;
 
   const contact = await CreateContactService({
@@ -324,7 +330,10 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     neighborhood,
     city,
     state,
-    cpf
+    cpf,
+    technicalHardware,
+    technicalOperatingSystem,
+    technicalApplications
   });
 
   await logActivity(req, {

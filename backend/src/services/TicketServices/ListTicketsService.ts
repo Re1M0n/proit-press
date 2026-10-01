@@ -68,6 +68,9 @@ const ListTicketsService = async ({
         "telegramId",
         "webchatId",
         "messageHandling",
+        "technicalHardware",
+        "technicalOperatingSystem",
+        "technicalApplications",
         "isGroup"
       ]
     },

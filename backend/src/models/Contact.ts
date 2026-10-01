@@ -4,6 +4,7 @@ import {
   BelongsToMany,
   Column,
   CreatedAt,
+  DataType,
   Default,
   HasMany,
   Model,
@@ -125,6 +126,18 @@ class Contact extends Model<Contact> {
   @Default("normal")
   @Column
   messageHandling: string;
+
+  @AllowNull(true)
+  @Column(DataType.TEXT)
+  technicalHardware: string;
+
+  @AllowNull(true)
+  @Column(DataType.TEXT)
+  technicalOperatingSystem: string;
+
+  @AllowNull(true)
+  @Column(DataType.TEXT)
+  technicalApplications: string;
 
   @CreatedAt
   createdAt: Date;

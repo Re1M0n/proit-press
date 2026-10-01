@@ -26,6 +26,9 @@ interface Request {
   city?: string;
   state?: string;
   cpf?: string;
+  technicalHardware?: string;
+  technicalOperatingSystem?: string;
+  technicalApplications?: string;
 }
 
 const CreateContactService = async ({
@@ -46,7 +49,10 @@ const CreateContactService = async ({
   neighborhood = "",
   city = "",
   state = "",
-  cpf = ""
+  cpf = "",
+  technicalHardware = "",
+  technicalOperatingSystem = "",
+  technicalApplications = ""
 }: Request): Promise<Contact> => {
   const numberExists = await Contact.findOne({
     where: { number }
@@ -75,6 +81,9 @@ const CreateContactService = async ({
       city,
       state,
       cpf,
+      technicalHardware,
+      technicalOperatingSystem,
+      technicalApplications,
       whatsappId
     },
     {

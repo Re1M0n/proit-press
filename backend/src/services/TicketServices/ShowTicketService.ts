@@ -23,7 +23,10 @@ const ShowTicketService = async (id: string | number): Promise<Ticket> => {
           "instagramId",
           "telegramId",
           "webchatId",
-          "messageHandling"
+          "messageHandling",
+          "technicalHardware",
+          "technicalOperatingSystem",
+          "technicalApplications"
         ],
         include: ["extraInfo", "tags"]
       },

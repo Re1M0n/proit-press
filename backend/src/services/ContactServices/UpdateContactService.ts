@@ -27,6 +27,9 @@ interface ContactData {
   state?: string;
   cpf?: string;
   messageHandling?: string;
+  technicalHardware?: string;
+  technicalOperatingSystem?: string;
+  technicalApplications?: string;
 }
 
 interface Request {
@@ -38,7 +41,7 @@ const UpdateContactService = async ({
   contactData,
   contactId
 }: Request): Promise<Contact> => {
-  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf, messageHandling } = contactData;
+  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf, messageHandling, technicalHardware, technicalOperatingSystem, technicalApplications } = contactData;
 
   const contact = await Contact.findOne({
     where: { id: contactId },
@@ -61,6 +64,9 @@ const UpdateContactService = async ({
       "state",
       "cpf",
       "messageHandling",
+      "technicalHardware",
+      "technicalOperatingSystem",
+      "technicalApplications",
       "profilePicUrl",
       "messengerId",
       "instagramId",
@@ -109,6 +115,11 @@ const UpdateContactService = async ({
     city,
     state,
     cpf,
+    ...(technicalHardware !== undefined ? { technicalHardware } : {}),
+    ...(technicalOperatingSystem !== undefined
+      ? { technicalOperatingSystem }
+      : {}),
+    ...(technicalApplications !== undefined ? { technicalApplications } : {}),
     messageHandling:
       messageHandling !== undefined
         ? normalizarMessageHandling(messageHandling)
@@ -124,6 +135,9 @@ const UpdateContactService = async ({
       "address",
       "email",
       "messageHandling",
+      "technicalHardware",
+      "technicalOperatingSystem",
+      "technicalApplications",
       "profilePicUrl",
       "messengerId",
       "instagramId",
