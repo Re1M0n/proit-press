@@ -53,17 +53,20 @@ export const hour = (): string => {
 
 export default (body: string, ticket?: Ticket): string => {
   const view = {
-    name: ticket ? ticket.contact.name : "",
-    user: ticket ? ticket?.user : "",
-    ticket_id: ticket ? ticket.id : "",
+    // Las relaciones pueden venir nulas (p. ej. un ticket cuyo canal fue
+    // eliminado y quedó con whatsappId nulo): acceder a `.name` tiraba un
+    // TypeError que abortaba TODO el envío con ERR_SENDING_WAPP_MSG.
+    name: ticket?.contact?.name ?? "",
+    user: ticket?.user ?? "",
+    ticket_id: ticket?.id ?? "",
     ms: msgsd(),
     hour: hour(),
     date: date(),
-    queue: ticket ? ticket?.queue?.name : "",
-    connection: ticket ? ticket.whatsapp.name : "",
+    queue: ticket?.queue?.name ?? "",
+    connection: ticket?.whatsapp?.name ?? "",
     protocol: new Array(
       control(),
-      ticket ? ticket.id.toString() : ""
+      ticket?.id != null ? ticket.id.toString() : ""
     ).join(""),
   };
 
