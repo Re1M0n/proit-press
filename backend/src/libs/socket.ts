@@ -49,6 +49,9 @@ export const initIO = (httpServer: Server): void => {
         if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
           return callback(null, true);
         }
+        if (/^(https?|capacitor|ionic):\/\/localhost(?::\d+)?$/.test(origin)) {
+          return callback(null, true);
+        }
 
         // Permitir localhost em desenvolvimento
         if (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) {
