@@ -23,7 +23,7 @@ const messages = {
         },
         confirmationModal: {
           deleteTitle: "Delete",
-          deleteMessage: "Are you sure? This action cannot be undone.",
+          deleteMessage: "Are you sure? This channel's tickets will be automatically transferred to another available channel so they are not lost. This action cannot be undone.",
           disconnectTitle: "Disconnect",
           disconnectMessage: "Are you sure? You will need to scan the QR Code again.",
         },
@@ -914,6 +914,7 @@ const messages = {
         ERR_CREATING_TICKET: "Error creating ticket in the database.",
         ERR_CHAT_NOT_FOUND: "Chat not found in the WhatsApp session.",
         ERR_CONNECTION_CREATION_COUNT: "Channel limit reached, contact support to modify.",
+        ERR_CANT_DELETE_ONLY_WHATSAPP_WITH_TICKETS: "You can't delete the only channel while it still has tickets. Create or enable another channel first.",
         ERR_DELETE_WAPP_MSG: "Could not delete WhatsApp message.",
         ERR_DUPLICATED_CONTACT: "A contact with this number already exists.",
         ERR_EDITING_WAPP_MSG: "Could not edit WhatsApp message.",

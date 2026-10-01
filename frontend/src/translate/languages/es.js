@@ -190,7 +190,7 @@ const messages = {
       },
       confirmationModal: {
         deleteTitle: "Eliminar",
-        deleteMessage: "¿Está seguro? Esta acción no se puede deshacer.",
+        deleteMessage: "¿Está seguro? Los tickets de este canal se transferirán automáticamente a otro canal disponible para no perderlos. Esta acción no se puede deshacer.",
         disconnectTitle: "Desconectar",
         disconnectMessage: "¿Está seguro? Deberá escanear el código QR nuevamente."
       },
@@ -2243,6 +2243,7 @@ const messages = {
       ERR_CREATING_TICKET: "Error al crear el ticket en la base de datos.",
       ERR_CHAT_NOT_FOUND: "No se encontró el chat en la sesión de WhatsApp.",
       ERR_CONNECTION_CREATION_COUNT: "Límite de canales alcanzado, para cambiar contacte con soporte.",
+      ERR_CANT_DELETE_ONLY_WHATSAPP_WITH_TICKETS: "No se puede eliminar el único canal mientras tenga tickets. Cree o habilite otro canal antes de eliminarlo.",
       ERR_DELETE_WAPP_MSG: "No se pudo eliminar el mensaje de WhatsApp.",
       ERR_DUPLICATED_CONTACT: "Ya existe un contacto con este número.",
       ERR_EDITING_WAPP_MSG: "No se pudo editar el mensaje de WhatsApp.",

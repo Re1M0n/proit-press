@@ -190,7 +190,7 @@ const messages = {
         },
         confirmationModal: {
           deleteTitle: "Deletar",
-          deleteMessage: "Você tem certeza? Essa ação não pode ser revertida.",
+          deleteMessage: "Você tem certeza? Os tickets deste canal serão transferidos automaticamente para outro canal disponível para não serem perdidos. Essa ação não pode ser revertida.",
           disconnectTitle: "Desconectar",
           disconnectMessage: "Tem certeza? Você precisará ler o QR Code novamente.",
         },
@@ -2152,6 +2152,7 @@ const messages = {
         ERR_CREATING_MESSAGE: "Erro ao criar mensagem no banco de dados.",          ERR_CREATING_TICKET: "Erro ao criar ticket no banco de dados.",
           ERR_CHAT_NOT_FOUND: "Chat não encontrado na sessão do WhatsApp.",
         ERR_CONNECTION_CREATION_COUNT: "Limite de canais atingido, para alterar entre em contato com o suporte.",
+        ERR_CANT_DELETE_ONLY_WHATSAPP_WITH_TICKETS: "Não é possível excluir o único canal enquanto ele tiver tickets. Crie ou habilite outro canal antes de excluí-lo.",
         ERR_DELETE_WAPP_MSG: "Não foi possível excluir a mensagem do WhatsApp.",
         ERR_DUPLICATED_CONTACT: "Já existe um contato com este número.",
         ERR_EDITING_WAPP_MSG: "Não foi possível editar a mensagem do WhatsApp.",
