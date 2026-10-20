@@ -5,7 +5,6 @@ import { getIO } from "../../libs/socket";
 import { markSessionNotReady } from "../../libs/wbot";
 import Whatsapp from "../../models/Whatsapp";
 import { logger } from "../../utils/logger";
-import { StartWhatsAppSession } from "./StartWhatsAppSession";
 import { notifyChannelDisconnected } from "../PushNotificationService";
 
 interface Session extends Client {
@@ -14,7 +13,9 @@ interface Session extends Client {
 
 const wbotMonitor = async (
   wbot: Session,
-  whatsapp: Whatsapp
+  whatsapp: Whatsapp,
+  scheduleReconnect: () => void,
+  markConnected: () => void
 ): Promise<void> => {
   const io = getIO();
   const sessionName = whatsapp.name;
@@ -24,6 +25,8 @@ const wbotMonitor = async (
       logger.info(`Monitor session: ${sessionName}, ${newState}`);
       if (newState !== "CONNECTED") {
         markSessionNotReady(whatsapp.id);
+      } else {
+        markConnected();
       }
       try {
         await whatsapp.update({ status: newState });
@@ -43,8 +46,10 @@ const wbotMonitor = async (
       markSessionNotReady(whatsapp.id);
       try {
         await whatsapp.update({ status: "OPENING", session: "", number: "" });
-        void notifyChannelDisconnected(whatsapp, String(reason)).catch(err => {
-          logger.error(`[PUSH] Error notificando canal desconectado ${whatsapp.id}: ${err.message}`);
+        notifyChannelDisconnected(whatsapp, String(reason)).catch(err => {
+          logger.error(
+            `[PUSH] Error notificando canal desconectado ${whatsapp.id}: ${err.message}`
+          );
         });
       } catch (err) {
         Sentry.captureException(err);
@@ -56,7 +61,7 @@ const wbotMonitor = async (
         session: whatsapp
       });
 
-      setTimeout(() => StartWhatsAppSession(whatsapp), 2000);
+      scheduleReconnect();
     });
   } catch (err) {
     Sentry.captureException(err);

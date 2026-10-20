@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import AppError from "../errors/AppError";
 import { getIO } from "../libs/socket";
-import { initWbot, removeWbot, shutdownWbot } from "../libs/wbot";
+import { shutdownWbot } from "../libs/wbot";
 import { startTelegramSession, stopTelegramSession } from "../libs/telegram";
 import Whatsapp from "../models/Whatsapp";
-import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
+import {
+  StartWhatsAppSession,
+  StopWhatsAppSession
+} from "../services/WbotServices/StartWhatsAppSession";
 import CreateWhatsAppService from "../services/WhatsappService/CreateWhatsAppService";
 import DeleteWhatsAppService from "../services/WhatsappService/DeleteWhatsAppService";
 import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsService";
@@ -68,7 +71,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
       console.error(`[Telegram] Error iniciando sesión: ${err?.message}`);
     });
   } else {
-    StartWhatsAppSession(whatsapp);
+    StartWhatsAppSession(whatsapp).catch(err => {
+      console.error(`[WhatsApp] Error iniciando sesión ${whatsapp.id}: ${err?.message}`);
+    });
   }
   
   await logActivity(req, {
@@ -152,8 +157,8 @@ export const remove = async (
   const whatsappToDelete = await ShowWhatsAppService(whatsappId);
   
   stopTelegramSession(+whatsappId);
+  await StopWhatsAppSession(+whatsappId);
   await DeleteWhatsAppService(whatsappId);
-  removeWbot(+whatsappId);
   
   await logActivity(req, {
     action: ActivityActions.DELETE,
@@ -208,6 +213,7 @@ export const shutdown = async (req: Request, res: Response): Promise<Response> =
       stopTelegramSession(+whatsappId);
       await whatsapp.update({ status: "DISCONNECTED" });
     } else {
+      await StopWhatsAppSession(+whatsappId);
       await shutdownWbot(whatsappId);
     }
     return res.status(200).json({ message: "Whatsapp disconnected." });
@@ -245,7 +251,7 @@ export const start = async (req: Request, res: Response): Promise<Response> => {
     if (whatsapp.type === "telegram") {
       await startTelegramSession(whatsapp);
     } else {
-      await initWbot(whatsapp);
+      await StartWhatsAppSession(whatsapp);
     }
     const io = getIO();
     io.emit("whatsapp", {

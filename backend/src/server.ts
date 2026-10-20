@@ -2,9 +2,9 @@ import gracefulShutdown from "http-graceful-shutdown";
 import app from "./app";
 import { initIO } from "./libs/socket";
 import { logger } from "./utils/logger";
-import { destroyAllWbots } from "./libs/wbot";
 import { stopAllTelegramSessions } from "./libs/telegram";
 import { StartAllWhatsAppsSessions } from "./services/WbotServices/StartAllWhatsAppsSessions";
+import { StopAllWhatsAppSessions } from "./services/WbotServices/StartWhatsAppSession";
 
 
 const server = app.listen(process.env.PORT, () => {
@@ -21,7 +21,7 @@ StartAllWhatsAppsSessions();
 gracefulShutdown(server, {
   onShutdown: async () => {
     logger.info("Deteniendo sesiones de WhatsApp y Telegram...");
-    await destroyAllWbots();
+    await StopAllWhatsAppSessions();
     stopAllTelegramSessions();
   }
 });

@@ -2,9 +2,10 @@ import { getIO } from "../../libs/socket";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import GetTicketWbot from "../../helpers/GetTicketWbot";
-import { getWbot, restartWbot } from "../../libs/wbot";
+import { getWbot, isSessionReady } from "../../libs/wbot";
 import { logger } from "../../utils/logger";
 import Whatsapp from "../../models/Whatsapp";
+import { RestartWhatsAppSession } from "../WbotServices/StartWhatsAppSession";
 
 interface Request {
   ticketId: string | number;
@@ -60,19 +61,25 @@ const MarkMessagesAsReadService = async ({
       
       if (!wbot.info || !wbot.info.wid) {
         logger.warn(`Sesión WhatsApp para el ticket ${ticketId} no está totalmente inicializada. Intentando reiniciar...`);
-        wbot = await restartWbot(ticket.whatsappId);
+        wbot = await RestartWhatsAppSession(ticket.whatsappId);
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
     } catch (wbotError) {
       logger.error(`Error al obtener wbot para el ticket ${ticketId}: ${wbotError.message}`);
       logger.info(`Intentando reiniciar la sesión WhatsApp para el ticket ${ticketId}...`);
       try {
-        wbot = await restartWbot(ticket.whatsappId);
+        wbot = await RestartWhatsAppSession(ticket.whatsappId);
         await new Promise(resolve => setTimeout(resolve, 3000));
       } catch (restartError) {
         logger.error(`Fallo al reiniciar sesión WhatsApp: ${restartError.message}`);
         throw new Error(`No fue posible obtener una sesión válida de WhatsApp: ${restartError.message}`);
       }
+    }
+
+    if (!isSessionReady(ticket.whatsappId)) {
+      throw new Error(
+        `La sesión WhatsApp ${ticket.whatsappId} aún no está conectada; no se marcarán mensajes como leídos.`
+      );
     }
     
     const chatId = ticket.isGroup 

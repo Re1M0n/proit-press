@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
-import { getWbot, removeWbot } from "../libs/wbot";
+import { getWbot } from "../libs/wbot";
 import { stopTelegramSession } from "../libs/telegram";
-import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
+import {
+  StartWhatsAppSession,
+  StopWhatsAppSession
+} from "../services/WbotServices/StartWhatsAppSession";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import { ActivityActions, EntityTypes } from "../services/ActivityLogService";
@@ -12,7 +15,9 @@ const store = async (req: Request, res: Response): Promise<Response> => {
   const { whatsappId } = req.params;
   const whatsapp = await ShowWhatsAppService(whatsappId);
 
-  StartWhatsAppSession(whatsapp);
+  StartWhatsAppSession(whatsapp).catch(error => {
+    console.error(`[WhatsApp] Error iniciando sesión ${whatsapp.id}: ${error?.message}`);
+  });
 
   // LOG: Sessão iniciada
   try {
@@ -41,7 +46,9 @@ const update = async (req: Request, res: Response): Promise<Response> => {
     whatsappData: { session: "" }
   });
 
-  StartWhatsAppSession(whatsapp);
+  StartWhatsAppSession(whatsapp).catch(error => {
+    console.error(`[WhatsApp] Error reconectando sesión ${whatsapp.id}: ${error?.message}`);
+  });
 
   // LOG: Sessão reconectada
   try {
@@ -67,17 +74,25 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
     const { whatsappId } = req.params;
     const whatsapp = await ShowWhatsAppService(whatsappId);
 
+    let logoutClient: (() => Promise<void>) | undefined;
     try {
       const wbot = getWbot(whatsapp.id);
       if (wbot && typeof wbot.logout === "function") {
-        await wbot.logout();
+        logoutClient = async () => {
+          try {
+            await wbot.logout();
+          } catch (wbotError) {
+            console.log("Error al cerrar sesión de WhatsApp; se continuará con el cierre local.");
+            console.error(wbotError);
+          }
+        };
       }
     } catch (wbotError) {
       console.log("Sessão não encontrada ou já desconectada, continuando...");
     }
 
     stopTelegramSession(whatsapp.id);
-    removeWbot(whatsapp.id);
+    await StopWhatsAppSession(whatsapp.id, logoutClient);
 
     await UpdateWhatsAppService({
       whatsappId,

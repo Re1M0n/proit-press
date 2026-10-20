@@ -1,9 +1,12 @@
 import { startTelegramSession } from "../../libs/telegram";
-import { isSessionReady, removeWbot } from "../../libs/wbot";
+import { isSessionReady } from "../../libs/wbot";
 import Whatsapp from "../../models/Whatsapp";
 import { logger } from "../../utils/logger";
 import ListWhatsAppsService from "../WhatsappService/ListWhatsAppsService";
-import { StartWhatsAppSession } from "./StartWhatsAppSession";
+import {
+  StartWhatsAppSession,
+  StopWhatsAppSession
+} from "./StartWhatsAppSession";
 
 // Cuánto esperamos a que una sesión alcance READY antes de considerarla colgada.
 const READY_TIMEOUT_MS = 45000;
@@ -68,7 +71,7 @@ const startWhatsAppSessionWithRetry = async (
       `[SESSION_START] Iniciando sesión ${whatsapp.name} (intento ${attempt}/${MAX_ATTEMPTS})`
     );
 
-    void StartWhatsAppSession(whatsapp).catch((err: Error) => {
+    StartWhatsAppSession(whatsapp).catch((err: Error) => {
       logger.error(
         `[SESSION_START] ${whatsapp.name} falló al iniciar: ${err?.message || err}`
       );
@@ -99,7 +102,7 @@ const startWhatsAppSessionWithRetry = async (
         READY_TIMEOUT_MS / 1000
       )}s; reintentando`
     );
-    removeWbot(whatsapp.id);
+    await StopWhatsAppSession(whatsapp.id);
     await delay(RETRY_BACKOFF_MS);
   }
 

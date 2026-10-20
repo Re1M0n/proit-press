@@ -1,5 +1,4 @@
 import fs from "fs/promises";
-import { execFileSync } from "child_process";
 import { Configuration, CreateImageRequestSizeEnum, OpenAIApi } from "openai";
 import path from "path";
 import qrCode from "qrcode-terminal";
@@ -7,17 +6,35 @@ import { Client, LocalAuth } from "whatsapp-web.js";
 import AppError from "../errors/AppError";
 import Integration from "../models/Integration";
 import Whatsapp from "../models/Whatsapp";
-import GroupEventsService from "../services/WbotServices/GroupEventsService";
 import { handleCall, handleMessageReaction, handleVoteUpdate } from "../services/WbotServices/SessionEventsService";
 import { initializeHealthTracking, updateLastActivity } from "../services/WbotServices/HealthCheckService";
 import { handleMessage } from "../services/WbotServices/wbotMessageListener";
 import { logger } from "../utils/logger";
 import { getIO } from "./socket";
 import { notifyChannelDisconnected } from "../services/PushNotificationService";
+import {
+  cleanupOrphanChromium,
+  createLinuxChromiumProcessInspector
+} from "./ChromeOrphanRecovery";
 
-interface Session extends Client {
+export interface Session extends Client {
   id?: number;
 }
+
+export const getWbotClientSessionId = (whatsapp: Whatsapp): string => {
+  const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9_-]/g, "_");
+  if (process.env.COMPANY_NAME) {
+    return `${sanitize(process.env.COMPANY_NAME)}_${whatsapp.id}`;
+  }
+  return `${sanitize(whatsapp.name)}_${whatsapp.id}`;
+};
+
+export const getWbotSessionDirectory = (whatsapp: Whatsapp): string =>
+  path.resolve(
+    process.cwd(),
+    ".wwebjs_auth",
+    `session-${getWbotClientSessionId(whatsapp)}`
+  );
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface CreateImageRequest {
@@ -98,6 +115,8 @@ const sessions: Session[] = [];
 // lograrlo). Se registran apenas se crean para poder destruirlos al reintentar
 // el arranque; si no, un intento fallido deja su browser huérfano.
 const pendingSessions = new Map<number, Session>();
+const destroyingSessions = new Map<number, Promise<void>>();
+const initializationRejectors = new Map<number, (error: Error) => void>();
 
 // IDs de sesiones que alcanzaron READY y están operativas en memoria.
 const readySessions = new Set<number>();
@@ -219,36 +238,51 @@ const verificarParchesWwebjs = async (): Promise<void> => {
 };
 
 export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise<Session>(async (resolve, reject) => {
+    let settled = false;
+    const resolveOnce = (wbot: Session): void => {
+      if (settled) return;
+      settled = true;
+      initializationRejectors.delete(whatsapp.id);
+      resolve(wbot);
+    };
+    const rejectOnce = (error: Error): void => {
+      if (settled) return;
+      settled = true;
+      initializationRejectors.delete(whatsapp.id);
+      reject(error);
+    };
+
+    initializationRejectors.set(whatsapp.id, rejectOnce);
+
     try {
       logger.level = "trace";
       const io = getIO();
       const sessionName = whatsapp.name;
 
       await verificarParchesWwebjs();
+      if (settled) return;
 
-      const sanitize = (str: string) => str.replace(/[^a-zA-Z0-9_-]/g, '_');
-      let clientSession = `${sanitize(process.env.COMPANY_NAME || '')}_${whatsapp.id}`;
-      if (!process.env.COMPANY_NAME) {
-        clientSession = `${sanitize(whatsapp.name)}_${whatsapp.id}`;
-      }
+      const clientSession = getWbotClientSessionId(whatsapp);
 
-      // Si una instancia anterior fue matada sin cerrar (SIGKILL, crash, corte de
-      // luz), sus browsers quedan huérfanos pero siguen conectados a WhatsApp Web
-      // con la misma sesión. Abrir otra conexión con el mismo LocalAuth provoca
-      // conflicto y WhatsApp termina matando ambas. Limpiamos los browsers
-      // huérfanos de esta sesión antes de lanzar el nuestro.
-      try {
-        const escaped = clientSession.replace(/([.*+?^${}()|[\]\\])/g, "\\$1");
-        execFileSync("pkill", ["-f", `--user-data-dir=.*session-${escaped}`], {
-          stdio: "ignore"
-        });
-        logger.info(
-          `Session: ${sessionName} browsers huérfanos de la sesión anterior eliminados`
+      if (!process.env.CHROME_WS && process.platform === "linux") {
+        const recovery = await cleanupOrphanChromium(
+          getWbotSessionDirectory(whatsapp),
+          process.getuid(),
+          createLinuxChromiumProcessInspector()
         );
-      } catch (err) {
-        // pkill devuelve 1 cuando no hay procesos que matar: normal.
+        if (recovery === "ambiguous") {
+          throw new Error(
+            `No se pudo verificar con seguridad Chromium para la sesión ${whatsapp.id}`
+          );
+        }
+        if (recovery === "terminated") {
+          logger.info(
+            `[SESSION_START] Chromium huérfano recuperado para sesión ${whatsapp.id}`
+          );
+        }
       }
+      if (settled) return;
 
       const wbot: Session = new Client({
         authStrategy: new LocalAuth({ clientId: clientSession }),
@@ -307,32 +341,40 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         // },
       });
 
-      wbot.initialize();
-
-      pendingSessions.set(whatsapp.id, wbot);
-
-      wbot.on("qr", async qr => {
-        logger.info("Session:", sessionName);
-        pendingSessions.delete(whatsapp.id);
-        qrCode.generate(qr, { small: true });
-        await whatsapp.update({ 
-          qrcode: qr, 
-          status: "qrcode", 
-          retries: 0, 
-          type: "wwebjs" 
-        });
-
-        const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
-        if (sessionIndex === -1) {
-          wbot.id = whatsapp.id;
-          sessions.push(wbot);
+      wbot.on("disconnected", reason => {
+        if (!settled) {
+          rejectOnce(new Error(`Sesión ${whatsapp.id} desconectada durante el inicio: ${reason}`));
         }
+      });
 
-        io.emit("whatsappSession", {
-          action: "update",
-          session: whatsapp,
-          number: ""
-        });
+      wbot.on("qr", qr => {
+        void (async () => {
+          logger.info("Session:", sessionName);
+          pendingSessions.delete(whatsapp.id);
+          const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
+          if (sessionIndex === -1) {
+            wbot.id = whatsapp.id;
+            sessions.push(wbot);
+          }
+          qrCode.generate(qr, { small: true });
+          await whatsapp.update({
+            qrcode: qr,
+            status: "qrcode",
+            retries: 0,
+            type: "wwebjs"
+          });
+          if (settled) {
+            return;
+          }
+
+          io.emit("whatsappSession", {
+            action: "update",
+            session: whatsapp,
+            number: ""
+          });
+
+          resolveOnce(wbot);
+        })().catch((error: Error) => rejectOnce(error));
       });
 
       wbot.on("loading_screen", (percent, message) => {
@@ -354,84 +396,93 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         logger.info(`Session: ${sessionName} REMOTE_SESSION_SAVED`);
       });
 
-      wbot.on("authenticated", async () => {
-        logger.info(`Session: ${sessionName} AUTHENTICATED`);
-        
-        await whatsapp.update({
-          status: "AUTHENTICATED",
-          type: "wwebjs"
-        });
-        
-        io.emit("whatsappSession", {
-          action: "update",
-          session: whatsapp
+      wbot.on("authenticated", () => {
+        void (async () => {
+          logger.info(`Session: ${sessionName} AUTHENTICATED`);
+
+          await whatsapp.update({
+            status: "AUTHENTICATED",
+            type: "wwebjs"
+          });
+
+          io.emit("whatsappSession", {
+            action: "update",
+            session: whatsapp
+          });
+        })().catch((error: Error) => logger.error(error));
+      });
+
+      wbot.on("auth_failure", msg => {
+        void (async () => {
+          console.error(
+            `Session: ${sessionName} AUTHENTICATION FAILURE! Reason: ${msg}`
+          );
+
+          if (whatsapp.retries > 1) {
+            await whatsapp.update({ session: "", retries: 0 });
+          }
+
+          const retry = whatsapp.retries;
+          await whatsapp.update({
+            status: "DISCONNECTED",
+            retries: retry + 1,
+            number: ""
+          });
+          void notifyChannelDisconnected(whatsapp, "Falló la autenticación de WhatsApp").catch(error => {
+            logger.error(`[PUSH] Error notificando desconexión de WhatsApp ${whatsapp.id}: ${error.message}`);
+          });
+
+          readySessions.delete(whatsapp.id);
+
+          io.emit("whatsappSession", {
+            action: "update",
+            session: whatsapp
+          });
+
+          rejectOnce(new Error("Error al iniciar la sesión de WhatsApp."));
+        })().catch((error: Error) => {
+          logger.error(error);
+          rejectOnce(error);
         });
       });
 
-      wbot.on("auth_failure", async msg => {
-        console.error(
-          `Session: ${sessionName} AUTHENTICATION FAILURE! Reason: ${msg}`
-        );
+      wbot.on("ready", () => {
+        void (async () => {
+          logger.info(`Session: ${sessionName} READY`);
 
-        if (whatsapp.retries > 1) {
-          await whatsapp.update({ session: "", retries: 0 });
-        }
+          pendingSessions.delete(whatsapp.id);
+          readySessions.add(whatsapp.id);
 
-        const retry = whatsapp.retries;
-        await whatsapp.update({
-          status: "DISCONNECTED",
-          retries: retry + 1,
-          number: ""
-        });
-        void notifyChannelDisconnected(whatsapp, "Falló la autenticación de WhatsApp").catch(error => {
-          logger.error(`[PUSH] Error notificando desconexión de WhatsApp ${whatsapp.id}: ${error.message}`);
-        });
+          const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
+          if (sessionIndex === -1) {
+            wbot.id = whatsapp.id;
+            sessions.push(wbot);
+          }
 
-        pendingSessions.delete(whatsapp.id);
-        readySessions.delete(whatsapp.id);
+          initializeHealthTracking(whatsapp.id);
+          updateLastActivity(whatsapp.id);
 
-        io.emit("whatsappSession", {
-          action: "update",
-          session: whatsapp
-        });
+          await whatsapp.update({
+            status: "CONNECTED",
+            qrcode: "",
+            retries: 0,
+            number: wbot.info.wid._serialized.split("@")[0],
+            type: "wwebjs"
+          });
+          if (settled) {
+            return;
+          }
 
-        reject(new Error("Error al iniciar la sesión de WhatsApp."));
-      });
+          io.emit("whatsappSession", {
+            action: "update",
+            session: whatsapp
+          });
 
-      wbot.on("ready", async () => {
-        logger.info(`Session: ${sessionName} READY`);
+          wbot.sendPresenceAvailable();
+          void syncUnreadMessages(wbot);
 
-        pendingSessions.delete(whatsapp.id);
-        readySessions.add(whatsapp.id);
-
-        initializeHealthTracking(whatsapp.id);
-        updateLastActivity(whatsapp.id);
-
-        await whatsapp.update({
-          status: "CONNECTED",
-          qrcode: "",
-          retries: 0,
-          number: wbot.info.wid._serialized.split("@")[0],
-          type: "wwebjs"
-        });
-
-        io.emit("whatsappSession", {
-          action: "update",
-          session: whatsapp
-        });
-
-        const sessionIndex = sessions.findIndex(s => s.id === whatsapp.id);
-        if (sessionIndex === -1) {
-          wbot.id = whatsapp.id;
-          sessions.push(wbot);
-        }
-
-        wbot.sendPresenceAvailable();
-        void syncUnreadMessages(wbot);
-
-        GroupEventsService.setupGroupListeners(wbot, whatsapp.id);
-
-        resolve(wbot);
+          resolveOnce(wbot);
+        })().catch((error: Error) => rejectOnce(error));
       });
 
       wbot.on("message_reaction", reaction => {
@@ -451,11 +502,13 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         void handleCall(wbot, call, whatsapp.id);
       });
 
+      pendingSessions.set(whatsapp.id, wbot);
+      wbot.initialize().catch((error: Error) => rejectOnce(error));
+
     } catch (err: any) {
-      pendingSessions.delete(whatsapp.id);
       readySessions.delete(whatsapp.id);
       logger.error(err);
-      reject(err);
+      rejectOnce(err);
     }
   });
 };
@@ -469,39 +522,68 @@ export const getWbot = (whatsappId: number): Session => {
   return sessions[sessionIndex];
 };
 
-export const removeWbot = (whatsappId: number): void => {
-  try {
-    const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
-    if (sessionIndex !== -1) {
-      sessions[sessionIndex].destroy();
-      sessions.splice(sessionIndex, 1);
-    }
-  } catch (err: any) {
-    logger.error(err);
+export const removeWbot = (whatsappId: number): Promise<void> => {
+  const existingDestroy = destroyingSessions.get(whatsappId);
+  if (existingDestroy) {
+    return existingDestroy;
   }
 
-  // También destruimos un cliente que quedó a medio inicializar (nunca llegó a
-  // READY): sin esto, reintentar el arranque dejaría su browser huérfano.
+  const destroying = Promise.resolve().then(() => removeWbotInternal(whatsappId));
+  destroyingSessions.set(whatsappId, destroying);
+  destroying.then(
+    () => {
+      if (destroyingSessions.get(whatsappId) === destroying) {
+        destroyingSessions.delete(whatsappId);
+      }
+    },
+    () => {
+      if (destroyingSessions.get(whatsappId) === destroying) {
+        destroyingSessions.delete(whatsappId);
+      }
+    }
+  );
+  return destroying;
+};
+
+async function removeWbotInternal(whatsappId: number): Promise<void> {
+  const cancelInitialization = initializationRejectors.get(whatsappId);
+  if (cancelInitialization) {
+    cancelInitialization(new Error(`Inicio de sesión ${whatsappId} cancelado`));
+  }
+
+  const clients = new Set<Session>();
+  const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
+  if (sessionIndex !== -1) {
+    clients.add(sessions[sessionIndex]);
+    sessions.splice(sessionIndex, 1);
+  }
+
   const pending = pendingSessions.get(whatsappId);
   if (pending) {
-    try {
-      void pending
-        .destroy()
-        .catch((err: any) =>
-          logger.warn(
-            `removeWbot: error destruyendo sesión pendiente ${whatsappId}: ${err?.message}`
-          )
-        );
-    } catch (err: any) {
-      logger.warn(
-        `removeWbot: error destruyendo sesión pendiente ${whatsappId}: ${err?.message}`
-      );
-    }
+    clients.add(pending);
     pendingSessions.delete(whatsappId);
   }
 
   readySessions.delete(whatsappId);
-};
+
+  const destroyErrors: unknown[] = [];
+  await Promise.all(
+    Array.from(clients).map(async client => {
+      try {
+        await client.destroy();
+      } catch (error) {
+        logger.warn(
+          `removeWbot: error destruyendo sesión ${whatsappId}: ${(error as Error)?.message}`
+        );
+        destroyErrors.push(error);
+      }
+    })
+  );
+
+  if (destroyErrors.length > 0) {
+    throw destroyErrors[0];
+  }
+}
 
 export const isSessionReady = (whatsappId: number): boolean =>
   readySessions.has(whatsappId);
@@ -511,33 +593,24 @@ export const markSessionNotReady = (whatsappId: number): void => {
 };
 
 export const destroyAllWbots = async (): Promise<void> => {
-  const toDestroy = [...sessions, ...pendingSessions.values()];
-  sessions.length = 0;
-  pendingSessions.clear();
-  readySessions.clear();
-  for (const s of toDestroy) {
-    try {
-      await s.destroy();
-    } catch (err: any) {
-      logger.warn(`Error al destruir sesión ${s.id}: ${err?.message}`);
+  const whatsappIds = new Set<number>(pendingSessions.keys());
+  for (const session of sessions) {
+    if (typeof session.id === "number") {
+      whatsappIds.add(session.id);
     }
   }
-};
 
-export const restartWbot = async (whatsappId: number): Promise<Session> => {
-  const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
-  if (sessionIndex !== -1) {
-    const whatsapp = await Whatsapp.findByPk(whatsappId);
-    if (!whatsapp) {
-      throw new AppError("WhatsApp no encontrado.");
-    }
-    sessions[sessionIndex].destroy();
-    sessions.splice(sessionIndex, 1);
-
-    const newSession = await initWbot(whatsapp);
-    return newSession;
-  }
-  throw new AppError("WhatsApp session not initialized.");
+  await Promise.all(
+    Array.from(whatsappIds).map(async whatsappId => {
+      try {
+        await removeWbot(whatsappId);
+      } catch (error) {
+        logger.warn(
+          `Error al destruir sesión ${whatsappId}: ${(error as Error)?.message}`
+        );
+      }
+    })
+  );
 };
 
 export const shutdownWbot = async (whatsappId: string): Promise<void> => {
@@ -552,23 +625,12 @@ export const shutdownWbot = async (whatsappId: string): Promise<void> => {
     throw new AppError("WhatsApp not found.");
   }
 
-  const sessionIndex = sessions.findIndex(s => s.id === whatsappIDNumber);
-  if (sessionIndex === -1) {
-    console.warn(`Sesión con ID ${whatsappIDNumber} no fue encontrada.`);
-    throw new AppError("Sesión de WhatsApp no inicializada.");
-  }
-
-  const sessionPath = path.resolve(
-    __dirname,
-    `../../.wwebjs_auth/session-bd_${whatsappIDNumber}`
-  );
+  const sessionPath = getWbotSessionDirectory(whatsapp);
 
   try {
-    await sessions[sessionIndex].destroy();
-    
+    await removeWbot(whatsappIDNumber);
     await fs.rm(sessionPath, { recursive: true, force: true });
 
-    sessions.splice(sessionIndex, 1);
     console.info(
       `Sesión con ID ${whatsappIDNumber} removida de la lista de sesiones.`
     );

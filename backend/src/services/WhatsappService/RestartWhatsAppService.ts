@@ -1,7 +1,7 @@
 import Whatsapp from "../../models/Whatsapp";
-import { getWbot, restartWbot } from "../../libs/wbot";
 import { startTelegramSession, stopTelegramSession } from "../../libs/telegram";
 import { logger } from "../../utils/logger";
+import { RestartWhatsAppSession } from "../WbotServices/StartWhatsAppSession";
 
 const RestartWhatsAppService = async (whatsappId: string): Promise<void> => {
   const whatsappIDNumber: number = parseInt(whatsappId, 10);
@@ -19,12 +19,7 @@ const RestartWhatsAppService = async (whatsappId: string): Promise<void> => {
       return;
     }
 
-    const wbot = getWbot(whatsappIDNumber);
-    if (!wbot) {
-      throw new Error("No active session found for this ID.");
-    }
-
-    await restartWbot(whatsappIDNumber);
+    await RestartWhatsAppSession(whatsappIDNumber);
     logger.info(`WhatsApp session for ID ${whatsappId} has been restarted.`);
   } catch (error) {
     logger.error(
