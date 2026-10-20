@@ -36,18 +36,14 @@ jobs:
     # cancelled), así que acá se filtra: solo se despliega si terminó bien. Un
     # CI cancelado lo está reemplazando el push siguiente, que hará su deploy.
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-latest
+    # Runner self-hosted dentro de Prometheus (pm2 `github-runner`). El puerto 22
+    # ya no está publicado a Internet, así que el deploy por SSH (appleboy) no
+    # puede conectar: el runner sale por HTTPS y ejecuta el deploy localmente.
+    runs-on: [self-hosted, prometheus]
     environment: production
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - name: Ejecutar deploy en el servidor
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          fingerprint: ${{ secrets.DEPLOY_HOST_FINGERPRINT }}
-          port: 22
-          script_path: scripts/deploy.sh
+      - name: Ejecutar deploy.sh en Prometheus
+        run: bash scripts/deploy.sh
