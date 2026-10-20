@@ -104,8 +104,7 @@ const AcceptTicketWithouSelectQueue = ({ modalOpen, onClose, ticketId, onSuccess
 					queueId,
 				});
 				
-				const isGroup = ticketData?.contact?.isGroup;
-				localStorage.setItem("pressticket:changeTab", isGroup ? "groups" : "open");
+				localStorage.setItem("pressticket:changeTab", "open");
 				
 				setLoading(false);
 				if (onSuccess) {
@@ -142,8 +141,7 @@ const AcceptTicketWithouSelectQueue = ({ modalOpen, onClose, ticketId, onSuccess
 				queueId,
 			});
 
-			const isGroup = ticketData?.contact?.isGroup;
-			localStorage.setItem("pressticket:changeTab", isGroup ? "groups" : "open");
+			localStorage.setItem("pressticket:changeTab", "open");
 
 			setLoading(false);
 			if (onSuccess) {

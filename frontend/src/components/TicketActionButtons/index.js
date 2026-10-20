@@ -109,9 +109,7 @@ const TicketActionButtons = ({ ticket, onTicketAccepted }) => {
 		
 			
 			if (status === "open") {
-				const isGroup = ticket?.contact?.isGroup;
-				const targetTab = isGroup ? "groups" : "open";
-				localStorage.setItem("pressticket:changeTab", targetTab);
+				localStorage.setItem("pressticket:changeTab", "open");
 				navigate(`/tickets/${ticket.id}`);
 			} else if (status === "pending") {
 				navigate("/tickets");

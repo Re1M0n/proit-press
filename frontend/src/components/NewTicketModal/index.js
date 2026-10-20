@@ -168,9 +168,7 @@ const NewTicketModal = ({ modalOpen, onClose }) => {
 				whatsappId: selectedWhatsapp
 			});
 			
-			const isGroup = ticket?.contact?.isGroup;
-			const targetTab = isGroup ? "groups" : "open";
-			localStorage.setItem("pressticket:changeTab", targetTab);
+			localStorage.setItem("pressticket:changeTab", "open");
 			
 			navigate(`/tickets/${ticket.id}`);
 		} catch (err) {

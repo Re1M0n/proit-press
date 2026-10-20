@@ -22,7 +22,6 @@ import {
   Add,
   Close,
   Refresh,
-  Group,
   AccountTreeOutlined,
   SyncAlt
 } from "@mui/icons-material";
@@ -193,7 +192,6 @@ const TicketsManager = () => {
   const { whatsApps } = useContext(WhatsAppsContext);
   const [openCount, setOpenCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
-  const [openGroupsCount, setOpenGroupsCount] = useState(0);
   const [settings, setSettings] = useState([]);
   const [selectedQueueIds, setSelectedQueueIds] = useState([]);
   const [selectedChannelIds, setSelectedChannelIds] = useState([]);
@@ -211,7 +209,6 @@ const TicketsManager = () => {
       
       setOpenCount(data.open || 0);
       setPendingCount(data.pending || 0);
-      setOpenGroupsCount(data.openGroups || 0);
     } catch (err) {
       console.error("Erro ao buscar contadores:", err);
     }
@@ -288,7 +285,6 @@ const TicketsManager = () => {
       if (data.action === "updateCounter" && data.counters) {
         setOpenCount(data.counters.open || 0);
         setPendingCount(data.counters.pending || 0);
-        setOpenGroupsCount(data.counters.openGroups || 0);
       } else if (data.action === "update" || data.action === "create" || data.action === "delete") {
         debouncedFetchCounts();
       }
@@ -353,9 +349,6 @@ const TicketsManager = () => {
       } else if (originalStatus === "pending") {
         setTab(tab => tab === "pending" ? "open" : "pending");
         setTimeout(() => setTab("pending"), 100);
-      } else if (originalStatus === "groups") {
-        setTab(tab => tab === "groups" ? "open" : "groups");
-        setTimeout(() => setTab("groups"), 100);
       } else if (originalStatus === "all") {
         setTab(tab => tab === "open" ? "pending" : "open");
         setTimeout(() => setTab("open"), 100);
@@ -465,22 +458,6 @@ const TicketsManager = () => {
             }
             sx={{ minWidth: 100, width: "auto" }}
           />
-          <Tab
-            value={"groups"}
-            icon={
-              <StyledBadge
-                badgeContent={openGroupsCount}
-                overlap="circular"
-                max={999}
-                color="secondary"
-              >
-                <Tooltip title={t("tickets.tabs.groups.title")} placement="top" arrow>
-                  <Group />
-                </Tooltip>
-              </StyledBadge>
-            }
-            sx={{ minWidth: 100, width: "auto" }}
-          /> 
           {canTabsSettings("tabsPending") && (         
             <Tab
               value={"pending"}
@@ -718,16 +695,6 @@ const TicketsManager = () => {
           selectedChannelIds={selectedChannelIds}
           updateCount={(val) => setOpenCount(val)}
           isGroup={false}
-        />
-      </TabPanelStyled>
-      <TabPanelStyled value={tab} name="groups">
-        <TicketsList
-          status="open"
-          showAll={showAllTickets}
-          selectedQueueIds={selectedQueueIds}
-          selectedChannelIds={selectedChannelIds}
-          updateCount={(val) => setOpenGroupsCount(val)}
-          isGroup={true}
         />
       </TabPanelStyled>
       <TabPanelStyled value={tab} name="pending">

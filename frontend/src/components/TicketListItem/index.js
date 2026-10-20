@@ -390,9 +390,7 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 				status: "open",
 				userId: user?.id,
 			});
-			const isGroup = ticket?.contact?.isGroup || currentTicket?.contact?.isGroup;
-			const targetTab = isGroup ? "groups" : "open";
-			localStorage.setItem("pressticket:changeTab", targetTab);
+			localStorage.setItem("pressticket:changeTab", "open");
 			
 			navigate(`/tickets/${id}`);
 		} catch (err) {
@@ -433,9 +431,7 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 				status: "open",
 				userId: user?.id,
 			});
-			const isGroup = ticket?.contact?.isGroup || currentTicket?.contact?.isGroup;
-			const targetTab = isGroup ? "groups" : "open";
-			localStorage.setItem("pressticket:changeTab", targetTab);
+			localStorage.setItem("pressticket:changeTab", "open");
 			
 			navigate(`/tickets/${id}`);
 		} catch (err) {
