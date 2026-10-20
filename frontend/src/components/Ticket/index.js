@@ -215,6 +215,26 @@ const Ticket = () => {
     setMessageContact(null);
   };
 
+  // Esc: primero cierra cualquier diálogo/menú abierto (MUI ya lo hace), luego
+  // el panel de contacto y, si no hay nada abierto, vuelve a la lista de chats.
+  useEffect(() => {
+    const handleKeyDown = event => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      if (document.querySelector(".MuiModal-root, .MuiPopover-root, .MuiMenu-root")) {
+        return;
+      }
+      if (drawerOpen) {
+        handleDrawerClose();
+        return;
+      }
+      event.preventDefault();
+      navigate("/tickets");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [drawerOpen, navigate]);
+
   const handleTicketAccepted = async () => {
     try {
       const { data } = await api.get("/tickets/" + ticketId);

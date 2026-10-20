@@ -1520,7 +1520,12 @@ const MessageInput = ({ ticketStatus }) => {
               onMouseUp={showFormatMenu}
               onKeyUp={showFormatMenu}
               onKeyPress={(e) => {
-                if (e.ctrlKey && e.key === 'b') {
+                if (e.ctrlKey && e.key === 'Enter') {
+                  e.preventDefault();
+                  if (!loading) {
+                    handleSendMessage();
+                  }
+                } else if (e.ctrlKey && e.key === 'b') {
                   e.preventDefault();
                   formatText('*', '*');
                 } else if (e.ctrlKey && e.key === 'i') {
