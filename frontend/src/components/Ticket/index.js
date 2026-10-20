@@ -218,9 +218,19 @@ const Ticket = () => {
   // Esc: primero cierra cualquier diálogo/menú abierto (MUI ya lo hace), luego
   // el panel de contacto y, si no hay nada abierto, vuelve a la lista de chats.
   useEffect(() => {
+    // Los menús con keepMounted quedan en el DOM aunque estén cerrados (MUI los
+    // marca visibility:hidden), así que hay que mirar si el overlay es visible.
+    const hasOpenOverlay = () =>
+      Array.from(
+        document.querySelectorAll(".MuiModal-root, .MuiPopover-root, .MuiMenu-root")
+      ).some(element => {
+        const styles = window.getComputedStyle(element);
+        return styles.visibility !== "hidden" && styles.display !== "none";
+      });
+
     const handleKeyDown = event => {
       if (event.key !== "Escape" || event.defaultPrevented) return;
-      if (document.querySelector(".MuiModal-root, .MuiPopover-root, .MuiMenu-root")) {
+      if (hasOpenOverlay()) {
         return;
       }
       if (drawerOpen) {
