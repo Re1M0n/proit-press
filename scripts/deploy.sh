@@ -32,7 +32,15 @@ pm2 restart itn-backend --update-env
 echo "== Frontend: dependencias + build =="
 cd ../frontend
 npm install --no-audit --no-fund
-CI=false npm run build
+# Compila a build-new y recién después reemplaza build/: CRA vacía el directorio
+# de salida al empezar, así que buildear directo sobre build/ deja el panel en
+# 500 durante todo el build.
+rm -rf build-new
+BUILD_PATH=build-new CI=false npm run build
+rm -rf build-old
+if [ -d build ]; then mv build build-old; fi
+mv build-new build
+rm -rf build-old
 
 echo "== Verificación =="
 sleep 5
