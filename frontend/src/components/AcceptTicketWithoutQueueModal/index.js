@@ -96,8 +96,6 @@ const AcceptTicketWithouSelectQueue = ({ modalOpen, onClose, ticketId, onSuccess
 			const openTicketsSetting = getSettingValue("openTickets");
 
 			if (openTicketsSetting === "disabled") {
-				const { data: ticketData } = await api.get(`/tickets/${ticketId}`);
-				
 				await api.put(`/tickets/${ticketId}`, {
 					status: "open",
 					userId: userId || null,
