@@ -52,6 +52,7 @@ import * as WhatsappNotificationController from "../controllers/WhatsappNotifica
 import * as WhatsAppController from "../controllers/WhatsAppController";
 import WhatsAppSessionController from "../controllers/WhatsAppSessionController";
 import * as PushNotificationController from "../controllers/PushNotificationController";
+import * as ReminderController from "../controllers/ReminderController";
 /* eslint-disable */
 
 /* eslint-disable */
@@ -343,6 +344,18 @@ export const routeRegistry: RouteGroup[] = [
     { method: "put", path: "/quickAnswers/:quickAnswerId", middlewares: [isAuth, upload.single("media")], handler: QuickAnswerController.update },
     { method: "delete", path: "/quickAnswers/:quickAnswerId", middlewares: [isAuth], handler: QuickAnswerController.remove },
     { method: "delete", path: "/quickAnswers", middlewares: [isAuth], handler: QuickAnswerController.removeAll }
+    ]
+  },
+  // reminders
+  {
+    path: "/reminders",
+    routes: [
+    { method: "get", path: "/", middlewares: [isAuth], handler: ReminderController.index },
+    { method: "post", path: "/", middlewares: [isAuth], handler: ReminderController.store },
+    { method: "put", path: "/:id", middlewares: [isAuth], handler: ReminderController.update },
+    { method: "patch", path: "/:id/status", middlewares: [isAuth], handler: ReminderController.markDone },
+    { method: "post", path: "/:id/snooze", middlewares: [isAuth], handler: ReminderController.snooze },
+    { method: "delete", path: "/:id", middlewares: [isAuth], handler: ReminderController.remove }
     ]
   },
   // setting

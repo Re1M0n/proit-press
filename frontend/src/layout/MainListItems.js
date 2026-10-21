@@ -15,6 +15,7 @@ import { styled } from "@mui/material/styles";
 import AccountTreeOutlined from "@mui/icons-material/AccountTreeOutlined";
 import Code from "@mui/icons-material/Code";
 import ContactPhoneOutlined from "@mui/icons-material/ContactPhoneOutlined";
+import EventNoteOutlined from "@mui/icons-material/EventNoteOutlined";
 import BlockIcon from "@mui/icons-material/Block";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -348,6 +349,13 @@ const MainListItems = (props) => {
           />
         )}
       </ListItemLinkWithDropdown>
+      <ListItemLink
+        to="/reminders"
+        primary={t("mainDrawer.listItems.reminders", { defaultValue: "Recordatorios" })}
+        icon={<EventNoteOutlined />}
+        active={location.pathname === "/reminders"}
+        drawerClose={drawerClose}
+      />
       <ListItemLink
         to="/quickAnswers"
         primary={t("mainDrawer.listItems.quickAnswers")}

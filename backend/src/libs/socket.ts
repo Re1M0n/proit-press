@@ -122,6 +122,7 @@ export const initIO = (httpServer: Server): void => {
         }
 
         socket.join(userId.toString());
+        socket.join("reminders");
         logger.info("Conexión socket establecida", { 
           userId,
           socketId: socket.id
@@ -204,6 +205,7 @@ export const initIO = (httpServer: Server): void => {
         );
 
         socket.leave(userId.toString());
+        socket.leave("reminders");
         logger.info("Usuario removido de la sala tras cierre de sesión", {
           userId,
           socketId: socket.id

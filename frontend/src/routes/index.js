@@ -23,6 +23,7 @@ import Login from "../pages/Login/";
 import Queues from "../pages/Queues/";
 import QuickAnswers from "../pages/QuickAnswers/";
 import ResetPassword from "../pages/ResetPassword";
+import Reminders from "../pages/Reminders";
 import Settings from "../pages/Settings/";
 import Backup from "../pages/Backup";
 import ActivityLogs from "../pages/ActivityLogs";
@@ -80,6 +81,7 @@ const AppRoutes = ({ toggleTheme, onThemeConfigUpdate }) => {
             <Route path="tickets/:ticketId?" element={<Tickets />} />
             <Route path="channels" element={<Channels />} />
             <Route path="contacts" element={<Contacts />} />
+            <Route path="reminders" element={<Reminders />} />
             <Route path="blocked-contacts" element={<AdminRoute element={<BlockedContacts />} />} />
             <Route path="users" element={<Users />} />
             <Route path="quickAnswers" element={<QuickAnswers />} />

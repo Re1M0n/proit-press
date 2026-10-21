@@ -33,13 +33,13 @@
 </head>
 <body>
 <main>
-<h1 id="hk4rcdc">Recordatorios con agenda y alarma — Plan de implementación</h1>
+<h1 id="hpca405">Recordatorios con agenda y alarma — Plan de implementación</h1>
 <blockquote><strong>Para agentes:</strong> SUB-SKILL REQUERIDA: usar <code>superpowers:subagent-driven-development</code> (recomendado) o <code>superpowers:executing-plans</code> para implementar tarea por tarea. Los pasos usan checkboxes (<code>- [ ]</code>).</blockquote>
 <p><strong>Goal:</strong> Agregar recordatorios compartidos con fecha/hora, repetición, agenda mensual y alarma para todo el equipo en Press-Ticket.</p>
-<p><strong>Architecture:</strong> Tabla <code>Reminders</code> en MySQL + servicios REST en el backend Express/Sequelize, un scheduler de 30 s que emite por Socket.IO a todos los clientes, y una página React con grilla mensual más un componente global de alarma. Sin dependencias nuevas.</p>
+<p><strong>Architecture:</strong> Tabla <code>Reminders</code> en MySQL + servicios REST en el backend Express/Sequelize, un scheduler de 30 s que emite a un room Socket.IO de usuarios autenticados, y una página React con grilla mensual más un componente global de alarma. Sin dependencias nuevas.</p>
 <p><strong>Tech Stack:</strong> Node 18 + TypeScript + Express + Sequelize (<code>sequelize-typescript</code>) + Socket.IO + Yup; React (CRA) + MUI v5 + date-fns + <code>use-sound</code>.</p>
 <p><strong>Spec:</strong> <code>docs/superpowers/specs/2026-10-21-recordatorios-design.md</code></p>
-<h2 id="hutw37o">Restricciones globales</h2>
+<h2 id="hjc0c1i">Restricciones globales</h2>
 <ul>
 <li>La UI es 100 % en español; textos nuevos con <code>defaultValue</code> en español.</li>
 <li>No agregar dependencias npm.</li>
@@ -52,7 +52,33 @@
 <ul>
 <li>Commits convencionales en español, uno por tarea.</li>
 </ul>
-<h2 id="hxgjane">Estructura de archivos</h2>
+<h2 id="hol5xzi">Refinamientos técnicos aplicados</h2>
+<ul>
+<li>El scheduler usa un guard para no solapar barridos y reclama cada vencimiento</li>
+</ul>
+<p>  mediante <code>UPDATE</code> condicional (<code>pending</code>, vencida y sin <code>notifiedAt</code>); así no</p>
+<p>  duplica alarmas al competir con snooze o completado.</p>
+<ul>
+<li>Solo sockets que validaron el JWT entran al room <code>reminders</code>; el evento no se</li>
+</ul>
+<p>  emite a sockets no autenticados.</p>
+<ul>
+<li>Completar una repetición bloquea la fila dentro de una transacción, para crear</li>
+</ul>
+<p>  una sola siguiente ocurrencia aunque dos usuarios pulsen «Listo» a la vez.</p>
+<ul>
+<li>Posponer actualiza solo filas <code>pending</code>, desde la hora actual; los recordatorios</li>
+</ul>
+<p>  ya completados responden <code>409</code>.</p>
+<ul>
+<li>GET requiere <code>from</code> y <code>to</code>, con un rango máximo de 62 días. Los vínculos se</li>
+</ul>
+<p>  validan contra la existencia del ticket/contacto.</p>
+<ul>
+<li>Los perfiles <code>admin</code> y <code>masteradmin</code> pueden editar o borrar recordatorios</li>
+</ul>
+<p>  ajenos; usuarios normales solo los de su autoría.</p>
+<h2 id="hqy7pwp">Estructura de archivos</h2>
 <p>Backend:</p>
 <table><thead><tr>
 <th>Archivo</th>
@@ -158,7 +184,7 @@
 </tr>
 </tbody></table>
 <p>---</p>
-<h3 id="h6dzhec">Task 1: Modelo, migración y registro</h3>
+<h3 id="hla4mkr">Task 1: Modelo, migración y registro</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>backend/src/models/Reminder.ts</code></li>
@@ -358,7 +384,7 @@ module.exports = {
 <pre class="code bash"><code>git add backend/src/models/Reminder.ts backend/src/database/migrations/20261021010000-create-reminders.ts backend/src/database/index.ts
 git commit -m "feat(recordatorios): agrega modelo y migracion de recordatorios"</code></pre>
 <p>---</p>
-<h3 id="hqv3wjs">Task 2: Cálculo de la próxima ocurrencia</h3>
+<h3 id="hhdnnel">Task 2: Cálculo de la próxima ocurrencia</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>backend/src/helpers/getNextReminderDueAt.ts</code></li>
@@ -438,7 +464,7 @@ export default getNextReminderDueAt;</code></pre>
 <pre class="code bash"><code>git add backend/src/helpers/getNextReminderDueAt.ts backend/src/__tests__/unit/ReminderRecurrence.spec.ts
 git commit -m "feat(recordatorios): calcula la proxima ocurrencia de un recordatorio"</code></pre>
 <p>---</p>
-<h3 id="h5857rc">Task 3: Scheduler de vencidos</h3>
+<h3 id="hldrwhr">Task 3: Scheduler de vencidos</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>backend/src/services/ReminderService/ReminderScheduler.ts</code></li>
@@ -616,7 +642,7 @@ export const stopReminderScheduler = (): void =&gt; {
 <pre class="code bash"><code>git add backend/src/services/ReminderService/ReminderScheduler.ts backend/src/__tests__/unit/ReminderScheduler.spec.ts
 git commit -m "feat(recordatorios): agrega scheduler que avisa los vencidos por socket"</code></pre>
 <p>---</p>
-<h3 id="h8akgr2">Task 4: Servicios con permisos, recurrencia y snooze</h3>
+<h3 id="htr2rgl">Task 4: Servicios con permisos, recurrencia y snooze</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>backend/src/services/ReminderService/ReminderPermissions.ts</code></li>
@@ -1010,7 +1036,7 @@ export default SnoozeReminderService;</code></pre>
 <pre class="code bash"><code>git add backend/src/services/ReminderService backend/src/__tests__/unit/ReminderServices.spec.ts
 git commit -m "feat(recordatorios): servicios de alta, edicion, completado y posposicion"</code></pre>
 <p>---</p>
-<h3 id="hz9t7wc">Task 5: Controlador, validación y rutas</h3>
+<h3 id="hgyhx0s">Task 5: Controlador, validación y rutas</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>backend/src/controllers/ReminderController.ts</code></li>
@@ -1244,7 +1270,7 @@ export const remove = async (req: Request, res: Response): Promise&lt;Response&g
 <pre class="code bash"><code>git add backend/src/controllers/ReminderController.ts backend/src/routes/routeRegistry.ts
 git commit -m "feat(recordatorios): expone la API de recordatorios"</code></pre>
 <p>---</p>
-<h3 id="h623z79">Task 6: Arranque y apagado del scheduler</h3>
+<h3 id="h6xufiy">Task 6: Arranque y apagado del scheduler</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Modify: <code>backend/src/server.ts</code></li>
@@ -1301,7 +1327,7 @@ gracefulShutdown(server, {
 <pre class="code bash"><code>git add backend/src/server.ts
 git commit -m "feat(recordatorios): arranca y detiene el scheduler con el servidor"</code></pre>
 <p>---</p>
-<h3 id="hkd9kaa">Task 7: Sonido propio de alarma</h3>
+<h3 id="h8ni912">Task 7: Sonido propio de alarma</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>frontend/scripts/generate-reminder-alarm.js</code></li>
@@ -1385,7 +1411,7 @@ console.log(`Generado ${target} (${buffer.length} bytes)`);</code></pre>
 <pre class="code bash"><code>git add frontend/scripts/generate-reminder-alarm.js frontend/src/assets/reminder-alarm.wav
 git commit -m "feat(recordatorios): agrega un sonido de alarma propio"</code></pre>
 <p>---</p>
-<h3 id="h48lxeh">Task 8: Página, modal, ruta y menú</h3>
+<h3 id="hfb3qu7">Task 8: Página, modal, ruta y menú</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>frontend/src/pages/Reminders/index.js</code></li>
@@ -2048,7 +2074,7 @@ export default ReminderModal;</code></pre>
 <pre class="code bash"><code>git add frontend/src/pages/Reminders/index.js frontend/src/components/ReminderModal/index.js frontend/src/routes/index.js frontend/src/layout/MainListItems.js
 git commit -m "feat(recordatorios): agrega pagina, modal, ruta y menu de recordatorios"</code></pre>
 <p>---</p>
-<h3 id="h2yo21i">Task 9: Alarma global con notificación del navegador</h3>
+<h3 id="hyeyaxx">Task 9: Alarma global con notificación del navegador</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Create: <code>frontend/src/components/ReminderAlarm/index.js</code></li>
@@ -2228,7 +2254,7 @@ export default ReminderAlarm;</code></pre>
 <pre class="code bash"><code>git add frontend/src/components/ReminderAlarm/index.js frontend/src/layout/index.js
 git commit -m "feat(recordatorios): alarma global con sonido y notificacion del navegador"</code></pre>
 <p>---</p>
-<h3 id="hdxr53x">Task 10: Verificación y despliegue</h3>
+<h3 id="hbj7nop">Task 10: Verificación y despliegue</h3>
 <p><strong>Files:</strong></p>
 <ul>
 <li>Modify: <code>docs/superpowers/specs/2026-10-21-recordatorios-design.md</code> (solo si cambió algo durante la implementación)</li>

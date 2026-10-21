@@ -36,7 +36,8 @@ sonido de tickets. No hay scheduler ni librería de cron en el backend.
 - Repetición por días de semana personalizados o rangos de fin.
 - Notas largas, prioridades, etiquetas o adjuntos.
 - Calendario compartido con Google/Outlook.
-- Edición o borrado por usuarios que no sean el creador o un admin.
+- Edición o borrado por usuarios que no sean el creador, un admin o un
+  `masteradmin`.
 
 ## Decisiones
 
@@ -65,13 +66,15 @@ Tabla `Reminders`:
 - **Ver:** todos los usuarios autenticados ven todos los recordatorios.
 - **Completar y posponer:** cualquier usuario autenticado.
 - **Crear:** cualquier usuario autenticado; queda como creador.
-- **Editar y eliminar:** solo el creador o un usuario con perfil `admin`
-  (comparación sin distinguir mayúsculas, como el resto del backend).
+- **Editar y eliminar:** solo el creador o un usuario con perfil `admin` o
+  `masteradmin` (comparación sin distinguir mayúsculas).
 
 ### Recurrencia
 
 - Completar un recordatorio con repetición distinta de `none` crea una nueva
-  ocurrencia `pending` con el mismo creador, título, notas, vínculo y repetición.
+  ocurrencia `pending` con el mismo creador, título, notas, vínculo y repetición;
+  la transición se hace bajo una transacción con bloqueo de fila para no crear
+  ocurrencias duplicadas si dos usuarios lo completan a la vez.
 - La siguiente fecha se calcula desde el `dueAt` vigente al completar: `+1 día`,
   `+7 días` o `+1 mes` con `date-fns` (`addMonths` recorta fin de mes: 31/01 →
   28/02).
@@ -85,12 +88,12 @@ Router `/reminders`, todas las rutas autenticadas:
 
 | Método | Ruta | Uso |
 | --- | --- | --- |
-| GET | `/reminders?from&to` | lista en rango ISO; incluye creador, ticket y contacto resumidos |
+| GET | `/reminders?from&to` | lista en rango ISO (obligatorio, máximo 62 días); incluye creador, ticket y contacto resumidos |
 | POST | `/reminders` | crea (`title`, `dueAt`, `notes?`, `recurrence?`, `ticketId?`, `contactId?`) |
-| PUT | `/reminders/:id` | edita campos; solo creador o admin |
+| PUT | `/reminders/:id` | edita campos; solo creador, admin o masteradmin |
 | PATCH | `/reminders/:id/status` | `{ "status": "done" }`; cualquier usuario |
 | POST | `/reminders/:id/snooze` | `{ "minutes": 5 \| 15 \| 60 }`; cualquier usuario |
-| DELETE | `/reminders/:id` | solo creador o admin |
+| DELETE | `/reminders/:id` | solo creador, admin o masteradmin |
 
 Respuesta de un recordatorio:
 
@@ -117,16 +120,19 @@ con la ocurrencia creada.
 - `ReminderScheduler` inicia en `server.ts` después de `initIO()` y corre cada
   30 segundos.
 - Consulta `status = pending AND dueAt <= now AND notifiedAt IS NULL`.
-- Para cada fila: guarda `notifiedAt = now` y emite `reminder` a **todos** los
-  sockets conectados (`io.emit`), con el recordatorio serializado.
+- Cada socket que valida su JWT se une al room `reminders`; al cerrar sesión
+  sale de ese room. El scheduler evita barridos simultáneos y reclama cada fila
+  con un `UPDATE` condicional (`pending`, vencida y `notifiedAt IS NULL`). Para
+  cada fila reclamada, guarda `notifiedAt = now` y emite `reminder` a ese room
+  (solo sockets autenticados).
 - Un mismo recordatorio se emite una sola vez aunque haya varias pestañas. Todas
   las pestañas que lo reciban suenan.
 - El aviso puede llegar hasta 30 segundos tarde; es aceptable.
 - `snooze` reprograma desde el momento del clic (ahora + minutos) y pone
   `notifiedAt = null`, por lo que vuelve a sonar.
-- CRUD y cambios de estado emiten `reminderUpdate` a todos con
-  `{ action: "create" | "update" | "delete", reminder }` para refrescar la agenda
-  sin recargar.
+- CRUD y cambios de estado emiten `reminderUpdate` al room `reminders` con
+  `{ action: "create" | "update" | "delete", reminder }` para refrescar la
+  agenda sin recargar.
 - Los recordatorios vencidos que se cargan por HTTP (panel recién abierto) se
   muestran como vencidos y **no** suenan.
 
@@ -145,7 +151,8 @@ con la ocurrencia creada.
   botones Guardar / Eliminar según permisos.
 - Alarma global en el layout: escucha `reminder`, reproduce un sonido propio de
   alarma (asset distinto de `sound.mp3`) y abre un diálogo con título, hora,
-  vínculo y acciones **Abrir**, **Posponer** (5/15/60 min) y **Listo**.
+  vínculo y acciones **Abrir**, **Posponer** (5/15/60 min) y **Listo**. Respeta
+  el control local `userAudioEnabled` que ya se usa para el sonido de tickets.
 - **Abrir** navega a `/tickets/:id` si tiene ticket; si solo tiene contacto va a
   `/contacts` (la página no soporta seleccionar un contacto por URL); si no tiene
   vínculo, solo cierra el diálogo.
@@ -162,7 +169,10 @@ con la ocurrencia creada.
 
 - Validación: `title` requerido y ≤120, `notes` ≤150, `dueAt` ISO válido,
   `recurrence` dentro del enum, `minutes` en {5, 15, 60}, ids numéricos.
-- `404` si el recordatorio no existe; `403` al editar/borrar sin permiso.
+- `404` si el recordatorio no existe; `403` al editar/borrar sin permiso; `400`
+  si el rango de consulta es inválido o supera 62 días.
+- `404` si el ticket o contacto vinculado no existe; `409` si se intenta
+  posponer un recordatorio ya completado.
 - Si falla la emisión por socket, el scheduler registra el error pero no revierte
   `notifiedAt` (se prioriza no repetir la alarma).
 - En el frontend, todo error de API usa `toastError` como el resto del panel.
@@ -175,8 +185,8 @@ Backend (Jest, unitarias con modelos mockeados):
 2. Completar una recurrencia diaria/semanal/mensual crea la siguiente ocurrencia
    con la fecha esperada, incluido el recorte de fin de mes.
 3. `snooze` mueve `dueAt` y limpia `notifiedAt`; rechaza minutos inválidos.
-4. Editar/borrar sin ser creador ni admin devuelve 403; completar y posponer lo
-   permite cualquier usuario.
+4. Editar/borrar sin ser creador ni admin/masteradmin devuelve 403; completar y
+   posponer lo permite cualquier usuario.
 5. El rango `from`/`to` filtra por `dueAt` inclusivo.
 
 Frontend: verificación manual de la grilla, el modal, el diálogo de alarma, la

@@ -142,7 +142,7 @@
     <li>Repetición por días de semana personalizados o rangos de fin.</li>
     <li>Notas largas, prioridades, etiquetas o adjuntos.</li>
     <li>Calendario compartido con Google/Outlook.</li>
-    <li>Edición o borrado por usuarios que no sean el creador o un admin.</li>
+    <li>Edición o borrado por usuarios que no sean el creador, un admin o un <code>masteradmin</code>.</li>
   </ul>
 
   <h2 id="datos">Modelo de datos</h2>
@@ -170,12 +170,12 @@
     <li><strong>Ver:</strong> todos los usuarios autenticados ven todos los recordatorios.</li>
     <li><strong>Completar y posponer:</strong> cualquier usuario autenticado.</li>
     <li><strong>Crear:</strong> cualquier usuario autenticado; queda como creador.</li>
-    <li><strong>Editar y eliminar:</strong> solo el creador o un usuario con perfil <code>admin</code> (comparación sin distinguir mayúsculas).</li>
+    <li><strong>Editar y eliminar:</strong> solo el creador o un usuario con perfil <code>admin</code> o <code>masteradmin</code> (comparación sin distinguir mayúsculas).</li>
   </ul>
 
   <h2 id="recurrencia">Recurrencia</h2>
   <ul>
-    <li>Completar un recordatorio con repetición distinta de <code>none</code> crea una nueva ocurrencia <code>pending</code> con el mismo creador, título, notas, vínculo y repetición.</li>
+    <li>Completar un recordatorio con repetición distinta de <code>none</code> crea una nueva ocurrencia <code>pending</code> con el mismo creador, título, notas, vínculo y repetición; la transición se hace bajo una transacción con bloqueo de fila para no crear ocurrencias duplicadas si dos usuarios lo completan a la vez.</li>
     <li>La siguiente fecha se calcula desde el <code>dueAt</code> vigente al completar: <code>+1 día</code>, <code>+7 días</code> o <code>+1 mes</code> con <code>date-fns</code> (<code>addMonths</code> recorta fin de mes: 31/01 → 28/02).</li>
     <li>Si se pospuso y luego se completa, la siguiente ocurrencia parte de la fecha pospuesta (puede haber un corrimiento menor; se acepta).</li>
     <li>Las ocurrencias no tienen fin: se crean de a una al completar, nunca por lote.</li>
@@ -186,12 +186,12 @@
   <table>
     <thead><tr><th>Método</th><th>Ruta</th><th>Uso</th></tr></thead>
     <tbody>
-      <tr><td>GET</td><td><code>/reminders?from&amp;to</code></td><td>lista en rango ISO; incluye creador, ticket y contacto resumidos</td></tr>
+      <tr><td>GET</td><td><code>/reminders?from&amp;to</code></td><td>lista en rango ISO obligatorio (máximo 62 días); incluye creador, ticket y contacto resumidos</td></tr>
       <tr><td>POST</td><td><code>/reminders</code></td><td>crea (<code>title</code>, <code>dueAt</code>, <code>notes?</code>, <code>recurrence?</code>, <code>ticketId?</code>, <code>contactId?</code>)</td></tr>
-      <tr><td>PUT</td><td><code>/reminders/:id</code></td><td>edita campos; solo creador o admin</td></tr>
+      <tr><td>PUT</td><td><code>/reminders/:id</code></td><td>edita campos; solo creador, admin o masteradmin</td></tr>
       <tr><td>PATCH</td><td><code>/reminders/:id/status</code></td><td><code>{ "status": "done" }</code>; cualquier usuario</td></tr>
       <tr><td>POST</td><td><code>/reminders/:id/snooze</code></td><td><code>{ "minutes": 5 | 15 | 60 }</code>; cualquier usuario</td></tr>
-      <tr><td>DELETE</td><td><code>/reminders/:id</code></td><td>solo creador o admin</td></tr>
+      <tr><td>DELETE</td><td><code>/reminders/:id</code></td><td>solo creador, admin o masteradmin</td></tr>
     </tbody>
   </table>
   <p>Respuesta de un recordatorio:</p>
@@ -213,11 +213,11 @@
   <ul>
     <li><code>ReminderScheduler</code> inicia en <code>server.ts</code> después de <code>initIO()</code> y corre cada 30 segundos.</li>
     <li>Consulta <code>status = pending AND dueAt &lt;= now AND notifiedAt IS NULL</code>.</li>
-    <li>Para cada fila: guarda <code>notifiedAt = now</code> y emite <code>reminder</code> a <strong>todos</strong> los sockets conectados (<code>io.emit</code>), con el recordatorio serializado.</li>
+    <li>Cada socket que valida su JWT se une al room <code>reminders</code>; al cerrar sesión sale de ese room. El scheduler evita barridos simultáneos y reclama cada fila con un <code>UPDATE</code> condicional (<code>pending</code>, vencida y <code>notifiedAt IS NULL</code>). Para cada fila reclamada, guarda <code>notifiedAt = now</code> y emite <code>reminder</code> a ese room (solo sockets autenticados).</li>
     <li>Un mismo recordatorio se emite una sola vez aunque haya varias pestañas. Todas las pestañas que lo reciban suenan.</li>
     <li>El aviso puede llegar hasta 30 segundos tarde; es aceptable.</li>
     <li><code>snooze</code> reprograma desde el momento del clic (ahora + minutos) y pone <code>notifiedAt = null</code>, por lo que vuelve a sonar.</li>
-    <li>CRUD y cambios de estado emiten <code>reminderUpdate</code> a todos con <code>{ action, reminder }</code> para refrescar la agenda sin recargar.</li>
+    <li>CRUD y cambios de estado emiten <code>reminderUpdate</code> al room <code>reminders</code> con <code>{ action, reminder }</code> para refrescar la agenda sin recargar.</li>
     <li>Los recordatorios vencidos que se cargan por HTTP (panel recién abierto) se muestran como vencidos y <strong>no</strong> suenan.</li>
   </ul>
 
@@ -226,7 +226,7 @@
     <li>Ruta <code>/reminders</code> y entrada <strong>Recordatorios</strong> en la sección General del menú, visible para todos los perfiles.</li>
     <li>Grilla mensual de 7 columnas (lunes a domingo), navegación <code>‹ mes ›</code> y botón <strong>Hoy</strong>. Cada día muestra hasta 3 chips <code>HH:mm título</code> y <code>+N más</code>; los vencidos pendientes se distinguen con color de error. Clic en un día abre el panel derecho con la lista de ese día; clic en un chip abre la edición. En pantallas angostas la lista va debajo de la grilla.</li>
     <li>Modal crear/editar: título, fecha (<code>DatePicker</code>), hora, repetición, vínculo opcional con pestañas <strong>Ticket</strong> / <strong>Contacto</strong> (buscador), comentario con contador de 150 y botones Guardar / Eliminar según permisos.</li>
-    <li>Alarma global en el layout: escucha <code>reminder</code>, reproduce un sonido propio de alarma (asset distinto de <code>sound.mp3</code>) y abre un diálogo con título, hora, vínculo y acciones <strong>Abrir</strong>, <strong>Posponer</strong> (5/15/60 min) y <strong>Listo</strong>.</li>
+    <li>Alarma global en el layout: escucha <code>reminder</code>, reproduce un sonido propio de alarma (asset distinto de <code>sound.mp3</code>) y abre un diálogo con título, hora, vínculo y acciones <strong>Abrir</strong>, <strong>Posponer</strong> (5/15/60 min) y <strong>Listo</strong>. Respeta el control local <code>userAudioEnabled</code> que ya se usa para el sonido de tickets.</li>
     <li><strong>Abrir</strong> navega a <code>/tickets/:id</code> si tiene ticket; si solo tiene contacto va a <code>/contacts</code>; si no tiene vínculo, solo cierra el diálogo.</li>
     <li>Volver a <code>pending</code> un recordatorio completado no está permitido: <code>done</code> es final para esa ocurrencia. Si se completó por error, se crea uno nuevo.</li>
     <li>Notificación del navegador: si el permiso está concedido y <code>document.hidden</code> es verdadero, dispara <code>new Notification(...)</code>; al hacer clic enfoca el panel y navega al vínculo. El permiso se pide con un botón en la página de recordatorios (Chrome exige gesto del usuario).</li>
@@ -236,7 +236,8 @@
   <h2 id="errores">Manejo de errores</h2>
   <ul>
     <li>Validación: <code>title</code> requerido y ≤120, <code>notes</code> ≤150, <code>dueAt</code> ISO válido, <code>recurrence</code> dentro del enum, <code>minutes</code> en {5, 15, 60}, ids numéricos.</li>
-    <li><code>404</code> si el recordatorio no existe; <code>403</code> al editar/borrar sin permiso.</li>
+    <li><code>404</code> si el recordatorio no existe; <code>403</code> al editar/borrar sin permiso; <code>400</code> si el rango de consulta es inválido o supera 62 días.</li>
+    <li><code>404</code> si el ticket o contacto vinculado no existe; <code>409</code> si se intenta posponer un recordatorio ya completado.</li>
     <li>Si falla la emisión por socket, el scheduler registra el error pero no revierte <code>notifiedAt</code> (se prioriza no repetir la alarma).</li>
     <li>En el frontend, todo error de API usa <code>toastError</code> como el resto del panel.</li>
   </ul>
@@ -247,7 +248,7 @@
     <li>El scheduler emite una vez y no re-emite lo ya notificado.</li>
     <li>Completar una recurrencia diaria/semanal/mensual crea la siguiente ocurrencia con la fecha esperada, incluido el recorte de fin de mes.</li>
     <li><code>snooze</code> mueve <code>dueAt</code> y limpia <code>notifiedAt</code>; rechaza minutos inválidos.</li>
-    <li>Editar/borrar sin ser creador ni admin devuelve 403; completar y posponer lo permite cualquier usuario.</li>
+    <li>Editar/borrar sin ser creador ni admin/masteradmin devuelve 403; completar y posponer lo permite cualquier usuario.</li>
     <li>El rango <code>from</code>/<code>to</code> filtra por <code>dueAt</code> inclusivo.</li>
   </ol>
   <p>Frontend: verificación manual de la grilla, el modal, el diálogo de alarma, la notificación del navegador y el refresco por socket.</p>

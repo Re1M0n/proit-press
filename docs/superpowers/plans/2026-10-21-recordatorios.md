@@ -4,7 +4,7 @@
 
 **Goal:** Agregar recordatorios compartidos con fecha/hora, repetición, agenda mensual y alarma para todo el equipo en Press-Ticket.
 
-**Architecture:** Tabla `Reminders` en MySQL + servicios REST en el backend Express/Sequelize, un scheduler de 30 s que emite por Socket.IO a todos los clientes, y una página React con grilla mensual más un componente global de alarma. Sin dependencias nuevas.
+**Architecture:** Tabla `Reminders` en MySQL + servicios REST en el backend Express/Sequelize, un scheduler de 30 s que emite a un room Socket.IO de usuarios autenticados, y una página React con grilla mensual más un componente global de alarma. Sin dependencias nuevas.
 
 **Tech Stack:** Node 18 + TypeScript + Express + Sequelize (`sequelize-typescript`) + Socket.IO + Yup; React (CRA) + MUI v5 + date-fns + `use-sound`.
 
@@ -20,6 +20,22 @@
 - Tests del backend se ejecutan sin `pretest` para no tocar la DB de test:
   `npx jest --runInBand src/__tests__/unit/<archivo>.spec.ts`
 - Commits convencionales en español, uno por tarea.
+
+## Refinamientos técnicos aplicados
+
+- El scheduler usa un guard para no solapar barridos y reclama cada vencimiento
+  mediante `UPDATE` condicional (`pending`, vencida y sin `notifiedAt`); así no
+  duplica alarmas al competir con snooze o completado.
+- Solo sockets que validaron el JWT entran al room `reminders`; el evento no se
+  emite a sockets no autenticados.
+- Completar una repetición bloquea la fila dentro de una transacción, para crear
+  una sola siguiente ocurrencia aunque dos usuarios pulsen «Listo» a la vez.
+- Posponer actualiza solo filas `pending`, desde la hora actual; los recordatorios
+  ya completados responden `409`.
+- GET requiere `from` y `to`, con un rango máximo de 62 días. Los vínculos se
+  validan contra la existencia del ticket/contacto.
+- Los perfiles `admin` y `masteradmin` pueden editar o borrar recordatorios
+  ajenos; usuarios normales solo los de su autoría.
 
 ## Estructura de archivos
 

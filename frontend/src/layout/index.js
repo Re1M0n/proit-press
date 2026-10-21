@@ -22,6 +22,7 @@ import { getImageUrl } from '../helpers/imageHelper';
 import BackdropLoading from "../components/BackdropLoading";
 import LanguageSelector from "../components/LanguageSelector";
 import NotificationsPopOver from "../components/NotificationsPopOver";
+import ReminderAlarm from "../components/ReminderAlarm";
 import MobileModeControl from "../components/MobileModeControl";
 import ServerSettingsModal from "../components/ServerSettingsModal";
 import ThemeSelector from '../components/ThemeSelector';
@@ -381,6 +382,7 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
             <LanguageSelector />
             {user?.id && <MobileModeControl />}
             {user?.id && <NotificationsPopOver />}
+            {user?.id && <ReminderAlarm />}
             <IconButton
               aria-label="account of current user"
               aria-controls="menu-appbar"
