@@ -61,7 +61,7 @@ class Reminder extends Model<Reminder> {
 
   @ForeignKey(() => Ticket)
   @AllowNull(true)
-  @Column
+  @Column(DataType.INTEGER)
   ticketId: number | null;
 
   @BelongsTo(() => Ticket, {
@@ -72,7 +72,7 @@ class Reminder extends Model<Reminder> {
 
   @ForeignKey(() => Contact)
   @AllowNull(true)
-  @Column
+  @Column(DataType.INTEGER)
   contactId: number | null;
 
   @BelongsTo(() => Contact, {
