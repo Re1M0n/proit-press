@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recordatorios con agenda y alarma — Plan de implementación</title>
+<style>
+  :root { --paper:#fff; --bg:#f5f6f8; --ink:#1b1f24; --muted:#5b6470; --line:#e3e7ec; --accent:#0f766e; --accent-soft:#e6f4f1; --code:#f2f4f7; --task:#fffdf5; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 36px auto 80px; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:44px 52px; box-shadow:0 8px 30px rgba(16,24,40,.06); }
+  h1 { font-size:29px; line-height:1.25; margin:0 0 18px; border-bottom:1px solid var(--line); padding-bottom:18px; }
+  h2 { font-size:22px; margin:42px 0 10px; padding-top:14px; border-top:2px solid var(--line); }
+  h3 { font-size:18px; margin:34px 0 10px; padding:10px 14px; background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; }
+  h4 { font-size:16px; margin:24px 0 8px; }
+  p, li { color:#242a31; }
+  ul, ol { padding-left:24px; }
+  li { margin:4px 0; }
+  ul.tasks { list-style:none; padding-left:4px; }
+  ul.tasks li { display:flex; gap:10px; align-items:flex-start; background:var(--task); border:1px solid #f0e7c8; border-radius:8px; padding:8px 12px; margin:6px 0; }
+  ul.tasks .box { width:15px; height:15px; border:2px solid #b7a24a; border-radius:4px; flex:none; margin-top:3px; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14.5px; }
+  th, td { text-align:left; padding:8px 11px; border:1px solid var(--line); vertical-align:top; }
+  th { background:#f7f9fb; }
+  code { font-family:"Cascadia Code", Consolas, monospace; font-size:13.5px; background:var(--code); padding:1px 5px; border-radius:4px; }
+  pre.code { background:var(--code); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.5; }
+  pre.code code { background:none; padding:0; }
+  blockquote { border-left:4px solid var(--accent); background:var(--accent-soft); margin:14px 0; padding:10px 16px; border-radius:0 8px 8px 0; }
+  a { color:var(--accent); }
+  @media (max-width:760px) { main { margin:0; border:0; border-radius:0; padding:26px 18px; } }
+  @media print { body { background:#fff; } main { margin:0; border:0; box-shadow:none; padding:0; } h3 { break-after:avoid; } pre.code, table { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<main>
+<h1 id="hk4rcdc">Recordatorios con agenda y alarma — Plan de implementación</h1>
+<blockquote><strong>Para agentes:</strong> SUB-SKILL REQUERIDA: usar <code>superpowers:subagent-driven-development</code> (recomendado) o <code>superpowers:executing-plans</code> para implementar tarea por tarea. Los pasos usan checkboxes (<code>- [ ]</code>).</blockquote>
+<p><strong>Goal:</strong> Agregar recordatorios compartidos con fecha/hora, repetición, agenda mensual y alarma para todo el equipo en Press-Ticket.</p>
+<p><strong>Architecture:</strong> Tabla <code>Reminders</code> en MySQL + servicios REST en el backend Express/Sequelize, un scheduler de 30 s que emite por Socket.IO a todos los clientes, y una página React con grilla mensual más un componente global de alarma. Sin dependencias nuevas.</p>
+<p><strong>Tech Stack:</strong> Node 18 + TypeScript + Express + Sequelize (<code>sequelize-typescript</code>) + Socket.IO + Yup; React (CRA) + MUI v5 + date-fns + <code>use-sound</code>.</p>
+<p><strong>Spec:</strong> <code>docs/superpowers/specs/2026-10-21-recordatorios-design.md</code></p>
+<h2 id="hutw37o">Restricciones globales</h2>
+<ul>
+<li>La UI es 100 % en español; textos nuevos con <code>defaultValue</code> en español.</li>
+<li>No agregar dependencias npm.</li>
+<li>No tocar <code>IA/</code> ni la app Android.</li>
+<li>Fechas: se guardan en UTC (<code>dueAt</code> Date) y se muestran con la hora local del navegador.</li>
+<li>El deploy corre <code>db:migrate</code> antes de reiniciar el backend; la migración debe ser idempotente respecto de datos existentes (tabla nueva, sin backfill).</li>
+<li>Tests del backend se ejecutan sin <code>pretest</code> para no tocar la DB de test:</li>
+</ul>
+<p>  <code>npx jest --runInBand src/__tests__/unit/&lt;archivo&gt;.spec.ts</code></p>
+<ul>
+<li>Commits convencionales en español, uno por tarea.</li>
+</ul>
+<h2 id="hxgjane">Estructura de archivos</h2>
+<p>Backend:</p>
+<table><thead><tr>
+<th>Archivo</th>
+<th>Responsabilidad</th>
+</tr></thead><tbody>
+<tr>
+<td><code>backend/src/models/Reminder.ts</code></td>
+<td>modelo Sequelize con asociaciones a User, Ticket y Contact</td>
+</tr>
+<tr>
+<td><code>backend/src/database/migrations/20261021010000-create-reminders.ts</code></td>
+<td>crear tabla e índices</td>
+</tr>
+<tr>
+<td><code>backend/src/database/index.ts</code></td>
+<td>registrar el modelo en la instancia de Sequelize</td>
+</tr>
+<tr>
+<td><code>backend/src/helpers/getNextReminderDueAt.ts</code></td>
+<td>calcular la próxima ocurrencia</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/ReminderScheduler.ts</code></td>
+<td>barrido de vencidos + emit socket</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/ReminderPermissions.ts</code></td>
+<td>regla creador/admin</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/CreateReminderService.ts</code></td>
+<td>alta</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/ListRemindersService.ts</code></td>
+<td>listado por rango con includes</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/UpdateReminderService.ts</code></td>
+<td>edición con permisos</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/DeleteReminderService.ts</code></td>
+<td>borrado con permisos</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/MarkReminderDoneService.ts</code></td>
+<td>completar + siguiente ocurrencia</td>
+</tr>
+<tr>
+<td><code>backend/src/services/ReminderService/SnoozeReminderService.ts</code></td>
+<td>posponer 5/15/60</td>
+</tr>
+<tr>
+<td><code>backend/src/controllers/ReminderController.ts</code></td>
+<td>validación, serialización y evento <code>reminderUpdate</code></td>
+</tr>
+<tr>
+<td><code>backend/src/routes/routeRegistry.ts</code></td>
+<td>montar <code>/reminders</code></td>
+</tr>
+<tr>
+<td><code>backend/src/server.ts</code></td>
+<td>arrancar/detener el scheduler</td>
+</tr>
+</tbody></table>
+<p>Frontend:</p>
+<table><thead><tr>
+<th>Archivo</th>
+<th>Responsabilidad</th>
+</tr></thead><tbody>
+<tr>
+<td><code>frontend/src/pages/Reminders/index.js</code></td>
+<td>grilla mensual + panel del día + permiso de notificaciones</td>
+</tr>
+<tr>
+<td><code>frontend/src/components/ReminderModal/index.js</code></td>
+<td>alta/edición y borrado</td>
+</tr>
+<tr>
+<td><code>frontend/src/components/ReminderAlarm/index.js</code></td>
+<td>escucha socket, sonido y diálogo</td>
+</tr>
+<tr>
+<td><code>frontend/src/assets/reminder-alarm.wav</code></td>
+<td>sonido propio (generado por script)</td>
+</tr>
+<tr>
+<td><code>frontend/scripts/generate-reminder-alarm.js</code></td>
+<td>genera el WAV una sola vez</td>
+</tr>
+<tr>
+<td><code>frontend/src/routes/index.js</code></td>
+<td>ruta <code>/reminders</code></td>
+</tr>
+<tr>
+<td><code>frontend/src/layout/MainListItems.js</code></td>
+<td>ítem de menú</td>
+</tr>
+<tr>
+<td><code>frontend/src/layout/index.js</code></td>
+<td>montar <code>&lt;ReminderAlarm /&gt;</code></td>
+</tr>
+</tbody></table>
+<p>---</p>
+<h3 id="h6dzhec">Task 1: Modelo, migración y registro</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>backend/src/models/Reminder.ts</code></li>
+<li>Create: <code>backend/src/database/migrations/20261021010000-create-reminders.ts</code></li>
+<li>Modify: <code>backend/src/database/index.ts:1-60</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: nada.</li>
+<li>Produces: <code>Reminder</code> (default export) con campos <code>id, userId, title, notes, dueAt, status, recurrence, ticketId, contactId, notifiedAt, createdAt, updatedAt</code> y asociaciones <code>user</code>, <code>ticket</code>, <code>contact</code>.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Crear el modelo</strong></li>
+</ul>
+<p><code>backend/src/models/Reminder.ts</code>:</p>
+<pre class="code ts"><code>import {
+  AutoIncrement,
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  Default,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt
+} from "sequelize-typescript";
+import Contact from "./Contact";
+import Ticket from "./Ticket";
+import User from "./User";
+
+export type ReminderStatus = "pending" | "done";
+export type ReminderRecurrence = "none" | "daily" | "weekly" | "monthly";
+
+@Table
+class Reminder extends Model&lt;Reminder&gt; {
+  @PrimaryKey
+  @AutoIncrement
+  @Column
+  id: number;
+
+  @ForeignKey(() =&gt; User)
+  @Column
+  userId: number;
+
+  @BelongsTo(() =&gt; User, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+  })
+  user: User;
+
+  @Column(DataType.STRING(120))
+  title: string;
+
+  @Column(DataType.STRING(150))
+  notes: string;
+
+  @Column(DataType.DATE)
+  dueAt: Date;
+
+  @Default("pending")
+  @Column(DataType.ENUM("pending", "done"))
+  status: ReminderStatus;
+
+  @Default("none")
+  @Column(DataType.ENUM("none", "daily", "weekly", "monthly"))
+  recurrence: ReminderRecurrence;
+
+  @ForeignKey(() =&gt; Ticket)
+  @Column
+  ticketId: number;
+
+  @BelongsTo(() =&gt; Ticket, {
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE"
+  })
+  ticket: Ticket;
+
+  @ForeignKey(() =&gt; Contact)
+  @Column
+  contactId: number;
+
+  @BelongsTo(() =&gt; Contact, {
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE"
+  })
+  contact: Contact;
+
+  @Column(DataType.DATE)
+  notifiedAt: Date;
+
+  @CreatedAt
+  createdAt: Date;
+
+  @UpdatedAt
+  updatedAt: Date;
+}
+
+export default Reminder;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Crear la migración</strong></li>
+</ul>
+<p><code>backend/src/database/migrations/20261021010000-create-reminders.ts</code>:</p>
+<pre class="code ts"><code>import { QueryInterface, DataTypes } from "sequelize";
+
+module.exports = {
+  up: async (queryInterface: QueryInterface) =&gt; {
+    await queryInterface.createTable("Reminders", {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: "Users", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE"
+      },
+      title: {
+        type: DataTypes.STRING(120),
+        allowNull: false
+      },
+      notes: {
+        type: DataTypes.STRING(150),
+        allowNull: true
+      },
+      dueAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      status: {
+        type: DataTypes.ENUM("pending", "done"),
+        allowNull: false,
+        defaultValue: "pending"
+      },
+      recurrence: {
+        type: DataTypes.ENUM("none", "daily", "weekly", "monthly"),
+        allowNull: false,
+        defaultValue: "none"
+      },
+      ticketId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: "Tickets", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+      contactId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: "Contacts", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+      notifiedAt: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      }
+    });
+
+    await queryInterface.addIndex("Reminders", ["status", "dueAt"], {
+      name: "reminders_status_due_at"
+    });
+    await queryInterface.addIndex("Reminders", ["dueAt"], {
+      name: "reminders_due_at"
+    });
+  },
+
+  down: async (queryInterface: QueryInterface) =&gt; {
+    await queryInterface.dropTable("Reminders");
+  }
+};</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Registrar el modelo</strong></li>
+</ul>
+<p>En <code>backend/src/database/index.ts</code>: agregar <code>import Reminder from "../models/Reminder";</code> junto a los demás imports y <code>Reminder,</code> dentro del array <code>models</code> (al final del listado).</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Verificar que compila</strong></li>
+</ul>
+<p>Run: <code>npx tsc --noEmit</code> (en <code>backend/</code>)</p>
+<p>Expected: sin errores.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/models/Reminder.ts backend/src/database/migrations/20261021010000-create-reminders.ts backend/src/database/index.ts
+git commit -m "feat(recordatorios): agrega modelo y migracion de recordatorios"</code></pre>
+<p>---</p>
+<h3 id="hqv3wjs">Task 2: Cálculo de la próxima ocurrencia</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>backend/src/helpers/getNextReminderDueAt.ts</code></li>
+<li>Test: <code>backend/src/__tests__/unit/ReminderRecurrence.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>ReminderRecurrence</code> de <code>models/Reminder</code>.</li>
+<li>Produces: <code>getNextReminderDueAt(dueAt: Date, recurrence: ReminderRecurrence): Date | undefined</code>.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir el test que falla</strong></li>
+</ul>
+<p><code>backend/src/__tests__/unit/ReminderRecurrence.spec.ts</code>:</p>
+<pre class="code ts"><code>import { addDays, addMonths } from "date-fns";
+import getNextReminderDueAt from "../../helpers/getNextReminderDueAt";
+
+describe("getNextReminderDueAt", () =&gt; {
+  const dueAt = new Date("2026-10-21T18:00:00.000Z");
+
+  it("no devuelve fecha cuando no repite", () =&gt; {
+    expect(getNextReminderDueAt(dueAt, "none")).toBeUndefined();
+  });
+
+  it("suma un dia en la repeticion diaria", () =&gt; {
+    expect(getNextReminderDueAt(dueAt, "daily")).toEqual(addDays(dueAt, 1));
+  });
+
+  it("suma siete dias en la repeticion semanal", () =&gt; {
+    expect(getNextReminderDueAt(dueAt, "weekly")).toEqual(addDays(dueAt, 7));
+  });
+
+  it("suma un mes y recorta fin de mes", () =&gt; {
+    const endOfMonth = new Date("2026-01-31T12:00:00.000Z");
+    expect(getNextReminderDueAt(endOfMonth, "monthly")).toEqual(
+      addMonths(endOfMonth, 1)
+    );
+  });
+});</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Ejecutar y ver el fallo</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderRecurrence.spec.ts</code></p>
+<p>Expected: FAIL <code>Cannot find module '../../helpers/getNextReminderDueAt'</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Implementar el helper</strong></li>
+</ul>
+<p><code>backend/src/helpers/getNextReminderDueAt.ts</code>:</p>
+<pre class="code ts"><code>import { addDays, addMonths } from "date-fns";
+import { ReminderRecurrence } from "../models/Reminder";
+
+const getNextReminderDueAt = (
+  dueAt: Date,
+  recurrence: ReminderRecurrence
+): Date | undefined =&gt; {
+  switch (recurrence) {
+    case "daily":
+      return addDays(dueAt, 1);
+    case "weekly":
+      return addDays(dueAt, 7);
+    case "monthly":
+      return addMonths(dueAt, 1);
+    default:
+      return undefined;
+  }
+};
+
+export default getNextReminderDueAt;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Ejecutar el test</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderRecurrence.spec.ts</code></p>
+<p>Expected: 4 tests PASS.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/helpers/getNextReminderDueAt.ts backend/src/__tests__/unit/ReminderRecurrence.spec.ts
+git commit -m "feat(recordatorios): calcula la proxima ocurrencia de un recordatorio"</code></pre>
+<p>---</p>
+<h3 id="h5857rc">Task 3: Scheduler de vencidos</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>backend/src/services/ReminderService/ReminderScheduler.ts</code></li>
+<li>Test: <code>backend/src/__tests__/unit/ReminderScheduler.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>Reminder</code>, <code>getIO</code>, <code>logger</code>.</li>
+<li>Produces: <code>runReminderSweep(now?: Date): Promise&lt;number&gt;</code>, <code>startReminderScheduler(): void</code>, <code>stopReminderScheduler(): void</code>, <code>SWEEP_INTERVAL_MS = 30000</code>.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir el test que falla</strong></li>
+</ul>
+<p><code>backend/src/__tests__/unit/ReminderScheduler.spec.ts</code>:</p>
+<pre class="code ts"><code>jest.mock("../../models/Reminder", () =&gt; ({
+  findAll: jest.fn()
+}));
+jest.mock("../../libs/socket", () =&gt; ({
+  getIO: jest.fn()
+}));
+jest.mock("../../utils/logger", () =&gt; ({
+  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn() }
+}));
+
+import Reminder from "../../models/Reminder";
+import { getIO } from "../../libs/socket";
+import { runReminderSweep } from "../../services/ReminderService/ReminderScheduler";
+
+const buildReminder = (id: number) =&gt; {
+  const data = {
+    id,
+    userId: 1,
+    title: `recordatorio ${id}`,
+    notes: null,
+    dueAt: new Date("2026-10-21T18:00:00.000Z"),
+    status: "pending",
+    recurrence: "none",
+    ticketId: null,
+    contactId: null,
+    notifiedAt: null
+  };
+  return {
+    ...data,
+    update: jest.fn().mockResolvedValue(undefined),
+    toJSON: jest.fn(() =&gt; data)
+  };
+};
+
+describe("runReminderSweep", () =&gt; {
+  it("marca y emite cada recordatorio vencido una sola vez", async () =&gt; {
+    const first = buildReminder(1);
+    const second = buildReminder(2);
+    (Reminder.findAll as unknown as jest.Mock).mockResolvedValue([first, second]);
+    const emit = jest.fn();
+    (getIO as jest.Mock).mockReturnValue({ emit });
+
+    const now = new Date("2026-10-21T19:00:00.000Z");
+    const emitted = await runReminderSweep(now);
+
+    expect(emitted).toBe(2);
+    expect(Reminder.findAll).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: "pending",
+          notifiedAt: null
+        })
+      })
+    );
+    expect(first.update).toHaveBeenCalledWith({ notifiedAt: now });
+    expect(second.update).toHaveBeenCalledWith({ notifiedAt: now });
+    expect(emit).toHaveBeenCalledTimes(2);
+    expect(emit).toHaveBeenCalledWith("reminder", first.toJSON());
+  });
+
+  it("no corta el barrido si falla una emision", async () =&gt; {
+    const first = buildReminder(1);
+    const second = buildReminder(2);
+    (Reminder.findAll as unknown as jest.Mock).mockResolvedValue([first, second]);
+    const emit = jest
+      .fn()
+      .mockImplementationOnce(() =&gt; {
+        throw new Error("socket caido");
+      })
+      .mockImplementationOnce(() =&gt; undefined);
+    (getIO as jest.Mock).mockReturnValue({ emit });
+
+    const emitted = await runReminderSweep(new Date());
+
+    expect(emitted).toBe(2);
+    expect(second.update).toHaveBeenCalled();
+    expect(second.toJSON).toHaveBeenCalled();
+  });
+});</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Ejecutar y ver el fallo</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderScheduler.spec.ts</code></p>
+<p>Expected: FAIL <code>Cannot find module '../../services/ReminderService/ReminderScheduler'</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Implementar el scheduler</strong></li>
+</ul>
+<p><code>backend/src/services/ReminderService/ReminderScheduler.ts</code>:</p>
+<pre class="code ts"><code>import { Op } from "sequelize";
+import { getIO } from "../../libs/socket";
+import Reminder from "../../models/Reminder";
+import { logger } from "../../utils/logger";
+
+export const SWEEP_INTERVAL_MS = 30000;
+
+let timer: NodeJS.Timeout | undefined;
+
+export const runReminderSweep = async (now = new Date()): Promise&lt;number&gt; =&gt; {
+  const dueReminders = await Reminder.findAll({
+    where: {
+      status: "pending",
+      dueAt: { [Op.lte]: now },
+      notifiedAt: null
+    }
+  });
+
+  let emitted = 0;
+
+  for (const reminder of dueReminders) {
+    await reminder.update({ notifiedAt: now });
+    emitted += 1;
+
+    try {
+      getIO().emit("reminder", reminder.toJSON());
+    } catch (error) {
+      logger.error(
+        `[REMINDER] No se pudo emitir el recordatorio ${reminder.id}: ${
+          (error as Error)?.message || error
+        }`
+      );
+    }
+  }
+
+  return emitted;
+};
+
+export const startReminderScheduler = (): void =&gt; {
+  if (timer) {
+    return;
+  }
+
+  timer = setInterval(() =&gt; {
+    runReminderSweep().catch(error =&gt; {
+      logger.error(
+        `[REMINDER] Fallo el barrido de recordatorios: ${
+          (error as Error)?.message || error
+        }`
+      );
+    });
+  }, SWEEP_INTERVAL_MS);
+
+  logger.info(
+    `[REMINDER] Scheduler de recordatorios activo (cada ${SWEEP_INTERVAL_MS / 1000}s)`
+  );
+};
+
+export const stopReminderScheduler = (): void =&gt; {
+  if (timer) {
+    clearInterval(timer);
+    timer = undefined;
+  }
+};</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Ejecutar el test</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderScheduler.spec.ts</code></p>
+<p>Expected: 2 tests PASS.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/services/ReminderService/ReminderScheduler.ts backend/src/__tests__/unit/ReminderScheduler.spec.ts
+git commit -m "feat(recordatorios): agrega scheduler que avisa los vencidos por socket"</code></pre>
+<p>---</p>
+<h3 id="h8akgr2">Task 4: Servicios con permisos, recurrencia y snooze</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>backend/src/services/ReminderService/ReminderPermissions.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/CreateReminderService.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/ListRemindersService.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/UpdateReminderService.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/DeleteReminderService.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/MarkReminderDoneService.ts</code></li>
+<li>Create: <code>backend/src/services/ReminderService/SnoozeReminderService.ts</code></li>
+<li>Test: <code>backend/src/__tests__/unit/ReminderServices.spec.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>Reminder</code>, <code>getNextReminderDueAt</code>, <code>AppError</code>.</li>
+<li>Produces:</li>
+</ul>
+<p>  - <code>RequestingUser { id: number | string; profile?: string }</code></p>
+<p>  - <code>assertCanManageReminder(reminder, user): void</code></p>
+<p>  - <code>CreateReminderService(data): Promise&lt;Reminder&gt;</code></p>
+<p>  - <code>ListRemindersService({ from, to }): Promise&lt;Reminder[]&gt;</code></p>
+<p>  - <code>UpdateReminderService(id, user, data): Promise&lt;Reminder&gt;</code></p>
+<p>  - <code>DeleteReminderService(id, user): Promise&lt;void&gt;</code></p>
+<p>  - <code>MarkReminderDoneService(id): Promise&lt;{ reminder: Reminder; nextReminder?: Reminder }&gt;</code></p>
+<p>  - <code>SnoozeReminderService(id, minutes): Promise&lt;Reminder&gt;</code></p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir los tests que fallan</strong></li>
+</ul>
+<p><code>backend/src/__tests__/unit/ReminderServices.spec.ts</code>:</p>
+<pre class="code ts"><code>jest.mock("../../models/Reminder", () =&gt; ({
+  create: jest.fn(),
+  findByPk: jest.fn(),
+  findAll: jest.fn()
+}));
+jest.mock("../../utils/logger", () =&gt; ({
+  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn() }
+}));
+
+import { addDays } from "date-fns";
+import Reminder from "../../models/Reminder";
+import { assertCanManageReminder } from "../../services/ReminderService/ReminderPermissions";
+import MarkReminderDoneService from "../../services/ReminderService/MarkReminderDoneService";
+import SnoozeReminderService from "../../services/ReminderService/SnoozeReminderService";
+
+const buildReminder = (overrides: Record&lt;string, unknown&gt; = {}) =&gt; ({
+  id: 10,
+  userId: 3,
+  title: "Llamar",
+  notes: null,
+  dueAt: new Date("2026-10-21T18:00:00.000Z"),
+  status: "pending",
+  recurrence: "none",
+  ticketId: null,
+  contactId: null,
+  notifiedAt: null,
+  update: jest.fn().mockImplementation(function update(patch) {
+    Object.assign(this, patch);
+    return Promise.resolve(this);
+  }),
+  ...overrides
+});
+
+describe("permisos de recordatorios", () =&gt; {
+  it("deja editar al creador", () =&gt; {
+    expect(() =&gt;
+      assertCanManageReminder(buildReminder() as any, { id: 3, profile: "user" })
+    ).not.toThrow();
+  });
+
+  it("deja editar a un admin", () =&gt; {
+    expect(() =&gt;
+      assertCanManageReminder(buildReminder() as any, { id: 99, profile: "ADMIN" })
+    ).not.toThrow();
+  });
+
+  it("rechaza a otro usuario", () =&gt; {
+    expect(() =&gt;
+      assertCanManageReminder(buildReminder() as any, { id: 99, profile: "user" })
+    ).toThrow("ERR_REMINDER_FORBIDDEN");
+  });
+});
+
+describe("MarkReminderDoneService", () =&gt; {
+  it("crea la siguiente ocurrencia cuando repite semanalmente", async () =&gt; {
+    const reminder = buildReminder({ recurrence: "weekly" });
+    (Reminder.findByPk as unknown as jest.Mock).mockResolvedValue(reminder);
+    (Reminder.create as unknown as jest.Mock).mockResolvedValue({ id: 11 });
+
+    const result = await MarkReminderDoneService(10);
+
+    expect(reminder.update).toHaveBeenCalledWith({ status: "done" });
+    expect(Reminder.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 3,
+        title: "Llamar",
+        dueAt: addDays(reminder.dueAt, 7),
+        recurrence: "weekly"
+      })
+    );
+    expect(result.nextReminder).toEqual({ id: 11 });
+  });
+
+  it("no crea otra ocurrencia si no repite", async () =&gt; {
+    const reminder = buildReminder();
+    (Reminder.findByPk as unknown as jest.Mock).mockResolvedValue(reminder);
+
+    const result = await MarkReminderDoneService(10);
+
+    expect(Reminder.create).not.toHaveBeenCalled();
+    expect(result.nextReminder).toBeUndefined();
+  });
+});
+
+describe("SnoozeReminderService", () =&gt; {
+  it("pospone desde ahora y limpia notifiedAt", async () =&gt; {
+    const reminder = buildReminder({ notifiedAt: new Date() });
+    (Reminder.findByPk as unknown as jest.Mock).mockResolvedValue(reminder);
+
+    await SnoozeReminderService(10, 15);
+
+    expect(reminder.update).toHaveBeenCalledWith({
+      dueAt: expect.any(Date),
+      notifiedAt: null
+    });
+    const patch = reminder.update.mock.calls[0][0];
+    expect(patch.dueAt.getTime()).toBeGreaterThan(Date.now());
+  });
+
+  it("rechaza minutos fuera de 5, 15 y 60", async () =&gt; {
+    await expect(SnoozeReminderService(10, 7)).rejects.toThrow(
+      "ERR_REMINDER_INVALID_MINUTES"
+    );
+  });
+});</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Ejecutar y ver los fallos</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderServices.spec.ts</code></p>
+<p>Expected: FAIL por módulos inexistentes.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Implementar permisos</strong></li>
+</ul>
+<p><code>backend/src/services/ReminderService/ReminderPermissions.ts</code>:</p>
+<pre class="code ts"><code>import AppError from "../../errors/AppError";
+import Reminder from "../../models/Reminder";
+
+export interface RequestingUser {
+  id: number | string;
+  profile?: string;
+}
+
+export const isAdmin = (user?: RequestingUser): boolean =&gt;
+  String(user?.profile || "").toLowerCase() === "admin";
+
+export const assertCanManageReminder = (
+  reminder: Reminder,
+  user: RequestingUser
+): void =&gt; {
+  const isOwner = Number(reminder.userId) === Number(user?.id);
+
+  if (!isOwner &amp;&amp; !isAdmin(user)) {
+    throw new AppError("ERR_REMINDER_FORBIDDEN", 403);
+  }
+};</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Implementar alta y listado</strong></li>
+</ul>
+<p><code>CreateReminderService.ts</code>:</p>
+<pre class="code ts"><code>import Reminder, { ReminderRecurrence } from "../../models/Reminder";
+
+interface Request {
+  userId: number;
+  title: string;
+  dueAt: Date;
+  notes?: string | null;
+  recurrence?: ReminderRecurrence;
+  ticketId?: number | null;
+  contactId?: number | null;
+}
+
+const CreateReminderService = async ({
+  userId,
+  title,
+  dueAt,
+  notes = null,
+  recurrence = "none",
+  ticketId = null,
+  contactId = null
+}: Request): Promise&lt;Reminder&gt; =&gt; {
+  return Reminder.create({
+    userId,
+    title,
+    dueAt,
+    notes,
+    recurrence,
+    ticketId,
+    contactId
+  });
+};
+
+export default CreateReminderService;</code></pre>
+<p><code>ListRemindersService.ts</code>:</p>
+<pre class="code ts"><code>import { Op, WhereOptions } from "sequelize";
+import Contact from "../../models/Contact";
+import Reminder from "../../models/Reminder";
+import Ticket from "../../models/Ticket";
+import User from "../../models/User";
+
+interface Request {
+  from?: string;
+  to?: string;
+}
+
+const ListRemindersService = async ({ from, to }: Request): Promise&lt;Reminder[]&gt; =&gt; {
+  const where: WhereOptions = {};
+
+  if (from || to) {
+    const dueAt: Record&lt;string, Date&gt; = {};
+    if (from) dueAt[Op.gte as unknown as string] = new Date(from);
+    if (to) dueAt[Op.lte as unknown as string] = new Date(to);
+    (where as Record&lt;string, unknown&gt;).dueAt = dueAt;
+  }
+
+  return Reminder.findAll({
+    where,
+    include: [
+      { model: User, as: "user", attributes: ["id", "name"] },
+      {
+        model: Ticket,
+        as: "ticket",
+        attributes: ["id"],
+        include: [{ model: Contact, as: "contact", attributes: ["id", "name"] }]
+      },
+      { model: Contact, as: "contact", attributes: ["id", "name"] }
+    ],
+    order: [["dueAt", "ASC"]]
+  });
+};
+
+export default ListRemindersService;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Implementar edición y borrado</strong></li>
+</ul>
+<p><code>UpdateReminderService.ts</code>:</p>
+<pre class="code ts"><code>import AppError from "../../errors/AppError";
+import Reminder, { ReminderRecurrence } from "../../models/Reminder";
+import { assertCanManageReminder, RequestingUser } from "./ReminderPermissions";
+
+interface Request {
+  title?: string;
+  notes?: string | null;
+  dueAt?: Date;
+  recurrence?: ReminderRecurrence;
+  ticketId?: number | null;
+  contactId?: number | null;
+}
+
+const UpdateReminderService = async (
+  id: number,
+  user: RequestingUser,
+  data: Request
+): Promise&lt;Reminder&gt; =&gt; {
+  const reminder = await Reminder.findByPk(id);
+
+  if (!reminder) {
+    throw new AppError("ERR_REMINDER_NOT_FOUND", 404);
+  }
+
+  assertCanManageReminder(reminder, user);
+
+  const patch: Request &amp; { notifiedAt?: Date | null } = { ...data };
+
+  if (data.dueAt) {
+    patch.notifiedAt = null;
+  }
+
+  await reminder.update(patch);
+
+  return reminder;
+};
+
+export default UpdateReminderService;</code></pre>
+<p><code>DeleteReminderService.ts</code>:</p>
+<pre class="code ts"><code>import AppError from "../../errors/AppError";
+import Reminder from "../../models/Reminder";
+import { assertCanManageReminder, RequestingUser } from "./ReminderPermissions";
+
+const DeleteReminderService = async (
+  id: number,
+  user: RequestingUser
+): Promise&lt;void&gt; =&gt; {
+  const reminder = await Reminder.findByPk(id);
+
+  if (!reminder) {
+    throw new AppError("ERR_REMINDER_NOT_FOUND", 404);
+  }
+
+  assertCanManageReminder(reminder, user);
+  await reminder.destroy();
+};
+
+export default DeleteReminderService;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Implementar completar y posponer</strong></li>
+</ul>
+<p><code>MarkReminderDoneService.ts</code>:</p>
+<pre class="code ts"><code>import AppError from "../../errors/AppError";
+import getNextReminderDueAt from "../../helpers/getNextReminderDueAt";
+import Reminder from "../../models/Reminder";
+
+interface Result {
+  reminder: Reminder;
+  nextReminder?: Reminder;
+}
+
+const MarkReminderDoneService = async (id: number): Promise&lt;Result&gt; =&gt; {
+  const reminder = await Reminder.findByPk(id);
+
+  if (!reminder) {
+    throw new AppError("ERR_REMINDER_NOT_FOUND", 404);
+  }
+
+  if (reminder.status === "done") {
+    return { reminder };
+  }
+
+  await reminder.update({ status: "done" });
+
+  const nextDueAt = getNextReminderDueAt(reminder.dueAt, reminder.recurrence);
+
+  if (!nextDueAt) {
+    return { reminder };
+  }
+
+  const nextReminder = await Reminder.create({
+    userId: reminder.userId,
+    title: reminder.title,
+    notes: reminder.notes,
+    dueAt: nextDueAt,
+    recurrence: reminder.recurrence,
+    ticketId: reminder.ticketId,
+    contactId: reminder.contactId
+  });
+
+  return { reminder, nextReminder };
+};
+
+export default MarkReminderDoneService;</code></pre>
+<p><code>SnoozeReminderService.ts</code>:</p>
+<pre class="code ts"><code>import { addMinutes } from "date-fns";
+import AppError from "../../errors/AppError";
+import Reminder from "../../models/Reminder";
+
+const ALLOWED_MINUTES = [5, 15, 60];
+
+const SnoozeReminderService = async (
+  id: number,
+  minutes: number
+): Promise&lt;Reminder&gt; =&gt; {
+  if (!ALLOWED_MINUTES.includes(Number(minutes))) {
+    throw new AppError("ERR_REMINDER_INVALID_MINUTES", 400);
+  }
+
+  const reminder = await Reminder.findByPk(id);
+
+  if (!reminder) {
+    throw new AppError("ERR_REMINDER_NOT_FOUND", 404);
+  }
+
+  await reminder.update({
+    dueAt: addMinutes(new Date(), Number(minutes)),
+    notifiedAt: null
+  });
+
+  return reminder;
+};
+
+export default SnoozeReminderService;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 7: Ejecutar los tests</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderServices.spec.ts</code></p>
+<p>Expected: 7 tests PASS.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 8: Verificar tipos</strong></li>
+</ul>
+<p>Run: <code>npx tsc --noEmit</code></p>
+<p>Expected: sin errores.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 9: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/services/ReminderService backend/src/__tests__/unit/ReminderServices.spec.ts
+git commit -m "feat(recordatorios): servicios de alta, edicion, completado y posposicion"</code></pre>
+<p>---</p>
+<h3 id="hz9t7wc">Task 5: Controlador, validación y rutas</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>backend/src/controllers/ReminderController.ts</code></li>
+<li>Modify: <code>backend/src/routes/routeRegistry.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: servicios de Task 4, <code>getIO</code>, <code>AppError</code>, <code>isAuth</code>.</li>
+<li>Produces: endpoints <code>GET/POST /reminders</code>, <code>PUT/DELETE /reminders/:id</code>, <code>PATCH /reminders/:id/status</code>, <code>POST /reminders/:id/snooze</code>; evento <code>reminderUpdate</code> con <code>{ action, reminder }</code>.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir el controlador</strong></li>
+</ul>
+<p><code>backend/src/controllers/ReminderController.ts</code>:</p>
+<pre class="code ts"><code>import { Request, Response } from "express";
+import * as Yup from "yup";
+import AppError from "../errors/AppError";
+import { getIO } from "../libs/socket";
+import Contact from "../models/Contact";
+import Reminder, { ReminderRecurrence } from "../models/Reminder";
+import Ticket from "../models/Ticket";
+import User from "../models/User";
+import CreateReminderService from "../services/ReminderService/CreateReminderService";
+import DeleteReminderService from "../services/ReminderService/DeleteReminderService";
+import ListRemindersService from "../services/ReminderService/ListRemindersService";
+import MarkReminderDoneService from "../services/ReminderService/MarkReminderDoneService";
+import SnoozeReminderService from "../services/ReminderService/SnoozeReminderService";
+import UpdateReminderService from "../services/ReminderService/UpdateReminderService";
+
+interface ReminderPayload {
+  title: string;
+  notes?: string | null;
+  dueAt: string;
+  recurrence?: ReminderRecurrence;
+  ticketId?: number | null;
+  contactId?: number | null;
+}
+
+const reminderSchema = Yup.object().shape({
+  title: Yup.string().trim().required().max(120),
+  notes: Yup.string().trim().max(150).nullable(),
+  dueAt: Yup.date().required(),
+  recurrence: Yup.string().oneOf(["none", "daily", "weekly", "monthly"]),
+  ticketId: Yup.number().integer().nullable(),
+  contactId: Yup.number().integer().nullable()
+});
+
+const serializeReminder = (reminder: Reminder) =&gt; {
+  const plain = reminder.toJSON() as any;
+
+  return {
+    id: plain.id,
+    title: plain.title,
+    notes: plain.notes,
+    dueAt: plain.dueAt,
+    status: plain.status,
+    recurrence: plain.recurrence,
+    notifiedAt: plain.notifiedAt,
+    createdAt: plain.createdAt,
+    createdBy: plain.user ? { id: plain.user.id, name: plain.user.name } : null,
+    ticket: plain.ticket
+      ? {
+          id: plain.ticket.id,
+          contactName: plain.ticket.contact?.name || null
+        }
+      : null,
+    contact: plain.contact ? { id: plain.contact.id, name: plain.contact.name } : null
+  };
+};
+
+const findReminderWithRelations = async (id: number): Promise&lt;Reminder | null&gt; =&gt;
+  Reminder.findByPk(id, {
+    include: [
+      { model: User, as: "user", attributes: ["id", "name"] },
+      {
+        model: Ticket,
+        as: "ticket",
+        attributes: ["id"],
+        include: [{ model: Contact, as: "contact", attributes: ["id", "name"] }]
+      },
+      { model: Contact, as: "contact", attributes: ["id", "name"] }
+    ]
+  });
+
+const emitReminderUpdate = (action: "create" | "update" | "delete", reminder: unknown) =&gt; {
+  try {
+    getIO().emit("reminderUpdate", { action, reminder });
+  } catch (error) {
+    console.error("[REMINDER] No se pudo emitir reminderUpdate", error);
+  }
+};
+
+export const index = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const { from, to } = req.query as { from?: string; to?: string };
+  const reminders = await ListRemindersService({ from, to });
+
+  return res.json(reminders.map(serializeReminder));
+};
+
+export const store = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const payload = req.body as ReminderPayload;
+
+  try {
+    await reminderSchema.validate(payload);
+  } catch (err) {
+    throw new AppError((err as Error).message);
+  }
+
+  const reminder = await CreateReminderService({
+    userId: Number(req.user.id),
+    title: payload.title.trim(),
+    dueAt: new Date(payload.dueAt),
+    notes: payload.notes ?? null,
+    recurrence: payload.recurrence ?? "none",
+    ticketId: payload.ticketId ?? null,
+    contactId: payload.contactId ?? null
+  });
+
+  const withRelations = await findReminderWithRelations(reminder.id);
+  const serialized = serializeReminder(withRelations || reminder);
+
+  emitReminderUpdate("create", serialized);
+
+  return res.status(200).json(serialized);
+};
+
+export const update = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const payload = req.body as ReminderPayload;
+
+  try {
+    await reminderSchema.validate(payload);
+  } catch (err) {
+    throw new AppError((err as Error).message);
+  }
+
+  await UpdateReminderService(Number(req.params.id), req.user, {
+    title: payload.title.trim(),
+    dueAt: new Date(payload.dueAt),
+    notes: payload.notes ?? null,
+    recurrence: payload.recurrence ?? "none",
+    ticketId: payload.ticketId ?? null,
+    contactId: payload.contactId ?? null
+  });
+
+  const withRelations = await findReminderWithRelations(Number(req.params.id));
+  const serialized = serializeReminder(withRelations as Reminder);
+
+  emitReminderUpdate("update", serialized);
+
+  return res.json(serialized);
+};
+
+export const markDone = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const { reminder, nextReminder } = await MarkReminderDoneService(
+    Number(req.params.id)
+  );
+
+  const serialized = serializeReminder(
+    (await findReminderWithRelations(reminder.id)) || reminder
+  );
+
+  emitReminderUpdate("update", serialized);
+
+  if (nextReminder) {
+    const serializedNext = serializeReminder(
+      (await findReminderWithRelations(nextReminder.id)) || nextReminder
+    );
+    emitReminderUpdate("create", serializedNext);
+    return res.json({ reminder: serialized, nextReminder: serializedNext });
+  }
+
+  return res.json({ reminder: serialized });
+};
+
+export const snooze = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const { minutes } = req.body as { minutes?: number };
+  const reminder = await SnoozeReminderService(
+    Number(req.params.id),
+    Number(minutes)
+  );
+
+  const serialized = serializeReminder(
+    (await findReminderWithRelations(reminder.id)) || reminder
+  );
+
+  emitReminderUpdate("update", serialized);
+
+  return res.json(serialized);
+};
+
+export const remove = async (req: Request, res: Response): Promise&lt;Response&gt; =&gt; {
+  const id = Number(req.params.id);
+
+  await DeleteReminderService(id, req.user);
+
+  emitReminderUpdate("delete", { id });
+
+  return res.status(200).json({ message: "ERR_REMINDER_DELETED" });
+};</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Registrar las rutas</strong></li>
+</ul>
+<p>En <code>backend/src/routes/routeRegistry.ts</code>:</p>
+<ol>
+<li>Agregar el import junto a los demás controladores:</li>
+</ol>
+<pre class="code ts"><code>import * as ReminderController from "../controllers/ReminderController";</code></pre>
+<ol>
+<li>Agregar este grupo dentro del array (por ejemplo, después del grupo <code>quickAnswers</code>):</li>
+</ol>
+<pre class="code ts"><code>  // reminders
+  {
+    path: "/reminders",
+    routes: [
+    { method: "get", path: "/", middlewares: [isAuth], handler: ReminderController.index },
+    { method: "post", path: "/", middlewares: [isAuth], handler: ReminderController.store },
+    { method: "put", path: "/:id", middlewares: [isAuth], handler: ReminderController.update },
+    { method: "patch", path: "/:id/status", middlewares: [isAuth], handler: ReminderController.markDone },
+    { method: "post", path: "/:id/snooze", middlewares: [isAuth], handler: ReminderController.snooze },
+    { method: "delete", path: "/:id", middlewares: [isAuth], handler: ReminderController.remove }
+    ]
+  },</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Verificar tipos y tests</strong></li>
+</ul>
+<p>Run: <code>npx tsc --noEmit</code> y <code>npx jest --runInBand src/__tests__/unit/ReminderServices.spec.ts src/__tests__/unit/ReminderScheduler.spec.ts src/__tests__/unit/ReminderRecurrence.spec.ts</code></p>
+<p>Expected: sin errores de tipos y 13 tests PASS.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/controllers/ReminderController.ts backend/src/routes/routeRegistry.ts
+git commit -m "feat(recordatorios): expone la API de recordatorios"</code></pre>
+<p>---</p>
+<h3 id="h623z79">Task 6: Arranque y apagado del scheduler</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>backend/src/server.ts</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>startReminderScheduler</code>, <code>stopReminderScheduler</code>.</li>
+<li>Produces: scheduler activo mientras corre el backend.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Integrar en <code>server.ts</code></strong></li>
+</ul>
+<p>Dejar el archivo así:</p>
+<pre class="code ts"><code>import gracefulShutdown from "http-graceful-shutdown";
+import app from "./app";
+import { initIO } from "./libs/socket";
+import { logger } from "./utils/logger";
+import { stopAllTelegramSessions } from "./libs/telegram";
+import { StartAllWhatsAppsSessions } from "./services/WbotServices/StartAllWhatsAppsSessions";
+import { StopAllWhatsAppSessions } from "./services/WbotServices/StartWhatsAppSession";
+import {
+  startReminderScheduler,
+  stopReminderScheduler
+} from "./services/ReminderService/ReminderScheduler";
+
+const server = app.listen(process.env.PORT, () =&gt; {
+  logger.info(`Servidor iniciado na porta: ${process.env.PORT}`);
+});
+
+initIO(server);
+StartAllWhatsAppsSessions();
+startReminderScheduler();
+
+// Al recibir SIGTERM/SIGINT (p. ej. `pm2 restart`), destruir los clients de
+// wwebjs para que sus browsers de Chromium se cierren antes de salir. Si se
+// dejan huérfanos, siguen conectados a WhatsApp Web con el mismo LocalAuth y
+// la instancia nueva entra en conflicto de sesión: WhatsApp mata ambos.
+gracefulShutdown(server, {
+  onShutdown: async () =&gt; {
+    logger.info("Deteniendo sesiones de WhatsApp y Telegram...");
+    stopReminderScheduler();
+    await StopAllWhatsAppSessions();
+    stopAllTelegramSessions();
+  }
+});</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Compilar</strong></li>
+</ul>
+<p>Run: <code>npx tsc --noEmit</code></p>
+<p>Expected: sin errores.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/server.ts
+git commit -m "feat(recordatorios): arranca y detiene el scheduler con el servidor"</code></pre>
+<p>---</p>
+<h3 id="hkd9kaa">Task 7: Sonido propio de alarma</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>frontend/scripts/generate-reminder-alarm.js</code></li>
+<li>Create: <code>frontend/src/assets/reminder-alarm.wav</code> (generado)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Produces: asset WAV mono 44.1 kHz con tres pitidos ascendentes, distinto de <code>sound.mp3</code>.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir el generador</strong></li>
+</ul>
+<p><code>frontend/scripts/generate-reminder-alarm.js</code>:</p>
+<pre class="code js"><code>const fs = require("fs");
+const path = require("path");
+
+const sampleRate = 44100;
+const beeps = [
+  { frequency: 880, duration: 0.22 },
+  { frequency: 1046, duration: 0.22 },
+  { frequency: 1318, duration: 0.34 }
+];
+const gap = 0.12;
+const totalSamples = Math.ceil(
+  (beeps.reduce((sum, beep) =&gt; sum + beep.duration + gap, 0) + 0.2) * sampleRate
+);
+const samples = new Int16Array(totalSamples);
+
+let offset = Math.floor(0.1 * sampleRate);
+
+beeps.forEach(({ frequency, duration }) =&gt; {
+  const length = Math.floor(duration * sampleRate);
+  for (let index = 0; index &lt; length; index += 1) {
+    const envelope = Math.min(1, index / 200, (length - index) / 400);
+    const value =
+      Math.sin((2 * Math.PI * frequency * index) / sampleRate) *
+      0.35 *
+      envelope;
+    samples[offset + index] = Math.round(value * 32767);
+  }
+  offset += length + Math.floor(gap * sampleRate);
+});
+
+const dataSize = samples.length * 2;
+const buffer = Buffer.alloc(44 + dataSize);
+
+buffer.write("RIFF", 0);
+buffer.writeUInt32LE(36 + dataSize, 4);
+buffer.write("WAVE", 8);
+buffer.write("fmt ", 12);
+buffer.writeUInt32LE(16, 16);
+buffer.writeUInt16LE(1, 20);
+buffer.writeUInt16LE(1, 22);
+buffer.writeUInt32LE(sampleRate, 24);
+buffer.writeUInt32LE(sampleRate * 2, 28);
+buffer.writeUInt16LE(2, 32);
+buffer.writeUInt16LE(16, 34);
+buffer.write("data", 36);
+buffer.writeUInt32LE(dataSize, 40);
+
+samples.forEach((sample, index) =&gt; {
+  buffer.writeInt16LE(sample, 44 + index * 2);
+});
+
+const target = path.join(__dirname, "..", "src", "assets", "reminder-alarm.wav");
+fs.writeFileSync(target, buffer);
+console.log(`Generado ${target} (${buffer.length} bytes)`);</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Generar el asset</strong></li>
+</ul>
+<p>Run: <code>node scripts/generate-reminder-alarm.js</code> (en <code>frontend/</code>)</p>
+<p>Expected: <code>Generado ...reminder-alarm.wav (XXXX bytes)</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Verificar que existe y pesa poco</strong></li>
+</ul>
+<p>Run: <code>Get-Item src/assets/reminder-alarm.wav</code></p>
+<p>Expected: archivo de unos 70-90 KB.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/scripts/generate-reminder-alarm.js frontend/src/assets/reminder-alarm.wav
+git commit -m "feat(recordatorios): agrega un sonido de alarma propio"</code></pre>
+<p>---</p>
+<h3 id="h48lxeh">Task 8: Página, modal, ruta y menú</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>frontend/src/pages/Reminders/index.js</code></li>
+<li>Create: <code>frontend/src/components/ReminderModal/index.js</code></li>
+<li>Modify: <code>frontend/src/routes/index.js</code></li>
+<li>Modify: <code>frontend/src/layout/MainListItems.js</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>api</code>, <code>openSocket</code>, <code>toastError</code>, <code>AuthContext</code>.</li>
+<li>Produces: componente <code>Reminders</code> (ruta <code>/reminders</code>) que lista, muestra la grilla del mes, abre el modal de alta/edición y refresca por socket.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir la página</strong></li>
+</ul>
+<p><code>frontend/src/pages/Reminders/index.js</code>:</p>
+<pre class="code jsx"><code>import {
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import AddIcon from "@mui/icons-material/Add";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameMonth,
+  startOfMonth,
+  startOfWeek,
+  subMonths
+} from "date-fns";
+import { es } from "date-fns/locale";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import ReminderModal from "../../components/ReminderModal";
+import { AuthContext } from "../../context/Auth/AuthContext";
+import toastError from "../../errors/toastError";
+import api from "../../services/api";
+import openSocket from "../../services/socket-io";
+
+const Grid = styled("div")(({ theme }) =&gt; ({
+  display: "grid",
+  gridTemplateColumns: "repeat(7, 1fr)",
+  borderTop: `1px solid ${theme.palette.divider}`,
+  borderLeft: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.shape.borderRadius,
+  overflow: "hidden"
+}));
+
+const DayCell = styled("button", {
+  shouldForwardProp: prop =&gt; !["outside", "selected", "hasOverdue"].includes(prop)
+})(({ theme, outside, selected, hasOverdue }) =&gt; ({
+  appearance: "none",
+  border: 0,
+  borderRight: `1px solid ${theme.palette.divider}`,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  background: selected
+    ? theme.palette.action.selected
+    : outside
+      ? theme.palette.action.hover
+      : theme.palette.background.paper,
+  color: outside ? theme.palette.text.disabled : theme.palette.text.primary,
+  minHeight: 96,
+  padding: theme.spacing(0.75),
+  textAlign: "left",
+  cursor: "pointer",
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+  font: "inherit",
+  borderLeft: hasOverdue ? `3px solid ${theme.palette.error.main}` : undefined,
+  "&amp;:hover": { backgroundColor: theme.palette.action.hover }
+}));
+
+const weekdayLabels = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+
+const toDateKey = date =&gt; format(date, "yyyy-MM-dd");
+
+const timeOf = reminder =&gt; format(new Date(reminder.dueAt), "HH:mm");
+
+const Reminders = () =&gt; {
+  const { user } = useContext(AuthContext);
+  const [month, setMonth] = useState(startOfMonth(new Date()));
+  const [reminders, setReminders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(toDateKey(new Date()));
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [permission, setPermission] = useState(
+    typeof Notification !== "undefined" ? Notification.permission : "unsupported"
+  );
+
+  const fetchReminders = useCallback(async () =&gt; {
+    setLoading(true);
+    try {
+      const from = startOfMonth(month).toISOString();
+      const to = endOfMonth(month).toISOString();
+      const { data } = await api.get("/reminders", { params: { from, to } });
+      setReminders(data);
+    } catch (err) {
+      toastError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [month]);
+
+  useEffect(() =&gt; {
+    fetchReminders();
+  }, [fetchReminders]);
+
+  useEffect(() =&gt; {
+    const socket = openSocket();
+    const handleUpdate = () =&gt; fetchReminders();
+    socket.on("reminderUpdate", handleUpdate);
+    return () =&gt; socket.off("reminderUpdate", handleUpdate);
+  }, [fetchReminders]);
+
+  const days = useMemo(() =&gt; {
+    const start = startOfWeek(startOfMonth(month), { weekStartsOn: 1 });
+    const end = endOfWeek(endOfMonth(month), { weekStartsOn: 1 });
+    return eachDayOfInterval({ start, end });
+  }, [month]);
+
+  const remindersByDay = useMemo(() =&gt; {
+    const map = new Map();
+    reminders.forEach(reminder =&gt; {
+      const key = toDateKey(new Date(reminder.dueAt));
+      const list = map.get(key) || [];
+      list.push(reminder);
+      map.set(key, list);
+    });
+    return map;
+  }, [reminders]);
+
+  const selectedReminders = remindersByDay.get(selectedDay) || [];
+  const now = new Date();
+
+  const requestPermission = () =&gt; {
+    if (typeof Notification === "undefined") {
+      toast.info("Este navegador no soporta notificaciones.");
+      return;
+    }
+    Notification.requestPermission().then(result =&gt; setPermission(result));
+  };
+
+  const handleDone = async reminderId =&gt; {
+    try {
+      await api.patch(`/reminders/${reminderId}/status`, { status: "done" });
+      fetchReminders();
+    } catch (err) {
+      toastError(err);
+    }
+  };
+
+  return (
+    &lt;Box sx={{ p: { xs: 1, md: 2 }, height: "100%", overflowY: "auto" }}&gt;
+      &lt;Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}&gt;
+        &lt;Typography variant="h5" sx={{ fontWeight: 600 }}&gt;
+          Recordatorios
+        &lt;/Typography&gt;
+        &lt;Box sx={{ flex: 1 }} /&gt;
+        {permission !== "granted" &amp;&amp; (
+          &lt;Tooltip title="Recibir avisos del sistema cuando la pestaña no está visible"&gt;
+            &lt;Button
+              size="small"
+              startIcon={&lt;NotificationsActiveIcon /&gt;}
+              onClick={requestPermission}
+              variant="outlined"
+            &gt;
+              Activar notificaciones
+            &lt;/Button&gt;
+          &lt;/Tooltip&gt;
+        )}
+        &lt;Button
+          variant="contained"
+          startIcon={&lt;AddIcon /&gt;}
+          onClick={() =&gt; {
+            setEditing(null);
+            setModalOpen(true);
+          }}
+        &gt;
+          Nuevo recordatorio
+        &lt;/Button&gt;
+      &lt;/Stack&gt;
+
+      &lt;Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", flexDirection: { xs: "column", md: "row" } }}&gt;
+        &lt;Paper variant="outlined" sx={{ flex: 2, width: "100%", p: 1.5 }}&gt;
+          &lt;Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}&gt;
+            &lt;IconButton size="small" onClick={() =&gt; setMonth(subMonths(month, 1))}&gt;
+              &lt;ChevronLeftIcon /&gt;
+            &lt;/IconButton&gt;
+            &lt;Typography variant="h6" sx={{ textTransform: "capitalize", minWidth: 180, textAlign: "center" }}&gt;
+              {format(month, "MMMM yyyy", { locale: es })}
+            &lt;/Typography&gt;
+            &lt;IconButton size="small" onClick={() =&gt; setMonth(addMonths(month, 1))}&gt;
+              &lt;ChevronRightIcon /&gt;
+            &lt;/IconButton&gt;
+            &lt;Button size="small" onClick={() =&gt; setMonth(startOfMonth(new Date()))}&gt;
+              Hoy
+            &lt;/Button&gt;
+            &lt;Box sx={{ flex: 1 }} /&gt;
+            {loading &amp;&amp; &lt;CircularProgress size={18} /&gt;}
+          &lt;/Stack&gt;
+
+          &lt;Grid&gt;
+            {weekdayLabels.map(label =&gt; (
+              &lt;Typography
+                key={label}
+                variant="caption"
+                sx={{ p: 1, fontWeight: 700, textAlign: "center", backgroundColor: "action.hover" }}
+              &gt;
+                {label}
+              &lt;/Typography&gt;
+            ))}
+            {days.map(day =&gt; {
+              const key = toDateKey(day);
+              const list = remindersByDay.get(key) || [];
+              const hasOverdue = list.some(
+                reminder =&gt; reminder.status === "pending" &amp;&amp; new Date(reminder.dueAt) &lt; now
+              );
+              return (
+                &lt;DayCell
+                  key={key}
+                  type="button"
+                  outside={!isSameMonth(day, month)}
+                  selected={key === selectedDay}
+                  hasOverdue={hasOverdue}
+                  onClick={() =&gt; setSelectedDay(key)}
+                &gt;
+                  &lt;Typography variant="caption" sx={{ fontWeight: key === toDateKey(now) ? 700 : 500 }}&gt;
+                    {format(day, "d")}
+                  &lt;/Typography&gt;
+                  {list.slice(0, 3).map(reminder =&gt; (
+                    &lt;Chip
+                      key={reminder.id}
+                      size="small"
+                      label={`${timeOf(reminder)} ${reminder.title}`}
+                      color={
+                        reminder.status === "done"
+                          ? "default"
+                          : new Date(reminder.dueAt) &lt; now
+                            ? "error"
+                            : "primary"
+                      }
+                      variant={reminder.status === "done" ? "outlined" : "filled"}
+                      onClick={event =&gt; {
+                        event.stopPropagation();
+                        setEditing(reminder);
+                        setModalOpen(true);
+                      }}
+                      sx={{ justifyContent: "flex-start", maxWidth: "100%" }}
+                    /&gt;
+                  ))}
+                  {list.length &gt; 3 &amp;&amp; (
+                    &lt;Typography variant="caption" color="text.secondary"&gt;
+                      +{list.length - 3} más
+                    &lt;/Typography&gt;
+                  )}
+                &lt;/DayCell&gt;
+              );
+            })}
+          &lt;/Grid&gt;
+        &lt;/Paper&gt;
+
+        &lt;Paper variant="outlined" sx={{ flex: 1, width: "100%", p: 2, minHeight: 240 }}&gt;
+          &lt;Typography variant="subtitle1" sx={{ fontWeight: 600, textTransform: "capitalize", mb: 1 }}&gt;
+            {format(new Date(`${selectedDay}T12:00:00`), "EEEE d 'de' MMMM", { locale: es })}
+          &lt;/Typography&gt;
+          {selectedReminders.length === 0 &amp;&amp; (
+            &lt;Typography variant="body2" color="text.secondary"&gt;
+              Sin recordatorios para este día.
+            &lt;/Typography&gt;
+          )}
+          &lt;Stack spacing={1}&gt;
+            {selectedReminders.map(reminder =&gt; {
+              const canManage =
+                Number(reminder.createdBy?.id) === Number(user?.id) ||
+                String(user?.profile || "").toLowerCase() === "admin";
+              return (
+                &lt;Paper
+                  key={reminder.id}
+                  variant="outlined"
+                  sx={{ p: 1.25, cursor: canManage ? "pointer" : "default" }}
+                  onClick={() =&gt; {
+                    if (!canManage) return;
+                    setEditing(reminder);
+                    setModalOpen(true);
+                  }}
+                &gt;
+                  &lt;Stack direction="row" alignItems="center" spacing={1}&gt;
+                    &lt;Typography variant="body2" sx={{ fontWeight: 700 }}&gt;
+                      {timeOf(reminder)}
+                    &lt;/Typography&gt;
+                    &lt;Typography
+                      variant="body2"
+                      sx={{
+                        flex: 1,
+                        textDecoration: reminder.status === "done" ? "line-through" : "none"
+                      }}
+                    &gt;
+                      {reminder.title}
+                    &lt;/Typography&gt;
+                    {reminder.status === "pending" &amp;&amp; (
+                      &lt;Tooltip title="Marcar como listo"&gt;
+                        &lt;IconButton
+                          size="small"
+                          onClick={event =&gt; {
+                            event.stopPropagation();
+                            handleDone(reminder.id);
+                          }}
+                        &gt;
+                          &lt;CheckCircleOutlineIcon fontSize="small" /&gt;
+                        &lt;/IconButton&gt;
+                      &lt;/Tooltip&gt;
+                    )}
+                  &lt;/Stack&gt;
+                  &lt;Typography variant="caption" color="text.secondary"&gt;
+                    {reminder.createdBy?.name || "—"}
+                    {reminder.ticket ? ` · Ticket #${reminder.ticket.id}` : ""}
+                    {reminder.contact ? ` · ${reminder.contact.name}` : ""}
+                    {reminder.recurrence !== "none" ? ` · Repite ${reminder.recurrence}` : ""}
+                  &lt;/Typography&gt;
+                  {reminder.notes &amp;&amp; (
+                    &lt;Typography variant="caption" display="block" color="text.secondary"&gt;
+                      {reminder.notes}
+                    &lt;/Typography&gt;
+                  )}
+                &lt;/Paper&gt;
+              );
+            })}
+          &lt;/Stack&gt;
+        &lt;/Paper&gt;
+      &lt;/Box&gt;
+
+      &lt;ReminderModal
+        open={modalOpen}
+        reminder={editing}
+        defaultDate={selectedDay}
+        onClose={() =&gt; setModalOpen(false)}
+        onSaved={() =&gt; {
+          setModalOpen(false);
+          fetchReminders();
+        }}
+      /&gt;
+    &lt;/Box&gt;
+  );
+};
+
+export default Reminders;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Escribir el modal</strong></li>
+</ul>
+<p><code>frontend/src/components/ReminderModal/index.js</code>:</p>
+<pre class="code jsx"><code>import {
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  MenuItem,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography
+} from "@mui/material";
+import { format } from "date-fns";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { AuthContext } from "../../context/Auth/AuthContext";
+import toastError from "../../errors/toastError";
+import api from "../../services/api";
+
+const emptyForm = defaultDate =&gt; ({
+  title: "",
+  date: defaultDate || format(new Date(), "yyyy-MM-dd"),
+  time: "09:00",
+  recurrence: "none",
+  notes: "",
+  ticketId: null,
+  contactId: null
+});
+
+const toForm = reminder =&gt; {
+  const dueAt = new Date(reminder.dueAt);
+  return {
+    title: reminder.title,
+    date: format(dueAt, "yyyy-MM-dd"),
+    time: format(dueAt, "HH:mm"),
+    recurrence: reminder.recurrence,
+    notes: reminder.notes || "",
+    ticketId: reminder.ticket?.id || null,
+    contactId: reminder.contact?.id || null
+  };
+};
+
+const ReminderModal = ({ open, reminder, defaultDate, onClose, onSaved }) =&gt; {
+  const { user } = useContext(AuthContext);
+  const [form, setForm] = useState(emptyForm(defaultDate));
+  const [linkTab, setLinkTab] = useState("ticket");
+  const [search, setSearch] = useState("");
+  const [options, setOptions] = useState([]);
+  const [selectedLink, setSelectedLink] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const canManage = useMemo(() =&gt; {
+    if (!reminder) return true;
+    return (
+      Number(reminder.createdBy?.id) === Number(user?.id) ||
+      String(user?.profile || "").toLowerCase() === "admin"
+    );
+  }, [reminder, user]);
+
+  useEffect(() =&gt; {
+    if (!open) return;
+    setForm(reminder ? toForm(reminder) : emptyForm(defaultDate));
+    setSearch("");
+    setOptions([]);
+    setSelectedLink(
+      reminder?.ticket
+        ? { type: "ticket", id: reminder.ticket.id, label: `Ticket #${reminder.ticket.id} — ${reminder.ticket.contactName || ""}` }
+        : reminder?.contact
+          ? { type: "contact", id: reminder.contact.id, label: reminder.contact.name }
+          : null
+    );
+    setLinkTab(reminder?.contact &amp;&amp; !reminder?.ticket ? "contact" : "ticket");
+  }, [open, reminder, defaultDate]);
+
+  useEffect(() =&gt; {
+    if (!open || search.trim().length &lt; 2) {
+      setOptions([]);
+      return undefined;
+    }
+
+    const timeout = setTimeout(async () =&gt; {
+      try {
+        if (linkTab === "ticket") {
+          const { data } = await api.get("/tickets", {
+            params: { searchParam: search.trim(), pageNumber: 1 }
+          });
+          setOptions(
+            (data.tickets || []).map(ticket =&gt; ({
+              type: "ticket",
+              id: ticket.id,
+              label: `Ticket #${ticket.id} — ${ticket.contact?.name || ""}`
+            }))
+          );
+        } else {
+          const { data } = await api.get("/contacts", {
+            params: { searchParam: search.trim(), pageNumber: 1 }
+          });
+          setOptions(
+            (data.contacts || []).map(contact =&gt; ({
+              type: "contact",
+              id: contact.id,
+              label: contact.name
+            }))
+          );
+        }
+      } catch (err) {
+        setOptions([]);
+      }
+    }, 400);
+
+    return () =&gt; clearTimeout(timeout);
+  }, [open, search, linkTab]);
+
+  const handleSave = async () =&gt; {
+    const dueAt = new Date(`${form.date}T${form.time}:00`);
+    if (!form.title.trim() || Number.isNaN(dueAt.getTime())) return;
+
+    setSaving(true);
+    try {
+      const payload = {
+        title: form.title.trim(),
+        notes: form.notes.trim() || null,
+        dueAt: dueAt.toISOString(),
+        recurrence: form.recurrence,
+        ticketId: selectedLink?.type === "ticket" ? selectedLink.id : null,
+        contactId: selectedLink?.type === "contact" ? selectedLink.id : null
+      };
+
+      if (reminder) {
+        await api.put(`/reminders/${reminder.id}`, payload);
+      } else {
+        await api.post("/reminders", payload);
+      }
+
+      onSaved();
+    } catch (err) {
+      toastError(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () =&gt; {
+    if (!reminder) return;
+    // eslint-disable-next-line no-alert
+    if (!window.confirm("¿Eliminar este recordatorio?")) return;
+
+    try {
+      await api.delete(`/reminders/${reminder.id}`);
+      onSaved();
+    } catch (err) {
+      toastError(err);
+    }
+  };
+
+  return (
+    &lt;Dialog open={open} onClose={onClose} fullWidth maxWidth="sm"&gt;
+      &lt;DialogTitle&gt;{reminder ? "Editar recordatorio" : "Nuevo recordatorio"}&lt;/DialogTitle&gt;
+      &lt;DialogContent dividers&gt;
+        &lt;Stack spacing={2} sx={{ mt: 0.5 }}&gt;
+          &lt;TextField
+            label="Título"
+            value={form.title}
+            onChange={event =&gt; setForm({ ...form, title: event.target.value })}
+            inputProps={{ maxLength: 120 }}
+            autoFocus
+            fullWidth
+          /&gt;
+          &lt;Stack direction={{ xs: "column", sm: "row" }} spacing={2}&gt;
+            &lt;TextField
+              label="Fecha"
+              type="date"
+              value={form.date}
+              onChange={event =&gt; setForm({ ...form, date: event.target.value })}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+            /&gt;
+            &lt;TextField
+              label="Hora"
+              type="time"
+              value={form.time}
+              onChange={event =&gt; setForm({ ...form, time: event.target.value })}
+              InputLabelProps={{ shrink: true }}
+              fullWidth
+            /&gt;
+            &lt;TextField
+              select
+              label="Repetir"
+              value={form.recurrence}
+              onChange={event =&gt; setForm({ ...form, recurrence: event.target.value })}
+              fullWidth
+            &gt;
+              &lt;MenuItem value="none"&gt;Nunca&lt;/MenuItem&gt;
+              &lt;MenuItem value="daily"&gt;Todos los días&lt;/MenuItem&gt;
+              &lt;MenuItem value="weekly"&gt;Todas las semanas&lt;/MenuItem&gt;
+              &lt;MenuItem value="monthly"&gt;Todos los meses&lt;/MenuItem&gt;
+            &lt;/TextField&gt;
+          &lt;/Stack&gt;
+
+          &lt;Tabs value={linkTab} onChange={(event, value) =&gt; setLinkTab(value)}&gt;
+            &lt;Tab value="ticket" label="Ticket" /&gt;
+            &lt;Tab value="contact" label="Contacto" /&gt;
+          &lt;/Tabs&gt;
+          &lt;Autocomplete
+            options={options}
+            value={selectedLink}
+            inputValue={search}
+            onInputChange={(event, value) =&gt; setSearch(value)}
+            onChange={(event, value) =&gt; {
+              setSelectedLink(value);
+              setForm({
+                ...form,
+                ticketId: value?.type === "ticket" ? value.id : null,
+                contactId: value?.type === "contact" ? value.id : null
+              });
+            }}
+            getOptionLabel={option =&gt; option.label || ""}
+            isOptionEqualToValue={(option, value) =&gt; option.type === value.type &amp;&amp; option.id === value.id}
+            renderInput={params =&gt; (
+              &lt;TextField {...params} label="Vincular (opcional)" placeholder="Buscar..." /&gt;
+            )}
+            noOptionsText={search.trim().length &lt; 2 ? "Escribí al menos 2 letras" : "Sin resultados"}
+          /&gt;
+
+          &lt;TextField
+            label="Comentario (opcional)"
+            value={form.notes}
+            onChange={event =&gt; setForm({ ...form, notes: event.target.value })}
+            inputProps={{ maxLength: 150 }}
+            helperText={`${form.notes.length}/150`}
+            multiline
+            minRows={2}
+            fullWidth
+          /&gt;
+        &lt;/Stack&gt;
+      &lt;/DialogContent&gt;
+      &lt;DialogActions&gt;
+        {reminder &amp;&amp; canManage &amp;&amp; (
+          &lt;Button color="error" onClick={handleDelete}&gt;
+            Eliminar
+          &lt;/Button&gt;
+        )}
+        &lt;Typography sx={{ flex: 1 }} /&gt;
+        &lt;Button onClick={onClose}&gt;Cancelar&lt;/Button&gt;
+        &lt;Button
+          variant="contained"
+          onClick={handleSave}
+          disabled={saving || !canManage || !form.title.trim()}
+        &gt;
+          Guardar
+        &lt;/Button&gt;
+      &lt;/DialogActions&gt;
+    &lt;/Dialog&gt;
+  );
+};
+
+export default ReminderModal;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Agregar la ruta</strong></li>
+</ul>
+<p>En <code>frontend/src/routes/index.js</code>:</p>
+<ol>
+<li>Import: <code>import Reminders from "../pages/Reminders";</code></li>
+<li>Dentro del bloque de rutas privadas, junto a <code>contacts</code>:</li>
+</ol>
+<pre class="code jsx"><code>&lt;Route path="reminders" element={&lt;Reminders /&gt;} /&gt;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Agregar el ítem de menú</strong></li>
+</ul>
+<p>En <code>frontend/src/layout/MainListItems.js</code>:</p>
+<ol>
+<li>Import del ícono (junto a los demás de <code>@mui/icons-material</code>):</li>
+</ol>
+<pre class="code js"><code>import EventNoteOutlined from "@mui/icons-material/EventNoteOutlined";</code></pre>
+<ol>
+<li>Después del ítem de Contactos (<code>&lt;/ListItemLinkWithDropdown&gt;</code>), agregar:</li>
+</ol>
+<pre class="code jsx"><code>      &lt;ListItemLink
+        to="/reminders"
+        primary={t("mainDrawer.listItems.reminders", { defaultValue: "Recordatorios" })}
+        icon={&lt;EventNoteOutlined /&gt;}
+        active={location.pathname === "/reminders"}
+        drawerClose={drawerClose}
+      /&gt;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Verificar el build</strong></li>
+</ul>
+<p>Run: <code>npm run build</code> (en <code>frontend/</code>)</p>
+<p>Expected: compila sin errores nuevos.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/src/pages/Reminders/index.js frontend/src/components/ReminderModal/index.js frontend/src/routes/index.js frontend/src/layout/MainListItems.js
+git commit -m "feat(recordatorios): agrega pagina, modal, ruta y menu de recordatorios"</code></pre>
+<p>---</p>
+<h3 id="h2yo21i">Task 9: Alarma global con notificación del navegador</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Create: <code>frontend/src/components/ReminderAlarm/index.js</code></li>
+<li>Modify: <code>frontend/src/layout/index.js</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: socket <code>reminder</code>, <code>alarmSound</code>, <code>api</code>, <code>AuthContext</code>.</li>
+<li>Produces: <code>&lt;ReminderAlarm /&gt;</code> montado en el layout.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Escribir el componente</strong></li>
+</ul>
+<p><code>frontend/src/components/ReminderAlarm/index.js</code>:</p>
+<pre class="code jsx"><code>import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Typography
+} from "@mui/material";
+import { format } from "date-fns";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useSound from "use-sound";
+import alarmSound from "../../assets/reminder-alarm.wav";
+import api from "../../services/api";
+import openSocket from "../../services/socket-io";
+
+const ReminderAlarm = () =&gt; {
+  const navigate = useNavigate();
+  const [queue, setQueue] = useState([]);
+  const [play] = useSound(alarmSound, { volume: 0.8 });
+  const playRef = useRef(play);
+  const current = queue[0];
+
+  useEffect(() =&gt; {
+    playRef.current = play;
+  }, [play]);
+
+  useEffect(() =&gt; {
+    const socket = openSocket();
+
+    const handleReminder = reminder =&gt; {
+      if (!reminder || reminder.status === "done") return;
+
+      setQueue(previous =&gt; {
+        if (previous.some(item =&gt; item.id === reminder.id)) return previous;
+        return [...previous, reminder];
+      });
+
+      try {
+        playRef.current();
+      } catch (error) {
+        console.error("No se pudo reproducir la alarma", error);
+      }
+
+      if (
+        typeof Notification !== "undefined" &amp;&amp;
+        Notification.permission === "granted" &amp;&amp;
+        document.hidden
+      ) {
+        try {
+          const notification = new Notification("Recordatorio", {
+            body: `${format(new Date(reminder.dueAt), "HH:mm")} — ${reminder.title}`,
+            tag: `reminder-${reminder.id}`,
+            renotify: true
+          });
+          notification.onclick = event =&gt; {
+            event.preventDefault();
+            window.focus();
+            if (reminder.ticketId) {
+              navigate(`/tickets/${reminder.ticketId}`);
+            } else if (reminder.contactId) {
+              navigate("/contacts");
+            }
+          };
+        } catch (error) {
+          console.error("No se pudo mostrar la notificación", error);
+        }
+      }
+    };
+
+    socket.on("reminder", handleReminder);
+    return () =&gt; socket.off("reminder", handleReminder);
+  }, [navigate]);
+
+  const removeCurrent = () =&gt; setQueue(previous =&gt; previous.slice(1));
+
+  const openLink = () =&gt; {
+    if (current?.ticketId) {
+      navigate(`/tickets/${current.ticketId}`);
+    } else if (current?.contactId) {
+      navigate("/contacts");
+    }
+    removeCurrent();
+  };
+
+  const markDone = async () =&gt; {
+    try {
+      if (current?.id) {
+        await api.patch(`/reminders/${current.id}/status`, { status: "done" });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      removeCurrent();
+    }
+  };
+
+  const snooze = async minutes =&gt; {
+    try {
+      if (current?.id) {
+        await api.post(`/reminders/${current.id}/snooze`, { minutes });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      removeCurrent();
+    }
+  };
+
+  if (!current) return null;
+
+  return (
+    &lt;Dialog open onClose={() =&gt; {}} maxWidth="xs" fullWidth&gt;
+      &lt;DialogTitle&gt;Recordatorio&lt;/DialogTitle&gt;
+      &lt;DialogContent dividers&gt;
+        &lt;Stack spacing={1}&gt;
+          &lt;Typography variant="h6"&gt;{current.title}&lt;/Typography&gt;
+          &lt;Typography variant="body2" color="text.secondary"&gt;
+            {format(new Date(current.dueAt), "dd/MM/yyyy HH:mm")}
+          &lt;/Typography&gt;
+          {current.notes &amp;&amp; &lt;Typography variant="body2"&gt;{current.notes}&lt;/Typography&gt;}
+          {current.ticketId &amp;&amp; (
+            &lt;Typography variant="caption" color="text.secondary"&gt;
+              Ticket #{current.ticketId}
+            &lt;/Typography&gt;
+          )}
+        &lt;/Stack&gt;
+      &lt;/DialogContent&gt;
+      &lt;DialogActions sx={{ flexWrap: "wrap", gap: 1 }}&gt;
+        {(current.ticketId || current.contactId) &amp;&amp; (
+          &lt;Button onClick={openLink}&gt;Abrir&lt;/Button&gt;
+        )}
+        &lt;Button onClick={() =&gt; snooze(5)}&gt;5 min&lt;/Button&gt;
+        &lt;Button onClick={() =&gt; snooze(15)}&gt;15 min&lt;/Button&gt;
+        &lt;Button onClick={() =&gt; snooze(60)}&gt;60 min&lt;/Button&gt;
+        &lt;Button variant="contained" onClick={markDone}&gt;
+          Listo
+        &lt;/Button&gt;
+      &lt;/DialogActions&gt;
+    &lt;/Dialog&gt;
+  );
+};
+
+export default ReminderAlarm;</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Montarlo en el layout</strong></li>
+</ul>
+<p>En <code>frontend/src/layout/index.js</code>:</p>
+<ol>
+<li>Import: <code>import ReminderAlarm from "../components/ReminderAlarm";</code></li>
+<li>En el árbol, junto a <code>{user?.id &amp;&amp; &lt;NotificationsPopOver /&gt;}</code>, agregar:</li>
+</ol>
+<pre class="code jsx"><code>{user?.id &amp;&amp; &lt;ReminderAlarm /&gt;}</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Compilar</strong></li>
+</ul>
+<p>Run: <code>npm run build</code> (en <code>frontend/</code>)</p>
+<p>Expected: compila sin errores.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/src/components/ReminderAlarm/index.js frontend/src/layout/index.js
+git commit -m "feat(recordatorios): alarma global con sonido y notificacion del navegador"</code></pre>
+<p>---</p>
+<h3 id="hdxr53x">Task 10: Verificación y despliegue</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>docs/superpowers/specs/2026-10-21-recordatorios-design.md</code> (solo si cambió algo durante la implementación)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: todo lo anterior.</li>
+<li>Produces: feature en producción con migración aplicada.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Correr los tests del backend</strong></li>
+</ul>
+<p>Run: <code>npx jest --runInBand src/__tests__/unit/ReminderRecurrence.spec.ts src/__tests__/unit/ReminderScheduler.spec.ts src/__tests__/unit/ReminderServices.spec.ts</code> (en <code>backend/</code>)</p>
+<p>Expected: 13 tests PASS.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Compilar backend y frontend</strong></li>
+</ul>
+<p>Run: <code>npx tsc --noEmit</code> (en <code>backend/</code>) y <code>npm run build</code> (en <code>frontend/</code>)</p>
+<p>Expected: sin errores nuevos.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Probar en local con el panel</strong></li>
+</ul>
+<p>Checklist manual:</p>
+<ol>
+<li>Crear un recordatorio suelto para dentro de 2 minutos → a la hora suena la alarma con el sonido nuevo y el diálogo.</li>
+<li>Posponer 5 min → no suena de inmediato y vuelve a sonar a los 5 min.</li>
+<li>Crear uno con ticket y otro con contacto → "Abrir" navega a <code>/tickets/:id</code> y <code>/contacts</code>.</li>
+<li>Crear uno semanal, esperar la hora, "Listo" → aparece la ocurrencia de la semana siguiente en la agenda.</li>
+<li>Con otra cuenta: ver el recordatorio, completarlo y posponerlo; intentar editarlo → no debe poder (403 en el toast).</li>
+<li>Cerrar la pestaña y vencer otro recordatorio → al volver, se ve en la agenda como vencido (color de error) sin sonar.</li>
+</ol>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Commit final (si hubo ajustes)</strong></li>
+</ul>
+<pre class="code bash"><code>git add -A
+git commit -m "chore(recordatorios): ajustes de verificacion"</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Deploy</strong></li>
+</ul>
+<pre class="code bash"><code>git push origin main</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Verificar en producción</strong></li>
+</ul>
+<p>En Prometheus:</p>
+<pre class="code bash"><code>cd /home/deploy/Press-Ticket
+git log --oneline -1
+pm2 logs itn-backend --lines 40 --nostream | grep -i reminder
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/</code></pre>
+<p>Expected: commit nuevo, log <code>[REMINDER] Scheduler de recordatorios activo</code>, panel 200, y la migración aplicada sin errores (visible en el log del deploy).</p>
+</main>
+</body>
+</html>

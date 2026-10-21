@@ -122,7 +122,8 @@ con la ocurrencia creada.
 - Un mismo recordatorio se emite una sola vez aunque haya varias pestañas. Todas
   las pestañas que lo reciban suenan.
 - El aviso puede llegar hasta 30 segundos tarde; es aceptable.
-- `snooze` suma minutos y pone `notifiedAt = null`, por lo que vuelve a sonar.
+- `snooze` reprograma desde el momento del clic (ahora + minutos) y pone
+  `notifiedAt = null`, por lo que vuelve a sonar.
 - CRUD y cambios de estado emiten `reminderUpdate` a todos con
   `{ action: "create" | "update" | "delete", reminder }` para refrescar la agenda
   sin recargar.

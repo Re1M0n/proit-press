@@ -216,7 +216,7 @@
     <li>Para cada fila: guarda <code>notifiedAt = now</code> y emite <code>reminder</code> a <strong>todos</strong> los sockets conectados (<code>io.emit</code>), con el recordatorio serializado.</li>
     <li>Un mismo recordatorio se emite una sola vez aunque haya varias pestañas. Todas las pestañas que lo reciban suenan.</li>
     <li>El aviso puede llegar hasta 30 segundos tarde; es aceptable.</li>
-    <li><code>snooze</code> suma minutos y pone <code>notifiedAt = null</code>, por lo que vuelve a sonar.</li>
+    <li><code>snooze</code> reprograma desde el momento del clic (ahora + minutos) y pone <code>notifiedAt = null</code>, por lo que vuelve a sonar.</li>
     <li>CRUD y cambios de estado emiten <code>reminderUpdate</code> a todos con <code>{ action, reminder }</code> para refrescar la agenda sin recargar.</li>
     <li>Los recordatorios vencidos que se cargan por HTTP (panel recién abierto) se muestran como vencidos y <strong>no</strong> suenan.</li>
   </ul>
