@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recordatorios compartidos con agenda y alarma — Press-Ticket</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --paper: #ffffff;
+    --ink: #1b1f24;
+    --muted: #5b6470;
+    --line: #e3e7ec;
+    --accent: #0f766e;
+    --accent-soft: #e6f4f1;
+    --warn: #9a3412;
+    --warn-soft: #fff3e8;
+    --code-bg: #f2f4f7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  main {
+    max-width: 900px;
+    margin: 40px auto 80px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 48px 56px;
+    box-shadow: 0 8px 30px rgba(16, 24, 40, .06);
+  }
+  header.doc { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 32px; }
+  h1 { font-size: 30px; line-height: 1.25; margin: 0 0 12px; letter-spacing: -.4px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); font-weight: 600;
+  }
+  .chip.neutral { background: #eef1f5; color: var(--muted); }
+  h2 {
+    font-size: 21px; margin: 44px 0 12px; padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  h2:first-of-type { border-top: 0; }
+  h3 { font-size: 17px; margin: 28px 0 8px; }
+  p, li { color: #242a31; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 9px 12px; border: 1px solid var(--line); vertical-align: top; }
+  th { background: #f7f9fb; font-weight: 600; }
+  code {
+    font-family: "Cascadia Code", Consolas, monospace; font-size: 13.5px;
+    background: var(--code-bg); padding: 1px 5px; border-radius: 4px;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; }
+  .toc {
+    background: #fbfcfd; border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 20px; margin: 0 0 12px;
+  }
+  .toc strong { display: block; margin-bottom: 6px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .note {
+    border-left: 4px solid var(--accent); background: var(--accent-soft);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0;
+  }
+  .warn {
+    border-left: 4px solid var(--warn); background: var(--warn-soft);
+    padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0;
+  }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) {
+    main { margin: 0; border-radius: 0; border: 0; padding: 28px 20px; }
+    .cols { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; }
+    main { margin: 0; border: 0; box-shadow: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="doc">
+    <h1>Recordatorios compartidos con agenda y alarma</h1>
+    <div class="meta">
+      <span class="chip">Diseño aprobado</span>
+      <span class="chip neutral">2026-10-21</span>
+      <span class="chip neutral">proit-press / Press-Ticket</span>
+      <span class="chip neutral">Web</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <strong>Contenido</strong>
+    <ol>
+      <li><a href="#contexto">Contexto</a></li>
+      <li><a href="#objetivos">Objetivos</a></li>
+      <li><a href="#fuera">Fuera de alcance</a></li>
+      <li><a href="#datos">Modelo de datos</a></li>
+      <li><a href="#permisos">Permisos</a></li>
+      <li><a href="#recurrencia">Recurrencia</a></li>
+      <li><a href="#api">API</a></li>
+      <li><a href="#scheduler">Scheduler y eventos</a></li>
+      <li><a href="#frontend">Frontend</a></li>
+      <li><a href="#errores">Manejo de errores</a></li>
+      <li><a href="#pruebas">Pruebas</a></li>
+      <li><a href="#despliegue">Despliegue</a></li>
+      <li><a href="#riesgos">Riesgos</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="contexto">Contexto</h2>
+  <p>El panel no tiene forma de agendar tareas a futuro. Los usuarios necesitan recordar acciones ligadas a un ticket, a un contacto o sin vínculo (por ejemplo, «llamar al cliente a las 15:00»), y que el aviso llegue a tiempo a todo el equipo, no solo a quien lo creó: si el creador está ocupado, cualquiera puede tomar la tarea.</p>
+  <p>El backend ya tiene Socket.IO con un room por usuario, un servicio de push móvil (Firebase, sin configurar en producción) y el frontend usa <code>use-sound</code> para el sonido de tickets. No hay scheduler ni librería de cron en el backend.</p>
+
+  <h2 id="objetivos">Objetivos</h2>
+  <ol>
+    <li>Crear, editar, completar y posponer recordatorios con fecha y hora.</li>
+    <li>Repetición opcional diaria, semanal o mensual, o sin repetición.</li>
+    <li>Vincular el recordatorio a un ticket, a un contacto o a ninguno.</li>
+    <li>Que <strong>todos los usuarios</strong> vean todos los recordatorios y cualquiera pueda completarlos o posponerlos.</li>
+    <li>Agenda mensual estilo Google Calendar con panel del día.</li>
+    <li>Alarma sonora y popup en el panel, más notificación del navegador, con sonido distinto al de tickets.</li>
+    <li>Mostrar los recordatorios vencidos en la agenda sin sonido.</li>
+  </ol>
+
+  <h2 id="fuera">Fuera de alcance</h2>
+  <ul>
+    <li>Push móvil y cualquier dependencia de la app Android.</li>
+    <li>Avisos por email o por WhatsApp.</li>
+    <li>Repetición por días de semana personalizados o rangos de fin.</li>
+    <li>Notas largas, prioridades, etiquetas o adjuntos.</li>
+    <li>Calendario compartido con Google/Outlook.</li>
+    <li>Edición o borrado por usuarios que no sean el creador o un admin.</li>
+  </ul>
+
+  <h2 id="datos">Modelo de datos</h2>
+  <p>Tabla <code>Reminders</code>:</p>
+  <table>
+    <thead><tr><th>Campo</th><th>Tipo</th><th>Reglas</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>integer PK</td><td>autoincremental</td></tr>
+      <tr><td><code>userId</code></td><td>integer FK <code>Users</code></td><td>creador; <code>onDelete: CASCADE</code></td></tr>
+      <tr><td><code>title</code></td><td>varchar(120)</td><td>obligatorio, no vacío</td></tr>
+      <tr><td><code>notes</code></td><td>varchar(150)</td><td>opcional</td></tr>
+      <tr><td><code>dueAt</code></td><td>datetime</td><td>obligatorio, se guarda en UTC</td></tr>
+      <tr><td><code>status</code></td><td>enum <code>pending</code>, <code>done</code></td><td>default <code>pending</code></td></tr>
+      <tr><td><code>recurrence</code></td><td>enum <code>none</code>, <code>daily</code>, <code>weekly</code>, <code>monthly</code></td><td>default <code>none</code></td></tr>
+      <tr><td><code>ticketId</code></td><td>integer FK <code>Tickets</code></td><td>opcional, <code>onDelete: SET NULL</code></td></tr>
+      <tr><td><code>contactId</code></td><td>integer FK <code>Contacts</code></td><td>opcional, <code>onDelete: SET NULL</code></td></tr>
+      <tr><td><code>notifiedAt</code></td><td>datetime</td><td>null hasta que el scheduler avisa</td></tr>
+      <tr><td><code>createdAt</code>, <code>updatedAt</code></td><td>datetime</td><td>Sequelize</td></tr>
+    </tbody>
+  </table>
+  <p>Índices: <code>(status, dueAt)</code> para el scheduler y <code>(dueAt)</code> para el rango mensual.</p>
+
+  <h2 id="permisos">Permisos</h2>
+  <ul>
+    <li><strong>Ver:</strong> todos los usuarios autenticados ven todos los recordatorios.</li>
+    <li><strong>Completar y posponer:</strong> cualquier usuario autenticado.</li>
+    <li><strong>Crear:</strong> cualquier usuario autenticado; queda como creador.</li>
+    <li><strong>Editar y eliminar:</strong> solo el creador o un usuario con perfil <code>admin</code> (comparación sin distinguir mayúsculas).</li>
+  </ul>
+
+  <h2 id="recurrencia">Recurrencia</h2>
+  <ul>
+    <li>Completar un recordatorio con repetición distinta de <code>none</code> crea una nueva ocurrencia <code>pending</code> con el mismo creador, título, notas, vínculo y repetición.</li>
+    <li>La siguiente fecha se calcula desde el <code>dueAt</code> vigente al completar: <code>+1 día</code>, <code>+7 días</code> o <code>+1 mes</code> con <code>date-fns</code> (<code>addMonths</code> recorta fin de mes: 31/01 → 28/02).</li>
+    <li>Si se pospuso y luego se completa, la siguiente ocurrencia parte de la fecha pospuesta (puede haber un corrimiento menor; se acepta).</li>
+    <li>Las ocurrencias no tienen fin: se crean de a una al completar, nunca por lote.</li>
+  </ul>
+
+  <h2 id="api">API</h2>
+  <p>Router <code>/reminders</code>, todas las rutas autenticadas:</p>
+  <table>
+    <thead><tr><th>Método</th><th>Ruta</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td><code>/reminders?from&amp;to</code></td><td>lista en rango ISO; incluye creador, ticket y contacto resumidos</td></tr>
+      <tr><td>POST</td><td><code>/reminders</code></td><td>crea (<code>title</code>, <code>dueAt</code>, <code>notes?</code>, <code>recurrence?</code>, <code>ticketId?</code>, <code>contactId?</code>)</td></tr>
+      <tr><td>PUT</td><td><code>/reminders/:id</code></td><td>edita campos; solo creador o admin</td></tr>
+      <tr><td>PATCH</td><td><code>/reminders/:id/status</code></td><td><code>{ "status": "done" }</code>; cualquier usuario</td></tr>
+      <tr><td>POST</td><td><code>/reminders/:id/snooze</code></td><td><code>{ "minutes": 5 | 15 | 60 }</code>; cualquier usuario</td></tr>
+      <tr><td>DELETE</td><td><code>/reminders/:id</code></td><td>solo creador o admin</td></tr>
+    </tbody>
+  </table>
+  <p>Respuesta de un recordatorio:</p>
+  <pre><code>{
+  "id": 12,
+  "title": "Llamar a Marcelo",
+  "notes": "Presupuesto de octubre",
+  "dueAt": "2026-10-21T18:00:00.000Z",
+  "status": "pending",
+  "recurrence": "weekly",
+  "notifiedAt": null,
+  "createdBy": { "id": 3, "name": "Rei" },
+  "ticket": { "id": 2058, "contactName": "Marcelo" },
+  "contact": null
+}</code></pre>
+  <p><code>status: done</code> sobre una ocurrencia recurrente devuelve además <code>nextReminder</code> con la ocurrencia creada.</p>
+
+  <h2 id="scheduler">Scheduler y eventos</h2>
+  <ul>
+    <li><code>ReminderScheduler</code> inicia en <code>server.ts</code> después de <code>initIO()</code> y corre cada 30 segundos.</li>
+    <li>Consulta <code>status = pending AND dueAt &lt;= now AND notifiedAt IS NULL</code>.</li>
+    <li>Para cada fila: guarda <code>notifiedAt = now</code> y emite <code>reminder</code> a <strong>todos</strong> los sockets conectados (<code>io.emit</code>), con el recordatorio serializado.</li>
+    <li>Un mismo recordatorio se emite una sola vez aunque haya varias pestañas. Todas las pestañas que lo reciban suenan.</li>
+    <li>El aviso puede llegar hasta 30 segundos tarde; es aceptable.</li>
+    <li><code>snooze</code> suma minutos y pone <code>notifiedAt = null</code>, por lo que vuelve a sonar.</li>
+    <li>CRUD y cambios de estado emiten <code>reminderUpdate</code> a todos con <code>{ action, reminder }</code> para refrescar la agenda sin recargar.</li>
+    <li>Los recordatorios vencidos que se cargan por HTTP (panel recién abierto) se muestran como vencidos y <strong>no</strong> suenan.</li>
+  </ul>
+
+  <h2 id="frontend">Frontend</h2>
+  <ul>
+    <li>Ruta <code>/reminders</code> y entrada <strong>Recordatorios</strong> en la sección General del menú, visible para todos los perfiles.</li>
+    <li>Grilla mensual de 7 columnas (lunes a domingo), navegación <code>‹ mes ›</code> y botón <strong>Hoy</strong>. Cada día muestra hasta 3 chips <code>HH:mm título</code> y <code>+N más</code>; los vencidos pendientes se distinguen con color de error. Clic en un día abre el panel derecho con la lista de ese día; clic en un chip abre la edición. En pantallas angostas la lista va debajo de la grilla.</li>
+    <li>Modal crear/editar: título, fecha (<code>DatePicker</code>), hora, repetición, vínculo opcional con pestañas <strong>Ticket</strong> / <strong>Contacto</strong> (buscador), comentario con contador de 150 y botones Guardar / Eliminar según permisos.</li>
+    <li>Alarma global en el layout: escucha <code>reminder</code>, reproduce un sonido propio de alarma (asset distinto de <code>sound.mp3</code>) y abre un diálogo con título, hora, vínculo y acciones <strong>Abrir</strong>, <strong>Posponer</strong> (5/15/60 min) y <strong>Listo</strong>.</li>
+    <li><strong>Abrir</strong> navega a <code>/tickets/:id</code> si tiene ticket; si solo tiene contacto va a <code>/contacts</code>; si no tiene vínculo, solo cierra el diálogo.</li>
+    <li>Volver a <code>pending</code> un recordatorio completado no está permitido: <code>done</code> es final para esa ocurrencia. Si se completó por error, se crea uno nuevo.</li>
+    <li>Notificación del navegador: si el permiso está concedido y <code>document.hidden</code> es verdadero, dispara <code>new Notification(...)</code>; al hacer clic enfoca el panel y navega al vínculo. El permiso se pide con un botón en la página de recordatorios (Chrome exige gesto del usuario).</li>
+    <li>Si el permiso está denegado o el navegador no lo soporta, la alarma interna sigue funcionando.</li>
+  </ul>
+
+  <h2 id="errores">Manejo de errores</h2>
+  <ul>
+    <li>Validación: <code>title</code> requerido y ≤120, <code>notes</code> ≤150, <code>dueAt</code> ISO válido, <code>recurrence</code> dentro del enum, <code>minutes</code> en {5, 15, 60}, ids numéricos.</li>
+    <li><code>404</code> si el recordatorio no existe; <code>403</code> al editar/borrar sin permiso.</li>
+    <li>Si falla la emisión por socket, el scheduler registra el error pero no revierte <code>notifiedAt</code> (se prioriza no repetir la alarma).</li>
+    <li>En el frontend, todo error de API usa <code>toastError</code> como el resto del panel.</li>
+  </ul>
+
+  <h2 id="pruebas">Pruebas</h2>
+  <p>Backend (Jest, unitarias con modelos mockeados):</p>
+  <ol>
+    <li>El scheduler emite una vez y no re-emite lo ya notificado.</li>
+    <li>Completar una recurrencia diaria/semanal/mensual crea la siguiente ocurrencia con la fecha esperada, incluido el recorte de fin de mes.</li>
+    <li><code>snooze</code> mueve <code>dueAt</code> y limpia <code>notifiedAt</code>; rechaza minutos inválidos.</li>
+    <li>Editar/borrar sin ser creador ni admin devuelve 403; completar y posponer lo permite cualquier usuario.</li>
+    <li>El rango <code>from</code>/<code>to</code> filtra por <code>dueAt</code> inclusivo.</li>
+  </ol>
+  <p>Frontend: verificación manual de la grilla, el modal, el diálogo de alarma, la notificación del navegador y el refresco por socket.</p>
+
+  <h2 id="despliegue">Despliegue</h2>
+  <ul>
+    <li>Migración nueva (<code>create-reminders</code>) y modelo Sequelize.</li>
+    <li><code>deploy.sh</code> ya ejecuta <code>db:migrate</code> antes de reiniciar el backend.</li>
+    <li>Sin backfill: la tabla arranca vacía.</li>
+    <li>El scheduler no requiere configuración ni variables de entorno.</li>
+  </ul>
+
+  <h2 id="riesgos">Riesgos</h2>
+  <div class="cols">
+    <div class="note"><strong>Zona horaria</strong><br>Se guarda UTC y se muestra en hora local del navegador; si el navegador está en otra zona que la oficina, la hora visible cambia.</div>
+    <div class="note"><strong>Alarma por pestaña</strong><br>Intencional: el estado es único, pero cada pestaña conectada suena.</div>
+    <div class="warn"><strong>Notificaciones del navegador</strong><br>Dependen del permiso y de HTTPS (el panel ya se sirve por HTTPS); no reemplazan la alarma interna.</div>
+    <div class="warn"><strong>Crecimiento por recurrencia</strong><br>Se crea una fila por ocurrencia al completar; no hay ocurrencias infinitas creadas por adelantado.</div>
+  </div>
+</main>
+</body>
+</html>
