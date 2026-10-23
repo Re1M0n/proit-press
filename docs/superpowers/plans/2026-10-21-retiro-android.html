@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retiro del cliente Android — Plan de implementación</title>
+<style>
+  :root { --paper:#fff; --bg:#f5f6f8; --ink:#1b1f24; --muted:#5b6470; --line:#e3e7ec; --accent:#0f766e; --accent-soft:#e6f4f1; --code:#f2f4f7; --task:#fffdf5; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 36px auto 80px; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:44px 52px; box-shadow:0 8px 30px rgba(16,24,40,.06); }
+  h1 { font-size:29px; line-height:1.25; margin:0 0 18px; border-bottom:1px solid var(--line); padding-bottom:18px; }
+  h2 { font-size:22px; margin:42px 0 10px; padding-top:14px; border-top:2px solid var(--line); }
+  h3 { font-size:18px; margin:34px 0 10px; padding:10px 14px; background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; }
+  h4 { font-size:16px; margin:24px 0 8px; }
+  p, li { color:#242a31; }
+  ul, ol { padding-left:24px; }
+  li { margin:4px 0; }
+  ul.tasks { list-style:none; padding-left:4px; }
+  ul.tasks li { display:flex; gap:10px; align-items:flex-start; background:var(--task); border:1px solid #f0e7c8; border-radius:8px; padding:8px 12px; margin:6px 0; }
+  ul.tasks .box { width:15px; height:15px; border:2px solid #b7a24a; border-radius:4px; flex:none; margin-top:3px; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14.5px; }
+  th, td { text-align:left; padding:8px 11px; border:1px solid var(--line); vertical-align:top; }
+  th { background:#f7f9fb; }
+  code { font-family:"Cascadia Code", Consolas, monospace; font-size:13.5px; background:var(--code); padding:1px 5px; border-radius:4px; }
+  pre.code { background:var(--code); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.5; }
+  pre.code code { background:none; padding:0; }
+  blockquote { border-left:4px solid var(--accent); background:var(--accent-soft); margin:14px 0; padding:10px 16px; border-radius:0 8px 8px 0; }
+  a { color:var(--accent); }
+  @media (max-width:760px) { main { margin:0; border:0; border-radius:0; padding:26px 18px; } }
+  @media print { body { background:#fff; } main { margin:0; border:0; box-shadow:none; padding:0; } h3 { break-after:avoid; } pre.code, table { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<main>
+<h1 id="h2jufv0">Retiro del cliente Android — Plan de implementación</h1>
+<blockquote><strong>Para agentes:</strong> SUB-SKILL REQUERIDA: usar <code>superpowers:executing-plans</code> para implementar esta tarea. Los pasos usan checkbox (<code>- [ ]</code>).</blockquote>
+<p><strong>Goal:</strong> Eliminar el cliente APK/Capacitor y todo el código de ejecución que solo soporta Android, FCM y refresh tokens nativos, conservando el acceso web por cookie.</p>
+<p><strong>Architecture:</strong> Se retira el shell Android/adaptadores nativos del frontend, el sistema FCM del backend y los headers de refresh nativos. Una migración nueva elimina las registraciones push y la preferencia móvil. Las migraciones históricas permanecen en el repo.</p>
+<p><strong>Tech Stack:</strong> React 18 + CRA + npm; Express/TypeScript + Sequelize/MySQL; Jest + Supertest; GitHub Actions self-hosted runner de Prometheus.</p>
+<p><strong>Spec:</strong> <code>docs/superpowers/specs/2026-10-21-retiro-android-design.md</code></p>
+<h2 id="hatj5i8">Restricciones globales</h2>
+<ul>
+<li>No tocar <code>IA/</code>, <code>.env</code>, credenciales Firebase externas ni keystores.</li>
+<li>Mantener el refresh web con cookie <code>jrt</code> HttpOnly y <code>withCredentials: true</code>.</li>
+<li>Mantener la URL del backend en <code>localStorage</code> para el navegador y las notificaciones web de Recordatorios.</li>
+<li>Eliminar de la base <code>PushTokens</code> y <code>Users.mobileNotificationsEnabled</code>; el usuario autorizó la pérdida de esos datos.</li>
+<li>Conservar las migraciones históricas de creación: <code>20260930010000-create-push-tokens.ts</code> y <code>20260930020000-add-mobile-notifications-to-users.ts</code>.</li>
+<li>No publicar ni despublicar la app en Google Play.</li>
+<li><code>npm test</code> del backend usa la DB local de test: no apuntarlo a producción.</li>
+</ul>
+<h2 id="hvpf370">Estructura de archivos</h2>
+<table><thead><tr>
+<th>Área</th>
+<th>Archivos principales</th>
+</tr></thead><tbody>
+<tr>
+<td>Android/Capacitor</td>
+<td><code>frontend/android/</code>, <code>frontend/capacitor.config.ts</code>, <code>frontend/build-android-apk.bat</code>, dependencias del frontend</td>
+</tr>
+<tr>
+<td>Adaptador web/native</td>
+<td><code>frontend/src/utils/nativeApp.js</code>, <code>services/serverConfig.js</code>, <code>services/api.js</code>, <code>services/pushNotifications.js</code>, <code>src/index.js</code></td>
+</tr>
+<tr>
+<td>UI móvil</td>
+<td><code>frontend/src/components/MobileModeControl/index.js</code>, <code>frontend/src/layout/index.js</code>, traducciones es/pt</td>
+</tr>
+<tr>
+<td>Sesión web</td>
+<td><code>backend/src/helpers/SendRefreshToken.ts</code>, <code>controllers/SessionController.ts</code>, <code>backend/src/app.ts</code></td>
+</tr>
+<tr>
+<td>Push backend</td>
+<td><code>PushNotificationController.ts</code>, <code>PushNotificationService/</code>, <code>PushToken.ts</code>, <code>User.ts</code>, <code>database/index.ts</code>, llamadores</td>
+</tr>
+<tr>
+<td>Smoke test deploy</td>
+<td><code>scripts/smoke-test.sh</code>, <code>scripts/deploy.sh</code></td>
+</tr>
+<tr>
+<td>Smoke test</td>
+<td><code>scripts/smoke-test.sh</code> pasa a verificar CORS web y refresh por cookie; <code>scripts/deploy.sh</code> queda sin comentarios Android</td>
+</tr>
+<tr>
+<td>Datos/versionado</td>
+<td>nueva migración de retiro; README; pruebas de sesión y de los servicios WhatsApp</td>
+</tr>
+</tbody></table>
+<p>---</p>
+<h3 id="h7poyfl">Task 1: Quitar las ramas nativas del frontend y preservar el navegador</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>frontend/src/services/serverConfig.js</code>, <code>serverConfig.test.js</code>, <code>services/api.js</code>, <code>hooks/useAuth.js</code>, <code>components/ServerSettingsModal/index.js</code>, <code>components/NotificationsPopOver/index.js</code>, <code>index.js</code>, <code>layout/index.js</code></li>
+<li>Delete: <code>frontend/src/utils/nativeApp.js</code>, <code>frontend/src/services/pushNotifications.js</code>, <code>frontend/src/components/MobileModeControl/index.js</code></li>
+<li>Modify: <code>frontend/src/translate/languages/es.js</code>, <code>pt.js</code></li>
+</ul>
+<p><strong>Interfaces:</strong> Se mantienen <code>getBackendUrl</code>, <code>normalizeBackendUrl</code>, <code>saveBackendUrl</code>, <code>setApiBaseUrl</code>, login web y refresh por cookie. Desaparecen <code>loadSavedServerUrl</code>, <code>initializeNativeApp</code> y <code>isNativeApp</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Simplificar serverConfig al navegador</strong></li>
+</ul>
+<p>Quitar imports de <code>@capacitor/core</code> y <code>@capacitor/preferences</code>, condiciones</p>
+<p><code>Capacitor.isNativePlatform()</code> y export <code>loadSavedServerUrl</code>. La lectura/escritura</p>
+<p>de <code>SERVER_URL_KEY</code> se queda en <code>window.localStorage</code>; fallback:</p>
+<pre class="code js"><code>return process.env.REACT_APP_BACKEND_URL || "";</code></pre>
+<p>En <code>serverConfig.test.js</code>, quitar mocks de Capacitor/Preferences y probar que la</p>
+<p>URL guardada en localStorage se recupera y normaliza.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Renderizar la web sin bootstrap nativo</strong></li>
+</ul>
+<p>En <code>frontend/src/index.js</code>, quitar import/llamada <code>initializeNativeApp</code> y</p>
+<p>renderizar directamente:</p>
+<pre class="code jsx"><code>root.render(
+  &lt;CssBaseline&gt;
+    &lt;ErrorBoundary componentName="App"&gt;
+      &lt;App /&gt;
+    &lt;/ErrorBoundary&gt;
+  &lt;/CssBaseline&gt;
+);
+setTimeout(finishLoading, 1000);</code></pre>
+<p>Quitar <code>MobileModeControl</code> de <code>layout/index.js</code>, borrar <code>nativeApp.js</code>,</p>
+<p><code>pushNotifications.js</code> y <code>MobileModeControl/index.js</code>, y borrar las claves</p>
+<p><code>mobileNotifications</code> de <code>es.js</code> y <code>pt.js</code>.</p>
+<p>Stagear estas eliminaciones explícitamente:</p>
+<pre class="code bash"><code>git rm frontend/src/utils/nativeApp.js frontend/src/services/pushNotifications.js frontend/src/components/MobileModeControl/index.js</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Simplificar api.js, useAuth y ServerSettingsModal</strong></li>
+</ul>
+<p>En <code>api.js</code>, quitar <code>import { Capacitor }</code>, el header <code>X-Client-App</code>, lectura/envío</p>
+<p>de <code>X-Refresh-Token</code> y almacenamiento de <code>localStorage.refreshToken</code>. Mantener el</p>
+<p>Authorization bearer, refresh por cookie, <code>withCredentials</code> y manejo de cola</p>
+<p>concurrente. Eliminar <code>removeItem("refreshToken")</code> de <code>handleLogout</code>,</p>
+<p><code>useAuth.js</code> y <code>ServerSettingsModal/index.js</code>.</p>
+<p>En <code>NotificationsPopOver/index.js</code>, quitar solo el comentario que atribuye la</p>
+<p>guardia de <code>Notification</code> al WebView; mantener `typeof Notification !==</p>
+<p>"undefined"` porque es una protección válida también para navegadores sin esa</p>
+<p>API.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Tests y build frontend</strong></li>
+</ul>
+<p>Run: <code>CI=true npm test -- --watchAll=false</code> y <code>npm run build</code> (en <code>frontend/</code>).</p>
+<p>Expected: tests pasan; build compilado.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/src/services/serverConfig.js frontend/src/services/serverConfig.test.js frontend/src/services/api.js frontend/src/hooks/useAuth.js frontend/src/components/ServerSettingsModal/index.js frontend/src/components/NotificationsPopOver/index.js frontend/src/index.js frontend/src/layout/index.js frontend/src/translate/languages/es.js frontend/src/translate/languages/pt.js
+git commit -m "refactor(frontend): elimina soporte nativo Android"</code></pre>
+<p>---</p>
+<h3 id="hrr2jdu">Task 2: Mantener autenticación web con cookie y eliminar refresh nativo</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>backend/src/helpers/SendRefreshToken.ts</code>, <code>controllers/SessionController.ts</code>, <code>app.ts</code></li>
+<li>Replace: <code>backend/src/__tests__/unit/Session/RefreshTokenNativo.spec.ts</code></li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Quitar emisión de header nativo</strong></li>
+</ul>
+<p>Dejar <code>SendRefreshToken(res, token)</code> como única firma. El helper mantiene la</p>
+<p>cookie <code>jrt</code> con <code>httpOnly: true</code>, <code>sameSite: "strict"</code>, path</p>
+<p><code>/auth/refresh_token</code>, <code>maxAge: 8 * 60 * 60 * 1000</code> y <code>secure</code> en producción; no</p>
+<p>llama <code>res.setHeader</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Leer refresh solamente de cookie</strong></li>
+</ul>
+<p>En <code>SessionController.store</code> y <code>.update</code>, llamar `SendRefreshToken(res,</p>
+<p>refreshToken)<code>. </code>.update<code> toma </code>req.cookies.jrt`; si falta, sigue lanzando</p>
+<p><code>ERR_SESSION_EXPIRED</code> con 401.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Limpiar CORS nativo</strong></li>
+</ul>
+<p>En <code>backend/src/app.ts</code>, quitar los esquemas <code>capacitor</code>/<code>ionic</code> de la regex de</p>
+<p>orígenes; mantener <code>http(s)://localhost</code> para desarrollo y</p>
+<p><code>process.env.FRONTEND_URL</code>. Quitar <code>X-Refresh-Token</code> y <code>X-Client-App</code> de</p>
+<p><code>allowedHeaders</code>/<code>exposedHeaders</code>.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Reemplazar las pruebas nativas por pruebas web</strong></li>
+</ul>
+<p>Renombrar el archivo con <code>git mv</code>:</p>
+<pre class="code bash"><code>git mv backend/src/__tests__/unit/Session/RefreshTokenNativo.spec.ts backend/src/__tests__/unit/Session/RefreshToken.spec.ts</code></pre>
+<p>En <code>RefreshToken.spec.ts</code>, conservar y verificar:</p>
+<ol>
+<li><code>SendRefreshToken</code> crea la cookie web segura y nunca envía headers.</li>
+<li><code>SessionController.update</code> lee <code>jrt</code>, rota el refresh por cookie y devuelve</li>
+</ol>
+<p>   <code>{ token, user }</code>.</p>
+<ol>
+<li>Sin cookie responde <code>ERR_SESSION_EXPIRED</code> y no llama <code>RefreshTokenService</code>.</li>
+<li><code>SessionController.store</code> crea cookie y devuelve token/user sin header.</li>
+<li><code>ERR_USER_INACTIVE</code> se sigue propagando.</li>
+</ol>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Tests y tipos</strong></li>
+</ul>
+<p>Run: `npx jest --runInBand --coverage=false</p>
+<p>src/__tests__/unit/Session/RefreshToken.spec.ts<code> y </code>npx tsc --noEmit` (en</p>
+<p><code>backend/</code>).</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/helpers/SendRefreshToken.ts backend/src/controllers/SessionController.ts backend/src/app.ts backend/src/__tests__/unit/Session/RefreshToken.spec.ts
+git commit -m "refactor(auth): conserva refresh web y elimina header nativo"</code></pre>
+<p>---</p>
+<h3 id="hlwf2j9">Task 3: Eliminar FCM backend y datos asociados</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>backend/src/database/index.ts</code>, <code>models/User.ts</code>, <code>routes/routeRegistry.ts</code>, callers de push</li>
+<li>Delete: <code>backend/src/controllers/PushNotificationController.ts</code>, <code>models/PushToken.ts</code>, <code>services/PushNotificationService/index.ts</code></li>
+<li>Create: <code>backend/src/database/migrations/20261021020000-remove-android-push-support.ts</code></li>
+<li>Modify: <code>backend/package.json</code>, <code>backend/package-lock.json</code></li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Eliminar API/modelo/runtime push</strong></li>
+</ul>
+<p>Quitar el grupo <code>/push-notifications</code> de <code>routeRegistry.ts</code>, el import/entrada</p>
+<p><code>PushToken</code> en <code>database/index.ts</code>, la propiedad <code>mobileNotificationsEnabled</code></p>
+<p>de <code>User.ts</code>, el controlador, servicio y modelo FCM. Quitar únicamente imports y</p>
+<p>llamadas <code>notifyIncomingTicketMessage</code>/<code>notifyChannelDisconnected</code> de</p>
+<p><code>CreateMessageService.ts</code>, <code>wbot.ts</code>, <code>telegram.ts</code>, <code>wbotMonitor.ts</code> y</p>
+<p><code>WhatsAppSessionController.ts</code>; conservar el resto del procesamiento de mensajes,</p>
+<p>sesiones y logs. Retirar los <code>jest.mock</code> de PushNotificationService en</p>
+<p><code>WbotMonitor.spec.ts</code> y <code>WbotInitLifecycle.spec.ts</code>.</p>
+<p>Stagear las eliminaciones runtime con:</p>
+<pre class="code bash"><code>git rm backend/src/controllers/PushNotificationController.ts backend/src/models/PushToken.ts backend/src/services/PushNotificationService/index.ts</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Crear migración reversible de esquema</strong></li>
+</ul>
+<p>Crear <code>20261021020000-remove-android-push-support.ts</code>. <code>up</code> debe ejecutar en este</p>
+<p>orden:</p>
+<pre class="code ts"><code>await queryInterface.dropTable("PushTokens");
+await queryInterface.removeColumn("Users", "mobileNotificationsEnabled");</code></pre>
+<p><code>down</code> añade primero <code>mobileNotificationsEnabled</code> (`BOOLEAN NOT NULL DEFAULT</p>
+<p>false<code>) y recrea </code>PushTokens<code> con las columnas </code>id<code>, </code>userId<code> FK a </code>Users` con</p>
+<p><code>CASCADE</code>, <code>token VARCHAR(512) UNIQUE</code>, `platform VARCHAR(20) NOT NULL DEFAULT</p>
+<p>'android'<code>, </code>createdAt<code> y </code>updatedAt`. No editar ni borrar las dos migraciones</p>
+<p>históricas. El rollback no recupera valores ni tokens borrados.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Retirar Firebase Admin</strong></li>
+</ul>
+<p>Verificar que <code>firebase-admin</code> no tenga imports fuera de PushNotificationService y</p>
+<p>ejecutar en <code>backend/</code>:</p>
+<pre class="code bash"><code>npm uninstall firebase-admin --no-audit --no-fund</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Correr pruebas backend y compilar</strong></li>
+</ul>
+<p>Run: <code>npm test</code> y <code>npx tsc --noEmit</code> (en <code>backend/</code>). <code>npm test</code> usa la DB de</p>
+<p>test, aplica todas las migraciones y luego las deshace; comprobar que la nueva</p>
+<p>migración sube y su <code>down</code> restaura las estructuras.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add backend/src/database/index.ts backend/src/models/User.ts backend/src/routes/routeRegistry.ts backend/src/database/migrations/20261021020000-remove-android-push-support.ts backend/src/services/MessageServices/CreateMessageService.ts backend/src/libs/wbot.ts backend/src/libs/telegram.ts backend/src/services/WbotServices/wbotMonitor.ts backend/src/controllers/WhatsAppSessionController.ts backend/src/__tests__/unit/WbotMonitor.spec.ts backend/src/__tests__/unit/WbotInitLifecycle.spec.ts backend/package.json backend/package-lock.json
+git commit -m "refactor(backend): elimina soporte push de Android"</code></pre>
+<p>---</p>
+<h3 id="hnmndm0">Task 4: Eliminar el proyecto APK y dependencias Capacitor</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Delete: <code>frontend/android/</code>, <code>frontend/capacitor.config.ts</code>, <code>frontend/build-android-apk.bat</code></li>
+<li>Modify: <code>frontend/package.json</code>, <code>frontend/package-lock.json</code>, <code>README.md</code></li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Quitar dependencias npm</strong></li>
+</ul>
+<p>En <code>frontend/</code>:</p>
+<pre class="code bash"><code>npm uninstall @capacitor/android @capacitor/core @capacitor/preferences @capacitor/push-notifications @capacitor/cli --no-audit --no-fund</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Eliminar archivos Android versionados</strong></li>
+</ul>
+<pre class="code bash"><code>git rm -r frontend/android
+git rm frontend/capacitor.config.ts frontend/build-android-apk.bat</code></pre>
+<p>No borrar <code>.toolchain</code>, <code>IA/</code>, credenciales externas ni logs locales no versionados.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Retirar las instrucciones de APK</strong></li>
+</ul>
+<p>Quitar la sección <code>## Compilar la app Android (APK)</code> de <code>README.md</code>; conservar</p>
+<p>instalación web, despliegue, créditos y documentación restante.</p>
+<p>Actualizar <code>scripts/smoke-test.sh</code>: probar CORS de la API/socket para el panel web</p>
+<p>y, si se configuran <code>SMOKE_EMAIL</code>/<code>SMOKE_PASSWORD</code>, validar cookie <code>jrt</code> en login</p>
+<p>y refresh. Quitar checks de <code>X-Client-App</code>, <code>X-Refresh-Token</code> y <code>/push-notifications</code>.</p>
+<p>Actualizar el comentario de smoke test en <code>scripts/deploy.sh</code> para reflejar los</p>
+<p>checks web.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Buscar referencias runtime restantes</strong></li>
+</ul>
+<p>Run en la raíz:</p>
+<pre class="code bash"><code>git grep -n -i -E "@capacitor|Capacitor|capacitor://|ionic://|proit-press-android|X-Client-App|X-Refresh-Token|PushNotificationService|PushToken|mobileNotificationsEnabled|build-android-apk|push móvil|refresh nativo|app Android" -- backend/src/controllers backend/src/helpers backend/src/libs backend/src/models backend/src/routes backend/src/services backend/src/__tests__ frontend/src frontend/package.json frontend/package-lock.json backend/package.json backend/package-lock.json README.md scripts</code></pre>
+<p>Expected: sin referencias runtime. Las referencias de las migraciones históricas</p>
+<p>se conservan intencionalmente.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 5: Build frontend</strong></li>
+</ul>
+<p>Run: <code>npm run build</code> (en <code>frontend/</code>, <code>CI=false</code>).</p>
+<p>Expected: <code>Compiled successfully</code> sin resolver paquetes Capacitor.</p>
+<p>Verificar la sintaxis de <code>scripts/smoke-test.sh</code> con <code>bash -n</code> y su salida web en</p>
+<p>el deploy; el smoke test no debe exigir Firebase ni headers nativos.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 6: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/package.json frontend/package-lock.json README.md frontend/src/index.js frontend/src/services/serverConfig.js frontend/src/services/serverConfig.test.js frontend/src/services/api.js frontend/src/hooks/useAuth.js frontend/src/components/ServerSettingsModal/index.js frontend/src/components/NotificationsPopOver/index.js frontend/src/layout/index.js frontend/src/translate/languages/es.js frontend/src/translate/languages/pt.js
+git commit -m "refactor(mobile): elimina cliente Android y Capacitor"</code></pre>
+<p>---</p>
+<h3 id="hy8dxys">Task 5: Verificación final y despliegue</h3>
+<p><strong>Files:</strong> toda la implementación anterior.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Verificación local completa</strong></li>
+</ul>
+<p>Run:</p>
+<pre class="code bash"><code>cd backend &amp;&amp; npm test &amp;&amp; npx tsc --noEmit
+cd ../frontend &amp;&amp; CI=true npm test -- --watchAll=false &amp;&amp; npm run build</code></pre>
+<p>Expected: las pruebas y builds web/backend pasan. No ejecutar Gradle ni generar</p>
+<p>APK: esa plataforma se retiró.</p>
+<p>Verificar además <code>bash -n scripts/smoke-test.sh</code>; el smoke test ahora comprueba</p>
+<p>CORS del panel web y refresh por cookie jrt, sin consultar endpoints push ni</p>
+<p>probar headers nativos.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Revisar diff y secretos</strong></li>
+</ul>
+<p>Run: <code>git diff --check</code>, <code>git status --short</code>, <code>git diff --stat</code>; confirmar que</p>
+<p>no se stagean <code>.env</code>, <code>google-services.json</code>, <code>IA/</code> ni artefactos de Android no</p>
+<p>versionados.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Pushear y monitorear Actions</strong></li>
+</ul>
+<pre class="code bash"><code>git push origin main</code></pre>
+<p>Esperar CI y Deploy en el runner self-hosted. <code>deploy.sh</code> aplica la migración</p>
+<p>antes del reinicio; no ejecutar manualmente contra producción.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Verificación post-deploy</strong></li>
+</ul>
+<p>Confirmar en Prometheus: migración <code>20261021020000-remove-android-push-support</code></p>
+<p>en estado <code>up</code>, <code>itn-backend</code>/<code>itn-frontend</code> online, panel HTTP 200, sesiones</p>
+<p>WhatsApp conectadas. Desde navegador web, iniciar sesión, confirmar refresh por</p>
+<p>cookie y cerrar un ticket desde la lista; debe desaparecer sin cambio de pestaña.</p>
+<h3 id="hffz24i">Rollback</h3>
+<p>El rollback de aplicación requiere volver al commit anterior y hacer <code>db:migrate:undo</code></p>
+<p>de la migración de retiro antes de arrancar ese código. La migración <code>down</code></p>
+<p>recrea tabla/columna vacías; los registros PushTokens borrados no se recuperan.</p>
+</main>
+</body>
+</html>

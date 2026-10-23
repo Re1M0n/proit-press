@@ -1,12 +1,9 @@
-import { getBackendConnectionErrorMessage, normalizeBackendUrl } from "./serverConfig";
-
-jest.mock("@capacitor/core", () => ({
-  Capacitor: { isNativePlatform: () => false }
-}));
-
-jest.mock("@capacitor/preferences", () => ({
-  Preferences: { get: jest.fn(), set: jest.fn() }
-}));
+import {
+  getBackendConnectionErrorMessage,
+  getBackendUrl,
+  normalizeBackendUrl,
+  saveBackendUrl
+} from "./serverConfig";
 
 describe("normalizeBackendUrl", () => {
   it("assumes HTTPS when a domain is entered without a scheme", () => {
@@ -29,6 +26,21 @@ describe("normalizeBackendUrl", () => {
     expect(() => normalizeBackendUrl("https://user:pass@press.example.com")).toThrow(/credenciales/);
     expect(() => normalizeBackendUrl("press.example.com?token=secret")).toThrow(/credenciales/);
     expect(() => normalizeBackendUrl("press.example.com#login")).toThrow(/credenciales/);
+  });
+});
+
+describe("backend URL configuration in the browser", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it("persists and reads the normalized server URL from localStorage", async () => {
+    await saveBackendUrl("press.example.com");
+
+    expect(window.localStorage.getItem("proitPressServerUrl")).toBe(
+      "https://press.example.com"
+    );
+    expect(getBackendUrl()).toBe("https://press.example.com");
   });
 });
 

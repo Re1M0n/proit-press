@@ -29,7 +29,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     additionalData: { email: serializedUser.email }
   });
 
-  SendRefreshToken(res, refreshToken, req.headers["x-client-app"] === "proit-press-android");
+  SendRefreshToken(res, refreshToken);
 
   return res.status(200).json({
     token,
@@ -41,7 +41,7 @@ export const update = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const token: string = req.cookies.jrt || req.headers["x-refresh-token"] as string;
+  const token: string = req.cookies.jrt;
 
   if (!token) {
     throw new AppError("ERR_SESSION_EXPIRED", 401);
@@ -52,7 +52,7 @@ export const update = async (
     token
   );
 
-  SendRefreshToken(res, refreshToken, req.headers["x-client-app"] === "proit-press-android");
+  SendRefreshToken(res, refreshToken);
 
   return res.json({ token: newToken, user });
 };

@@ -23,7 +23,6 @@ import BackdropLoading from "../components/BackdropLoading";
 import LanguageSelector from "../components/LanguageSelector";
 import NotificationsPopOver from "../components/NotificationsPopOver";
 import ReminderAlarm from "../components/ReminderAlarm";
-import MobileModeControl from "../components/MobileModeControl";
 import ServerSettingsModal from "../components/ServerSettingsModal";
 import ThemeSelector from '../components/ThemeSelector';
 import UserModal from "../components/UserModal";
@@ -380,7 +379,6 @@ const LoggedInLayout = ({ children, toggleTheme, onThemeConfigUpdate }) => {
             </Tooltip>
             <ThemeSelector toggleTheme={toggleTheme} />
             <LanguageSelector />
-            {user?.id && <MobileModeControl />}
             {user?.id && <NotificationsPopOver />}
             {user?.id && <ReminderAlarm />}
             <IconButton

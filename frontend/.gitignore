@@ -12,6 +12,9 @@
 /build
 /dist
 
+# Proyecto Android/Capacitor retirado; no versionar restos de builds locales.
+/android/
+
 # misc
 .DS_Store
 .env

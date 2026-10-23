@@ -61,10 +61,6 @@ jest.mock("../../utils/logger", () => ({
   logger: { level: "info", error: jest.fn(), info: jest.fn(), warn: jest.fn() }
 }));
 
-jest.mock("../../services/PushNotificationService", () => ({
-  notifyChannelDisconnected: jest.fn()
-}));
-
 interface MockWbotClient {
   emit: (event: string, ...args: unknown[]) => boolean;
   destroy: jest.Mock;

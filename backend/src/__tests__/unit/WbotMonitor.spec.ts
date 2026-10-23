@@ -11,10 +11,6 @@ jest.mock("../../libs/wbot", () => ({ markSessionNotReady: jest.fn() }));
 jest.mock("../../utils/logger", () => ({
   logger: { error: jest.fn(), info: jest.fn(), warn: jest.fn() }
 }));
-jest.mock("../../services/PushNotificationService", () => ({
-  notifyChannelDisconnected: jest.fn().mockResolvedValue(undefined)
-}));
-
 describe("wbotMonitor lifecycle callbacks", () => {
   it("informa CONNECTED y agenda una sola reconexión al desconectarse", async () => {
     const wbot = new EventEmitter();

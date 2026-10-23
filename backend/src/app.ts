@@ -88,7 +88,7 @@ const corsOptions = {
     if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
       return callback(null, true);
     }
-    if (/^(https?|capacitor|ionic):\/\/localhost(?::\d+)?$/.test(origin)) {
+    if (/^https?:\/\/localhost(?::\d+)?$/.test(origin)) {
       return callback(null, true);
     }
 
@@ -100,8 +100,8 @@ const corsOptions = {
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Range", "Accept", "x-api-token", "X-Refresh-Token", "X-Client-App"],
-  exposedHeaders: ["Content-Range", "Accept-Ranges", "Content-Length", "X-Refresh-Token"],
+  allowedHeaders: ["Content-Type", "Authorization", "Range", "Accept", "x-api-token"],
+  exposedHeaders: ["Content-Range", "Accept-Ranges", "Content-Length"],
   maxAge: 86400
 };
 

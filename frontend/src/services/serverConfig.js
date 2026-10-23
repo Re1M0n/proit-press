@@ -1,6 +1,3 @@
-import { Capacitor } from "@capacitor/core";
-import { Preferences } from "@capacitor/preferences";
-
 const SERVER_URL_KEY = "proitPressServerUrl";
 
 export const getBackendUrl = () => {
@@ -9,7 +6,6 @@ export const getBackendUrl = () => {
     if (configuredUrl) return configuredUrl.replace(/\/$/, "");
   }
 
-  if (Capacitor.isNativePlatform()) return "";
   return process.env.REACT_APP_BACKEND_URL || "";
 };
 
@@ -69,15 +65,5 @@ export const getBackendConnectionErrorMessage = (error, attemptedUrl) => {
 export const saveBackendUrl = async (input) => {
   const normalizedUrl = normalizeBackendUrl(input);
   window.localStorage.setItem(SERVER_URL_KEY, normalizedUrl);
-  if (Capacitor.isNativePlatform()) {
-    await Preferences.set({ key: SERVER_URL_KEY, value: normalizedUrl });
-  }
-
   return normalizedUrl;
-};
-
-export const loadSavedServerUrl = async () => {
-  if (!Capacitor.isNativePlatform()) return;
-  const { value } = await Preferences.get({ key: SERVER_URL_KEY });
-  if (value) window.localStorage.setItem(SERVER_URL_KEY, value);
 };

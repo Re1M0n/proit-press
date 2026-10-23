@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Capacitor } from "@capacitor/core";
 import { getBackendUrl } from "./serverConfig";
 
 const api = axios.create({
@@ -30,7 +29,6 @@ const processQueue = (error, token = null) => {
 const handleLogout = () => {
   api.delete("/auth/logout").catch(() => {});
   localStorage.removeItem("token");
-  localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
   window.location.href = "/login";
 };
@@ -52,9 +50,7 @@ const getStoredAccessToken = () => {
 
 const refreshToken = async () => {
   try {
-    const { data: { token, user }, headers } = await api.post("/auth/refresh_token");
-    const nextRefreshToken = headers["x-refresh-token"];
-    if (nextRefreshToken) localStorage.setItem("refreshToken", nextRefreshToken);
+    const { data: { token, user } } = await api.post("/auth/refresh_token");
 
     localStorage.setItem("token", JSON.stringify(token));
     api.defaults.headers.Authorization = `Bearer ${token}`;
@@ -77,16 +73,11 @@ const setUserInactiveFlag = (value) => {
 
 api.interceptors.request.use(
   async config => {
-    if (Capacitor.isNativePlatform()) config.headers["X-Client-App"] = "proit-press-android";
     if (userInactive && !config.url.includes("/auth/logout")) {
       return Promise.reject(new Error("User is inactive"));
     }
 
     if (config.url?.includes("/auth/refresh_token")) {
-      const nativeRefreshToken = localStorage.getItem("refreshToken");
-      if (Capacitor.isNativePlatform() && nativeRefreshToken) {
-        config.headers["X-Refresh-Token"] = nativeRefreshToken;
-      }
       return config;
     }
 
@@ -141,7 +132,7 @@ api.interceptors.response.use(
     }
 
     if (error?.response?.status === 401 && !originalRequest?._retry && !isAuthEndpoint(originalRequest?.url)) {
-      if (!getStoredAccessToken() && !localStorage.getItem("refreshToken")) {
+      if (!getStoredAccessToken()) {
         return Promise.reject(error);
       }
       if (isRefreshing) {

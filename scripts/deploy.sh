@@ -47,10 +47,8 @@ sleep 5
 pm2 list | grep itn-
 curl -s -o /dev/null -w "frontend HTTP %{http_code}\n" http://localhost:3000/
 
-# Smoke test: CORS (panel web + app Android) y refresh token nativo. Si el
-# backend deja de aceptar el origen de la app o de devolver el X-Refresh-Token,
-# la app Android se rompe sin que la web lo note: por eso acá el deploy falla
-# en vez de publicarlo igual.
+# Smoke test: CORS del panel web y refresh de sesión por cookie. Si la web deja
+# de conectar o el refresh web falla, el deploy corta en vez de publicarlo igual.
 echo "== Smoke test =="
 bash ../scripts/smoke-test.sh
 

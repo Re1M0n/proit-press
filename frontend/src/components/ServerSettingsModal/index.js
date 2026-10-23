@@ -19,7 +19,6 @@ const ServerSettingsModal = ({ open, onClose }) => {
       await saveBackendUrl(url);
       setApiBaseUrl(url);
       localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
       toast.success("Servidor actualizado. Iniciá sesión nuevamente.");
       onClose(false);

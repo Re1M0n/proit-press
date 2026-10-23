@@ -27,7 +27,6 @@ import MessageReaction from "../models/MessageReaction";
 import ClientStatus from "../models/ClientStatus";
 import GroupEvent from "../models/GroupEvent";
 import PollVote from "../models/PollVote";
-import PushToken from "../models/PushToken";
 import Reminder from "../models/Reminder";
 
 // eslint-disable-next-line
@@ -64,7 +63,6 @@ const models = [
   ClientStatus,
   GroupEvent,
   PollVote,
-  PushToken,
   Reminder
 ];
 

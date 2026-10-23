@@ -6,7 +6,6 @@ import { setupGlobalErrorHandlers } from "./utils/errorHandler";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 import App from "./App";
-import { initializeNativeApp } from "./utils/nativeApp";
 
 const finishLoading = initializeLoading();
 const rootElement = document.getElementById("root");
@@ -14,13 +13,11 @@ const root = createRoot(rootElement);
 
 setupGlobalErrorHandlers();
 
-initializeNativeApp().finally(() => {
-    root.render(
-        <CssBaseline>
-            <ErrorBoundary componentName="App">
-                <App />
-            </ErrorBoundary>
-        </CssBaseline>
-    );
-    setTimeout(finishLoading, 1000);
-});
+root.render(
+    <CssBaseline>
+        <ErrorBoundary componentName="App">
+            <App />
+        </ErrorBoundary>
+    </CssBaseline>
+);
+setTimeout(finishLoading, 1000);

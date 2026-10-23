@@ -6,7 +6,6 @@ import OldMessage from "../../models/OldMessage";
 import Ticket from "../../models/Ticket";
 import Whatsapp from "../../models/Whatsapp";
 import FormatLastMessage from "../../helpers/FormatLastMessage";
-import { notifyIncomingTicketMessage } from "../PushNotificationService";
 
 interface MessageData {
   id: string;
@@ -163,10 +162,6 @@ const CreateMessageService = async ({
         ticket: ticketPayload,
         contact: ticketPayload.contact
       });
-
-    void notifyIncomingTicketMessage(message.ticket, message).catch(error => {
-      console.error("No se pudo enviar la notificación push del mensaje:", error);
-    });
 
     return message;
   } catch (error) {

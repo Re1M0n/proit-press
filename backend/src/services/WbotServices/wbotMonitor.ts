@@ -5,7 +5,6 @@ import { getIO } from "../../libs/socket";
 import { markSessionNotReady } from "../../libs/wbot";
 import Whatsapp from "../../models/Whatsapp";
 import { logger } from "../../utils/logger";
-import { notifyChannelDisconnected } from "../PushNotificationService";
 
 interface Session extends Client {
   id?: number;
@@ -46,11 +45,6 @@ const wbotMonitor = async (
       markSessionNotReady(whatsapp.id);
       try {
         await whatsapp.update({ status: "OPENING", session: "", number: "" });
-        notifyChannelDisconnected(whatsapp, String(reason)).catch(err => {
-          logger.error(
-            `[PUSH] Error notificando canal desconectado ${whatsapp.id}: ${err.message}`
-          );
-        });
       } catch (err) {
         Sentry.captureException(err);
         logger.error(err);
