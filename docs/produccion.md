@@ -126,6 +126,44 @@ levanta los tres procesos en ~10 s (panel 200, preflight 204).
 Si se actualiza la versión de Node con `nvm`, el `ExecStart` del unit queda apuntando
 a la ruta vieja: hay que editarlo.
 
+## Limpieza de multimedia
+
+El multimedia de los tickets (imágenes, audios, videos, documentos) vive plano en
+`backend/public` y crece sin límite. `scripts/limpiar-multimedia.sh` borra lo que
+tenga más de **60 días**.
+
+| Pieza | Dónde |
+|---|---|
+| Script | `scripts/limpiar-multimedia.sh` (versionado en el repo) |
+| Log | `~/limpieza-multimedia.log` |
+| Estado | `~/.limpieza-multimedia.ultima` (epoch de la última limpieza) |
+| Cron | diario; el borrado real ocurre cada 60 días |
+
+```cron
+0 4 * * * /home/deploy/proit-press/scripts/limpiar-multimedia.sh >/dev/null 2>&1
+```
+
+El cron corre a diario a propósito: si el servidor estuvo apagado el día que tocaba,
+la limpieza se hace en cuanto vuelve. El intervalo se controla con el archivo de
+estado, no con la expresión de cron (que no sabe de "cada 60 días").
+
+```bash
+scripts/limpiar-multimedia.sh --dry-run   # informa cuánto borraría
+scripts/limpiar-multimedia.sh --forzar    # ignora el intervalo de 60 días
+```
+
+Borra **archivos**, no filas de la base: el ticket viejo sigue existiendo, pero sus
+adjuntos dejan de abrirse. Las sesiones de WhatsApp no se tocan.
+
+El cache de versiones de WhatsApp Web (`backend/.wwebjs_cache`) es otra cosa: cada
+versión nueva deja un HTML de ~500 KB. Sólo hacen falta las últimas; las viejas se
+pueden borrar sin afectar las sesiones:
+
+```bash
+cd /home/deploy/proit-press/backend/.wwebjs_cache
+ls -1 | sort -V | head -n -5 | xargs -d '\n' rm -f --
+```
+
 ## Acceso
 
 `pressticket` no tiene puertos entrantes: se entra por **Tailscale**.
