@@ -129,8 +129,15 @@ a la ruta vieja: hay que editarlo.
 ## Limpieza de multimedia
 
 El multimedia de los tickets (imágenes, audios, videos, documentos) vive plano en
-`backend/public` y crece sin límite. `scripts/limpiar-multimedia.sh` borra lo que
-tenga más de **60 días**.
+`backend/public` y crece sin límite. `scripts/limpiar-multimedia.sh` aplica esta regla:
+
+1. **Sólo actúa si el disco está por encima del 80%.** Por debajo de ese umbral no
+   borra nada, aunque haya archivos viejos.
+2. **Sólo borra archivos de más de 60 días.**
+3. **Empieza por los chats menos frecuentes**: ordena por última actividad del contacto
+   (de más vieja a más nueva) y, a igualdad, por cantidad de mensajes.
+4. **No toca los chats recurrentes**: si el contacto tuvo mensajes en los últimos 60
+   días, su multimedia viejo se conserva.
 
 | Pieza | Dónde |
 |---|---|
@@ -144,16 +151,19 @@ tenga más de **60 días**.
 ```
 
 El cron corre a diario a propósito: si el servidor estuvo apagado el día que tocaba,
-la limpieza se hace en cuanto vuelve. El intervalo se controla con el archivo de
-estado, no con la expresión de cron (que no sabe de "cada 60 días").
+la limpieza se hace en cuanto vuelve. La cadencia de 60 días se controla con el archivo
+de estado, no con la expresión de cron (que no sabe de "cada 60 días"). Si el disco
+llega al **90%**, se ignora la cadencia y se limpia en ese mismo ciclo.
 
 ```bash
-scripts/limpiar-multimedia.sh --dry-run   # informa cuánto borraría
-scripts/limpiar-multimedia.sh --forzar    # ignora el intervalo de 60 días
+scripts/limpiar-multimedia.sh --dry-run   # informa sin borrar
+scripts/limpiar-multimedia.sh --forzar    # ignora la cadencia (el umbral sigue)
 ```
 
 Borra **archivos**, no filas de la base: el ticket viejo sigue existiendo, pero sus
-adjuntos dejan de abrirse. Las sesiones de WhatsApp no se tocan.
+adjuntos dejan de abrirse. Las sesiones de WhatsApp no se tocan. La frecuencia de cada
+chat sale de `Messages` (`contactId` y `createdAt`), no de Redis: **Redis no almacena
+este multimedia**, sólo cachea datos de la aplicación.
 
 El cache de versiones de WhatsApp Web (`backend/.wwebjs_cache`) es otra cosa: cada
 versión nueva deja un HTML de ~500 KB. Sólo hacen falta las últimas; las viejas se
