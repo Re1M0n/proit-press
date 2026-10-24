@@ -54,4 +54,10 @@ jobs:
             echo "Auto-deploy pausado (.autodeploy-off presente): no se despliega."
             exit 0
           fi
+          # Las mismas variables que usa la línea de cron. Sin ellas el script
+          # deduce el repo de su propia ruta (su padre es /home/deploy) y muere
+          # en `git fetch` con "not a git repository".
+          AUTODEPLOY_REPO=/home/deploy/proit-press \
+          AUTODEPLOY_BRANCH=main \
+          AUTODEPLOY_DEPLOY=/home/deploy/.autodeploy/deploy.sh \
           /home/deploy/.autodeploy/auto-deploy.sh
