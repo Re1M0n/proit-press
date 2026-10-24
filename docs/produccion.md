@@ -106,9 +106,25 @@ pm2 logs github-runner --lines 20   # tiene que decir 'Listening for Jobs'
 pm2 restart github-runner
 ```
 
-⚠️ **Esta VM no tiene unidad systemd de PM2** (`pm2-deploy` no existe acá, a
-diferencia de `prometheus`): tras un reinicio hay que entrar y correr
-`pm2 resurrect` a mano. Falta `pm2 startup` (requiere `sudo` una vez).
+### Arranque tras un reinicio
+
+Esta VM **no** usa el `pm2 startup` de sistema (`pm2-deploy` existe en `prometheus`
+pero no acá, y `deploy` no tiene `sudo`). El arranque se resuelve con un **unit de
+systemd de usuario** más *linger*, así el manager de usuario sube sin que nadie
+inicie sesión:
+
+| Pieza | Ruta / comando |
+|---|---|
+| Unit | `~/.config/systemd/user/pm2.service` (`ExecStart`: `pm2 resurrect`) |
+| Habilitado | `systemctl --user enable pm2.service` → symlink en `default.target.wants` |
+| Linger | `loginctl enable-linger deploy` → `Linger=yes` |
+| Estado del dump | `pm2 save` (guarda `proit-back`, `proit-front` y `github-runner`) |
+
+Verificado sin reiniciar: tras `pm2 kill`, `systemctl --user start pm2.service`
+levanta los tres procesos en ~10 s (panel 200, preflight 204).
+
+Si se actualiza la versión de Node con `nvm`, el `ExecStart` del unit queda apuntando
+a la ruta vieja: hay que editarlo.
 
 ## Acceso
 
