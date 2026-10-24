@@ -2,9 +2,7 @@ name: Deploy
 
 on:
   # Deploy automático: al pushear a main queda desplegado solo, siempre que el
-  # CI (tsc del backend + build del frontend) haya pasado. Antes había que
-  # dispararlo a mano desde Actions y era fácil olvidarlo: el fix quedaba en
-  # main pero el servidor seguía con el código viejo.
+  # CI (tsc del backend + build del frontend) haya pasado.
   workflow_run:
     workflows: ["CI"]
     types: [completed]
@@ -20,7 +18,6 @@ on:
         type: choice
         options:
           - production
-          # testing se actualiza solo vía scripts/auto-deploy.sh (modelo pull, sin túnel)
 
 permissions:
   contents: read
@@ -31,19 +28,30 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy a producción (prometheus)
+    name: Deploy a producción (pressticket)
     # workflow_run se dispara con CUALQUIER conclusión del CI (success, failure,
     # cancelled), así que acá se filtra: solo se despliega si terminó bien. Un
     # CI cancelado lo está reemplazando el push siguiente, que hará su deploy.
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
-    # Runner self-hosted dentro de Prometheus (pm2 `github-runner`). El puerto 22
-    # ya no está publicado a Internet, así que el deploy por SSH (appleboy) no
-    # puede conectar: el runner sale por HTTPS y ejecuta el deploy localmente.
-    runs-on: [self-hosted, prometheus]
+    # Runner self-hosted dentro de pressticket (pm2 `github-runner`).
+    # pressticket está bajo CGNAT y no tiene puertos entrantes: Actions no puede
+    # entrar por SSH (appleboy), así que el runner sale por HTTPS y ejecuta el
+    # deploy localmente. No hace falta checkout: el deploy trabaja sobre
+    # /home/deploy/proit-press, no sobre el workspace del runner.
+    runs-on: [self-hosted, pressticket]
     environment: production
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Ejecutar deploy.sh en Prometheus
-        run: bash scripts/deploy.sh
+      - name: Aplicar origin/main en pressticket
+        # /home/deploy/.autodeploy/auto-deploy.sh hace git fetch de main, compara
+        # el SHA con .last-deployed y, si cambió, ejecuta deploy.sh (dependencias,
+        # parches de whatsapp-web.js, tsc, migraciones, build atómico del panel y
+        # reinicio de proit-back / proit-front). Solo marca el SHA si terminó
+        # bien. Tiene flock: si el cron de 3 minutos está corriendo, sale sin
+        # hacer nada; si ya desplegó ese commit, este paso también es no-op.
+        run: |
+          if [ -f /home/deploy/proit-press/.autodeploy-off ]; then
+            echo "Auto-deploy pausado (.autodeploy-off presente): no se despliega."
+            exit 0
+          fi
+          /home/deploy/.autodeploy/auto-deploy.sh
