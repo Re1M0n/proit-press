@@ -1,6 +1,9 @@
 #!/bin/bash
-# Script de deploy ejecutado por GitHub Actions en el servidor destino.
-# Asume: repo en /home/deploy/Press-Ticket, servicios pm2 itn-backend e itn-frontend.
+# Deploy del servidor ANTERIOR (Prometheus): repo en /home/deploy/Press-Ticket,
+# PM2 itn-backend / itn-frontend.
+#
+# Producción (pressticket) NO usa este script: allí el deploy corre desde
+# /home/deploy/.autodeploy/deploy.sh y sigue origin/main. Ver docs/produccion.md.
 set -e
 
 cd /home/deploy/Press-Ticket

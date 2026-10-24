@@ -64,22 +64,29 @@ Este sistema es ideal para empresas que buscan mejorar su atención al cliente a
 
 `main` es la rama de despliegue: **todo el código que corre en producción sale de `main`**. Trabajá siempre sobre `main` (o sobre una rama con nombre tipo `feature/algo` que mergees a `main` al terminar) y no dejes trabajo acumulado en ramas de respaldo como `backup-antes-debug`.
 
-### Cómo actualizar el código en el servidor
+### Producción: `pressticket`
+
+Producción corre en la VM **`pressticket`** (panel `https://press.professionalit.com.ar`,
+API `https://pressapi.professionalit.com.ar`). **No se despliega a mano**: un cron cada 3
+minutos compara `origin/main` con el último SHA desplegado y aplica el cambio completo
+(dependencias, `tsc`, migraciones, build del panel y reinicio de `proit-back` / `proit-front`).
+
+- Repo: `/home/deploy/proit-press` · PM2: `proit-back` (4000) y `proit-front` (3000)
+- Pausar deploys: `touch /home/deploy/proit-press/.autodeploy-off` (reanudar: borrarlo)
+- Log: `/home/deploy/auto-deploy.log`
+- Detalle operativo: [docs/produccion.md](docs/produccion.md)
+
+Actualización manual, solo con el cron pausado:
 
 ```bash
-cd /home/deploy/Press-Ticket
-git checkout main
-git pull origin main
+cd /home/deploy/proit-press
+git fetch origin && git reset --hard origin/main
+bash /home/deploy/.autodeploy/deploy.sh
 ```
 
-### Compilar y reiniciar los servicios
-
-```bash
-cd backend && npm run build && cd ..
-cd frontend && npm run build && cd ..
-pm2 restart itn-backend itn-frontend
-pm2 status
-```
+> El servidor anterior era **`prometheus`** (`/home/deploy/Press-Ticket`, PM2 `itn-backend` /
+> `itn-frontend`). Quedó fuera de producción el 24/10/2026 y conserva la copia de rollback.
+> No arrancar `itn-backend` mientras producción corre: duplicaría las sesiones de WhatsApp.
 
 > **Si hay una rama de backup con trabajo sin mergear** (ej. `backup-antes-debug`), mergeala a `main` antes de desplegar:
 > `git checkout main && git merge --ff-only backup-antes-debug && git push origin main`
@@ -136,7 +143,7 @@ sudo bash backup.sh /home/deploy/backups
 scp root@IP_PRODUCCION:/home/deploy/backups/proit_FECHA/* .
 ```
 
-> Los scripts `backup.sh` y `restore.sh` están en la raíz del repositorio. `database.sql.gz` es un dump restaurable con `mysqldump`/`mysql` estándar; `public.tar.gz` es el media de los tickets; `sessions.tar.gz` contiene las sesiones de WhatsApp (opcional, es lo que evita re-escanear el QR). Si la app quedó en otra carpeta que no sea `/home/deploy/Press-Ticket` (el instalador usa el nombre del proyecto), ejecutá con `PROIT_APP_DIR=/ruta/a/la/app bash backup.sh` (igual con `restore.sh`).
+> Los scripts `backup.sh` y `restore.sh` están en la raíz del repositorio. `database.sql.gz` es un dump restaurable con `mysqldump`/`mysql` estándar; `public.tar.gz` es el media de los tickets; `sessions.tar.gz` contiene las sesiones de WhatsApp (opcional, es lo que evita re-escanear el QR). Los scripts usan `/home/deploy/Press-Ticket` (servidor anterior) por defecto: en producción la app está en `/home/deploy/proit-press`, así que ejecutalos con `PROIT_APP_DIR=/home/deploy/proit-press bash backup.sh` (igual con `restore.sh`).
 
 ### 4. Restaurar en el servidor nuevo
 
@@ -165,7 +172,8 @@ curl -k https://back.tudominio.com.ar/version  # responde la versión
 Para un respaldo diario automático, agregá esta línea al crontab (`crontab -e`):
 
 ```bash
-30 3 * * * cd /home/deploy/Press-Ticket && sudo bash backup.sh /home/deploy/backups
+# Producción (pressticket)
+30 3 * * * cd /home/deploy/proit-press && sudo PROIT_APP_DIR=/home/deploy/proit-press bash backup.sh /home/deploy/backups
 ```
 
 ## Créditos

@@ -4,6 +4,12 @@ Guía para dejar de guardar los secretos del backend en `backend/.env` del
 servidor y pasarlos a **Infisical**. Es el caso de producción: el servidor
 `prometheus`, con el backend y el frontend corriendo bajo PM2 detrás de Nginx.
 
+> **Nota (24/10/2026):** los paths y nombres de PM2 de esta guía
+> (`/home/deploy/Press-Ticket`, `itn-backend` / `itn-frontend`) corresponden al
+> servidor anterior. En producción (`pressticket`) el repo está en
+> `/home/deploy/proit-press` y los procesos son `proit-back` / `proit-front`.
+> Ver [`produccion.md`](produccion.md).
+
 La aplicación **no cambia**: sigue leyendo `process.env` igual que siempre. Lo
 único distinto es de dónde salen esos valores.
 

@@ -6,6 +6,12 @@
 # IMPORTANTE: los commits/pushes intermedios a main NO disparan deploy.
 # Solo un tag vX.Y.Z nuevo (una release publicada) lo hace.
 #
+# LEGADO: producción (pressticket) NO usa este script. Allí el cron compara
+# origin/main contra el último SHA desplegado (/home/deploy/.autodeploy/) y
+# aplica el deploy en ≤3 min. Ver docs/produccion.md.
+# Este archivo queda para el servidor anterior (Prometheus) y como referencia;
+# los tags v* están hoy muy atrás de main, así que no sirve para "lo último".
+#
 # Overrides opcionales (para installs adaptados, p. ej. testing):
 #   AUTODEPLOY_REPO   = ruta del repo (default: el padre del directorio del script)
 #   AUTODEPLOY_DEPLOY = script de deploy a ejecutar (default: $REPO/scripts/deploy.sh)

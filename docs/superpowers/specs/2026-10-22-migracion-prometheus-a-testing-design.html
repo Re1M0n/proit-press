@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migración de Press-Ticket a testing — Diseño</title>
+<style>
+  :root{--bg:#f4f6f8;--paper:#fff;--ink:#20252b;--muted:#5d6874;--line:#e1e6eb;--accent:#087f72;--soft:#e8f6f3;--warn:#fff5e8;--warn-border:#b45309;--code:#f0f3f6}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Segoe UI",system-ui,sans-serif}
+  main{max-width:960px;margin:36px auto 70px;padding:44px 52px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 28px #1522380d}
+  h1{font-size:30px;line-height:1.25;margin:0 0 10px}h2{font-size:21px;margin:36px 0 10px;padding-top:15px;border-top:1px solid var(--line)}
+  p,li{color:#303740}li{margin:6px 0}code{background:var(--code);padding:2px 5px;border-radius:4px;font:13px Consolas,monospace}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding:0 0 20px;margin:0 0 24px}.tag{color:var(--accent);background:var(--soft);border-radius:999px;padding:4px 11px;font-size:13px;font-weight:650}
+  .callout{border-left:4px solid var(--warn-border);background:var(--warn);padding:13px 16px;border-radius:0 8px 8px 0}.muted{color:var(--muted)}a{color:var(--accent)}
+  @media(max-width:700px){main{margin:0;border:0;border-radius:0;padding:28px 20px}}@media print{body{background:#fff}main{margin:0;border:0;box-shadow:none;padding:0}}
+</style>
+</head>
+<body><main>
+  <h1>Migración de Press-Ticket de Prometheus a testing</h1>
+  <div class="meta"><span class="tag">Diseño aprobado</span><span class="tag">Press-Ticket</span><span class="tag">22/10/2026</span><span class="tag">Ejecutado 24/10/2026</span></div>
+  <p><strong>Objetivo:</strong> preparar la VM <code>testing</code> (<code>pressticket</code>) para reemplazar Prometheus como producción el lunes 26/10. El alta inicial del runner se prevé desde la consola de testing el viernes 23 después de hora.</p>
+  <p>Se aprobó reemplazar completamente la base de testing, sus adjuntos y sesiones WhatsApp por los de Prometheus, además de desplegar el commit de <code>main</code> que se seleccione para el corte.</p>
+  <div class="callout"><strong>Ejecutado el 24/10/2026:</strong> <code>pressticket</code> es producción y <code>prometheus</code> quedó como servidor anterior. Estado vigente en <a href="../../produccion.md">docs/produccion.md</a>.</div>
+  <p><strong>Plan operativo:</strong> <a href="../plans/2026-10-22-migracion-prometheus-a-testing-plan.html">abrir el runbook HTML</a>. Fuente: <a href="2026-10-22-migracion-prometheus-a-testing-design.md">diseño Markdown</a>.</p>
+
+  <h2>Decisiones confirmadas</h2>
+  <ol>
+    <li>Destino: VM <code>pressticket</code>, documentada como Ubuntu 24.04 detrás de CGNAT.</li>
+    <li>Se permite reemplazar por completo los datos actuales de testing; antes hay que respaldarlos.</li>
+    <li>Transferir MySQL, <code>backend/public</code>, <code>.wwebjs_auth</code> y <code>.wwebjs_cache</code>.</li>
+    <li>Se intentará conservar WhatsApp trasladando LocalAuth. Los backends estarán detenidos durante la copia y no se ejecutarán ambas instancias con la misma sesión.</li>
+    <li>Usar un artifact temporal de Actions cifrado con AES-GCM, secreto <code>PRESSTICKET_MIGRATION_KEY</code> y retención de un día. La clave no va en el chat.</li>
+    <li>Registrar un runner self-hosted con etiqueta <code>pressticket</code> para despliegue después de CI exitoso.</li>
+  </ol>
+
+  <h2>Estado técnico del repo</h2>
+  <ul>
+    <li>El workflow actual despliega a Prometheus en <code>[self-hosted, prometheus]</code> y llama <code>scripts/deploy.sh</code>.</li>
+    <li>Ese script apunta a <code>/home/deploy/Press-Ticket</code> y PM2 <code>itn-backend</code>/<code>itn-frontend</code>; no sirve directamente para testing.</li>
+    <li>El auto-deploy actual sigue tags <code>v*</code>; no despliega cada push.</li>
+    <li>Hay rutas discrepantes: <code>docs/tunel-testing.md</code> y <code>scripts/migrate-testing-releases.sh</code> describen <code>/home/deploy/proit-press</code>; <code>scripts/setup-auto-deploy.sh</code> presupone <code>/home/deploy/Press-Ticket</code>. Se debe verificar la ruta real en la consola de testing.</li>
+    <li><code>scripts/instalar-runner.sh</code> acepta etiqueta por argumento, instala en <code>$HOME/actions-runner</code> y usa PM2 con nombre <code>github-runner</code> por defecto.</li>
+    <li><code>restore.sh</code> importa sobre la DB existente y extrae archivos encima: no garantiza reemplazo total. <code>backup.sh</code> no detiene servicios ni cifra, depende de `.env` y no incluye código. Ambos requieren revisión/adaptación para este corte.</li>
+  </ul>
+  <p><strong>Tamaños reportados en Prometheus el 22/10:</strong> <code>backend/public</code> 602 MB, <code>.wwebjs_auth</code> 4.1 GB, <code>.wwebjs_cache</code> 81 MB; espacio libre 59 GB. El paquete comprimido/cifrado y el espacio libre de testing aún no se midieron.</p>
+
+  <h2>Transferencia y cifrado</h2>
+  <ol>
+    <li>Respaldar por separado el estado de Prometheus y el de testing.</li>
+    <li>Empaquetar dump SQL, medios, sesiones/cache y metadatos (SHA, fecha, tamaños, hashes). Excluir `.env`, credenciales, tokens y clave AES.</li>
+    <li>Cifrar con AES-256-GCM, nonce aleatorio nuevo y tag autenticado; definir/formalizar cómo se codifica la clave de 32 bytes.</li>
+    <li>Subir únicamente el ciphertext como artifact. Verificar tamaño/cuota y espacio antes de detener servicios.</li>
+    <li>En testing, autenticar el ciphertext antes de extraer. Preparar reemplazo de DB y directorios sin fusionar archivos sobrantes.</li>
+    <li>Arrancar solo testing con las sesiones migradas; validar aplicación, DB, medios y canales.</li>
+  </ol>
+  <div class="callout"><strong>Gate de sesiones:</strong> después de copiar LocalAuth, no iniciar ni mantener Prometheus y testing usando esas mismas sesiones en paralelo. Ante rollback, detener primero testing.</div>
+
+  <h2>Deploy por push a main</h2>
+  <ul>
+    <li>Preparar un deploy específico que use <code>[self-hosted, pressticket]</code>, ejecute tras CI exitoso en <code>main</code> y tenga dispatch manual controlado.</li>
+    <li>El script debe apuntar a la ruta real de testing y no reutilizar sin cambios el deploy hardcodeado para Prometheus.</li>
+    <li>Evitar concurrencia entre cron por tags y Actions; pausar el cron solo cuando el workflow nuevo ya haya sido validado.</li>
+    <li>Al pasar a producción, dejar el workflow de producción apuntando al destino activo y evitar que un job vuelva a arrancar Prometheus o duplique el control de WhatsApp.</li>
+  </ul>
+
+  <h2>Datos pendientes de confirmar</h2>
+  <ul>
+    <li>Ruta, usuario, nombres PM2 y configuración DB reales de testing.</li>
+    <li>URL pública final y mecanismo de cambio del tráfico productivo.</li>
+    <li>Espacio libre real del destino y límite/cuota del artifact.</li>
+    <li>Restauración destructiva exacta y backups utilizables de los dos lados.</li>
+    <li>Rol final de Prometheus y destino del workflow después del corte.</li>
+    <li>Generación/carga en GitHub del secreto y formato acordado de la clave.</li>
+  </ul>
+
+  <h2>Aceptación</h2>
+  <ol>
+    <li>Runner online en la VM correcta; job inocuo confirma host/usuario.</li>
+    <li>Push de prueba validado por CI despliega el SHA exacto en testing.</li>
+    <li>Artifact únicamente cifrado; autenticidad comprobada antes de extracción.</li>
+    <li>DB y archivos de destino reemplazados por completo y contrastados con origen.</li>
+    <li>WhatsApp validado con Prometheus detenido y rollback documentado.</li>
+    <li>URL productiva sirve testing y los deploys posteriores apuntan a un solo destino activo.</li>
+  </ol>
+  <p class="muted">A 22/10/2026 no se registró el runner, no se cambió el workflow, no se creó artifact, no se migraron datos y no se cambió el tráfico.</p>
+</main></body>
+</html>
