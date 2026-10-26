@@ -27,6 +27,7 @@ import { processMultiVCard, processVCard } from "./processVCard";
 import { verifyMediaMessage } from "./verifyMediaMessage";
 import { verifyMessage } from "./verifyMessage";
 import { verifyQueue } from "./verifyQueue";
+import SendAutoReplyMessage from "./SendAutoReplyMessage";
 
 const handleMessage = async (
   msg: WbotMessage,
@@ -294,12 +295,21 @@ const chat = await getSafeChat(wbot, msg);
       !msg.fromMe &&
       !ticket.userId &&
       whatsapp.queues.length >= 1
-    ) {
-      if (!isOldMessage) {
-	await verifyQueue(wbot, msg, ticket, contact);
+    ) {      if (!isOldMessage) {
+        // La conexión manda su propia bienvenida o su aviso fuera de horario.
+        // Si no tiene mensajes configurados, sigue el flujo viejo de colas.
+        const respondido = await SendAutoReplyMessage({
+          ticket,
+          contact,
+          whatsapp
+        });
+
+        if (!respondido) {
+          await verifyQueue(wbot, msg, ticket, contact);
+        }
       } else {
 	console.info(`[GREETING_IGNORADO] Mensagem antiga (autoQueue). ID=${msg.id.id} age=${msgAge}s`);
-	}
+      }
     }
 
     if (msg.type === "vcard") {

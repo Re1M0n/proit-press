@@ -116,6 +116,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId, initialType }) => {
 	const initialState = {
 		name: "",
 		greetingMessage: "",
+		outOfHoursMessage: "",
 		farewellMessage: "",
 		isDefault: false,
 		isDisplay: false,
@@ -295,7 +296,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId, initialType }) => {
 
                   <Field
                     as={StyledTextField}
-                    label={t("queueModal.form.greetingMessage")}
+                    label={t("whatsappModal.form.welcomeMessage")}
                     type="greetingMessage"
                     multiline
                     minRows={4}
@@ -305,11 +306,39 @@ const WhatsAppModal = ({ open, onClose, whatsAppId, initialType }) => {
                       touched.greetingMessage && Boolean(errors.greetingMessage)
                     }
                     helperText={
-                      touched.greetingMessage && errors.greetingMessage
+                      (touched.greetingMessage && errors.greetingMessage) ||
+                      t("whatsappModal.form.welcomeMessageHelp")
                     }
                     variant="outlined"
                     margin="normal"
                     placeholder={t("whatsappModal.form.greetingMessagePlaceholder")}
+                    InputProps={{
+                      sx: { borderRadius: 2 }
+                    }}
+                  />
+
+                  <Field
+                    as={StyledTextField}
+                    label={t("whatsappModal.form.outOfHoursMessage")}
+                    type="outOfHoursMessage"
+                    multiline
+                    minRows={4}
+                    fullWidth
+                    name="outOfHoursMessage"
+                    error={
+                      touched.outOfHoursMessage &&
+                      Boolean(errors.outOfHoursMessage)
+                    }
+                    helperText={
+                      (touched.outOfHoursMessage &&
+                        errors.outOfHoursMessage) ||
+                      t("whatsappModal.form.outOfHoursMessageHelp")
+                    }
+                    variant="outlined"
+                    margin="normal"
+                    placeholder={t(
+                      "whatsappModal.form.outOfHoursMessagePlaceholder"
+                    )}
                     InputProps={{
                       sx: { borderRadius: 2 }
                     }}

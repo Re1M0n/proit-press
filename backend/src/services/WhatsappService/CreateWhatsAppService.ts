@@ -8,6 +8,7 @@ interface Request {
   name: string;
   queueIds?: number[];
   greetingMessage?: string;
+  outOfHoursMessage?: string;
   farewellMessage?: string;
   status?: string;
   isDefault?: boolean;
@@ -27,6 +28,7 @@ const CreateWhatsAppService = async ({
   status = "OPENING",
   queueIds = [],
   greetingMessage,
+  outOfHoursMessage,
   farewellMessage,
   isDefault = false,
   isDisplay = false,
@@ -85,6 +87,7 @@ const CreateWhatsAppService = async ({
       name,
       status,
       greetingMessage,
+      outOfHoursMessage,
       farewellMessage,
       isDefault,
       isDisplay,
