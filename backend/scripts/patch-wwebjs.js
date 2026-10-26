@@ -103,6 +103,18 @@ const PATCHES = [
         "        return window.require('WAWebCollections').Msg.get(msg.id['$1'] || msg.id._serialized);";
       return source.replace(anchor, replacement);
     }
+  },
+  {
+    id: "message-id-fallback",
+    file: "whatsapp-web.js/src/structures/Message.js",
+    marker: 'this.id._serialized || this.id["$1"]',
+    description:
+      "Message: en la era LID el _serialized que arma wwebjs puede venir vacío. edit() se lo pasa a Msg.get(), que revienta con un error minificado ('r') y el panel responde ERR_EDITING_WAPP_MSG; lo mismo afecta citar, reaccionar, borrar y encuestas. Se cae al id interno ($1), igual que Utils.editMessage. Estaba aplicado a mano en el servidor anterior y se perdió en la instalación nueva.",
+    apply(source) {
+      const replacement = 'this.id._serialized || this.id["$1"]';
+      const patched = source.replace(/this\.id\._serialized/g, replacement);
+      return patched === source ? null : patched;
+    }
   }
 ];
 
