@@ -24,6 +24,8 @@ import Whatsapp from "../models/Whatsapp";
 import WhatsappNotification from "../models/WhatsappNotification";
 import WhatsappQueue from "../models/WhatsappQueue";
 import MessageReaction from "../models/MessageReaction";
+import Client from "../models/Client";
+import ClientContact from "../models/ClientContact";
 import ClientStatus from "../models/ClientStatus";
 import GroupEvent from "../models/GroupEvent";
 import PollVote from "../models/PollVote";
@@ -60,6 +62,8 @@ const models = [
   Video,
   VideoUser,
   MessageReaction,
+  Client,
+  ClientContact,
   ClientStatus,
   GroupEvent,
   PollVote,

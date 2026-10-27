@@ -13,6 +13,8 @@ import {
   Unique,
   UpdatedAt
 } from "sequelize-typescript";
+import Client from "./Client";
+import ClientContact from "./ClientContact";
 import ContactCustomField from "./ContactCustomField";
 import ContactTag from "./ContactTag";
 import Tag from "./Tag";
@@ -127,6 +129,17 @@ class Contact extends Model<Contact> {
   @Column
   messageHandling: string;
 
+  /**
+   * Cómo es este contacto para nosotros:
+   * "client"   -> es el cliente (el número del abonado). Va en una sola ficha.
+   * "external" -> no es cliente nuestro; es alguien de la órbita (el diseñador,
+   *               un técnico) y puede estar en varias fichas.
+   */
+  @AllowNull(false)
+  @Default("client")
+  @Column
+  contactType: string;
+
   @AllowNull(true)
   @Column(DataType.TEXT)
   technicalHardware: string;
@@ -162,6 +175,9 @@ class Contact extends Model<Contact> {
 
   @BelongsToMany(() => Tag, () => ContactTag)
   tags: Array<Tag & { ContactTag: ContactTag }>;
+
+  @BelongsToMany(() => Client, () => ClientContact)
+  clients: Array<Client & { ClientContact: ClientContact }>;
 
   @HasMany(() => ContactCustomField)
   extraInfo: ContactCustomField[];
