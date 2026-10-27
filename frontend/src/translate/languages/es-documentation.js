@@ -13,6 +13,7 @@ const documentationMessages = {
       quickAnswers: "Las Respuestas Rápidas son mensajes predefinidos que agilizan tu atención. Creá atajos de texto para respuestas frecuentes y ahorrá tiempo en cada conversación. También podés usar el divisor automático con |q para partir un mensaje largo en varias partes con envío diferido.",
       tags: "Con las Etiquetas organizás y clasificás contactos de forma eficiente. Creá etiquetas de colores personalizadas que facilitan la búsqueda y el filtrado de tus contactos.",
       clientStatus: "En Estado de Clientes creás y administrás estados personalizados para clasificar tus contactos: Activo, Inactivo, Potencial, VIP, entre otros. Así podés segmentar tu cartera y hacerle seguimiento.",
+      clients: "En Clientes agrupás los contactos de un mismo cliente bajo una ficha, marcás si está abonado o no y distinguís los contactos externos, como el diseñador que trabaja con ese cliente. Desde acá también se ve cuántos contactos tiene cada ficha.",
       videos: "La sección de Videos te permite gestionar y compartir contenido en video con tu equipo. Agregá videos de YouTube, controlá qué usuarios pueden verlos y reproducilos directamente en la plataforma."
     },
     administration: {

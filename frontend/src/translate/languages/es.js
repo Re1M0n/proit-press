@@ -30,6 +30,7 @@ const messages = {
         users: "Usuarios",
         quickAnswers: "Respuestas rápidas",
         clientStatus: "Estado de clientes",
+        clients: "Clientes",
         whatsappGroups: "Grupos de WhatsApp",
         presence: "Presencia (indicadores)",
         authentication: "Autenticación"
@@ -240,6 +241,15 @@ const messages = {
       }
     },
     contactModal: {
+      clientSection: {
+        title: "Cliente",
+        type: "Tipo de contacto",
+        typeClient: "Cliente",
+        typeExternal: "Externo",
+        clients: "Clientes",
+        clientsHelpSingle: "Un contacto tipo cliente pertenece a una sola ficha.",
+        clientsHelpMultiple: "Un contacto externo puede estar en varias fichas."
+      },
       title: {
         add: "Agregar contacto",
         edit: "Editar contacto"
@@ -410,7 +420,9 @@ const messages = {
       buttons: {
         edit: "Editar contacto"
       },
-      extraInfo: "Otra información"
+      extraInfo: "Otra información",
+      client: "Cliente",
+      contactTypeExternal: "Externo"
     },
     common: {
       search: "Buscar",
@@ -1582,6 +1594,70 @@ const messages = {
         deleteAllTitle: "Eliminar todos",
         deleteMessage: "¿Está seguro de que desea eliminar este estado?",
         deleteAllMessage: "¿Está seguro de que desea eliminar todos los estados?"
+      }
+    },
+    clients: {
+      title: "Clientes",
+      searchPlaceholder: "Buscar por nombre",
+      tabs: {
+        clients: "Clientes",
+        messages: "Mensajes"
+      },
+      filters: {
+        all: "Todas",
+        subscribers: "Abonado",
+        nonSubscribers: "No abonado",
+        external: "Externo"
+      },
+      table: {
+        name: "Nombre",
+        subscriber: "Estado",
+        contacts: "Contactos",
+        contactsCount: "{{count}} contactos ({{external}} externos)",
+        actions: "Acciones"
+      },
+      messages: {
+        comingSoon: "Acá se configuran el horario de atención y los mensajes automáticos de cada conexión."
+      },
+      buttons: {
+        add: "Agregar cliente",
+        edit: "Editar",
+        delete: "Eliminar"
+      },
+      toasts: {
+        deleted: "¡Cliente eliminado con éxito!"
+      },
+      confirmationModal: {
+        deleteTitle: "Eliminar cliente",
+        deleteMessage: "¿Está seguro de que desea eliminar este cliente?"
+      }
+    },
+    clientsModal: {
+      title: {
+        add: "Nuevo cliente",
+        edit: "Editar cliente"
+      },
+      form: {
+        name: "Nombre o razón social",
+        subscriber: "Abonado",
+        notes: "Notas",
+        notesHelp: "CUIT, tipo de abono y todo lo demás va acá.",
+        contactsTitle: "Contactos de este cliente",
+        addContact: "Buscar contacto por nombre o número",
+        noOptions: "Sin resultados"
+      },
+      contactType: {
+        client: "Cliente",
+        external: "Externo"
+      },
+      buttons: {
+        cancel: "Cancelar",
+        save: "Guardar"
+      },
+      success: "Cliente guardado",
+      errors: {
+        nameRequired: "El nombre es obligatorio",
+        alreadyLinked: "Ese contacto ya es cliente de otra ficha: marcalo como externo para vincularlo a esta."
       }
     },
     clientStatusModal: {

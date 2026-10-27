@@ -68,6 +68,15 @@ const messages = {
         },
       },
       contactModal: {
+        clientSection: {
+          title: "Client",
+          type: "Contact type",
+          typeClient: "Client",
+          typeExternal: "External",
+          clients: "Clients",
+          clientsHelpSingle: "A client-type contact belongs to a single client record.",
+          clientsHelpMultiple: "An external contact can belong to several client records.",
+        },
         title: {
           add: "Add contact",
           edit: "Edit contact",
@@ -144,6 +153,72 @@ const messages = {
           edit: "Edit contact",
         },
         extraInfo: "Other information",
+        client: "Client",
+        contactTypeExternal: "External",
+      },
+      clients: {
+        title: "Clients",
+        searchPlaceholder: "Search by name",
+        tabs: {
+          clients: "Clients",
+          messages: "Messages",
+        },
+        filters: {
+          all: "All",
+          subscribers: "Subscriber",
+          nonSubscribers: "Non subscriber",
+          external: "External",
+        },
+        table: {
+          name: "Name",
+          subscriber: "Status",
+          contacts: "Contacts",
+          contactsCount: "{{count}} contacts ({{external}} external)",
+          actions: "Actions",
+        },
+        messages: {
+          comingSoon: "Here you configure the business hours and the automatic messages of each connection.",
+        },
+        buttons: {
+          add: "New client",
+          edit: "Edit",
+          delete: "Delete",
+        },
+        toasts: {
+          deleted: "Client deleted",
+        },
+        confirmationModal: {
+          deleteTitle: "Delete client",
+          deleteMessage: "Are you sure you want to delete this client?",
+        },
+      },
+      clientsModal: {
+        title: {
+          add: "New client",
+          edit: "Edit client",
+        },
+        form: {
+          name: "Name or company name",
+          subscriber: "Subscriber",
+          notes: "Notes",
+          notesHelp: "Tax ID, subscription type and everything else goes here.",
+          contactsTitle: "Contacts of this client",
+          addContact: "Search contact by name or number",
+          noOptions: "No results",
+        },
+        contactType: {
+          client: "Client",
+          external: "External",
+        },
+        buttons: {
+          cancel: "Cancel",
+          save: "Save",
+        },
+        success: "Client saved",
+        errors: {
+          nameRequired: "Name is required",
+          alreadyLinked: "That contact already belongs to another client record: mark it as external to link it here.",
+        },
       },
       copyToClipboard: {
         copy: "Copy",
@@ -267,6 +342,7 @@ const messages = {
           connections: "Channels",
           tickets: "Tickets",
           contacts: "Contacts",
+          clients: "Clients",
           quickAnswers: "Quick Answers",
           tags: "Tags",
           queues: "Sectors",
