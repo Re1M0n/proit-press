@@ -1,4 +1,5 @@
 import AppError from "../../errors/AppError";
+import Client from "../../models/Client";
 import Contact from "../../models/Contact";
 import Queue from "../../models/Queue";
 import Ticket from "../../models/Ticket";
@@ -26,9 +27,19 @@ const ShowTicketService = async (id: string | number): Promise<Ticket> => {
           "messageHandling",
           "technicalHardware",
           "technicalOperatingSystem",
-          "technicalApplications"
+          "technicalApplications",
+          "contactType"
         ],
-        include: ["extraInfo", "tags"]
+        include: [
+          "extraInfo",
+          "tags",
+          {
+            model: Client,
+            as: "clients",
+            attributes: ["id", "name", "isSubscriber"],
+            through: { attributes: [] }
+          }
+        ]
       },
       {
         model: User,

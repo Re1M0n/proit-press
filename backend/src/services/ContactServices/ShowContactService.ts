@@ -1,5 +1,6 @@
 import Contact from "../../models/Contact";
 import AppError from "../../errors/AppError";
+import Client from "../../models/Client";
 import Tag from "../../models/Tag";
 
 const ShowContactService = async (id: string | number): Promise<Contact> => {
@@ -10,6 +11,12 @@ const ShowContactService = async (id: string | number): Promise<Contact> => {
         model: Tag,
         as: "tags",
         attributes: ["id", "name", "color"]
+      },
+      {
+        model: Client,
+        as: "clients",
+        attributes: ["id", "name", "isSubscriber"],
+        through: { attributes: [] }
       }
     ]
   });

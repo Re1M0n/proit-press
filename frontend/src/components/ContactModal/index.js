@@ -131,6 +131,8 @@ const initialState = {
 	technicalHardware: "",
 	technicalOperatingSystem: "",
 	technicalApplications: "",
+	contactType: "client",
+	clients: [],
 };
 
 const ContactSchema = Yup.object().shape({
@@ -147,6 +149,8 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 	const theme = useTheme();
 	const [loadingCep, setLoadingCep] = useState(false);
 	const [clientStatusList, setClientStatusList] = useState([]);
+	const [clientsOptions, setClientsOptions] = useState([]);
+	const [clientsSearch, setClientsSearch] = useState("");
 
 	const formatPhoneNumber = (number) => {
 		if (!number) return "-";
@@ -206,6 +210,33 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 	}, []);
 
 	useEffect(() => {
+		if (!open || clientsSearch.trim().length < 2) {
+			setClientsOptions([]);
+			return undefined;
+		}
+
+		const timeout = setTimeout(async () => {
+			try {
+				const { data } = await api.get("/clients", {
+					params: { searchParam: clientsSearch, pageNumber: 1 },
+				});
+
+				setClientsOptions(
+					(data.clients || []).map((client) => ({
+						id: client.id,
+						name: client.name,
+						isSubscriber: client.isSubscriber,
+					}))
+				);
+			} catch (err) {
+				toastError(err, t);
+			}
+		}, 400);
+
+		return () => clearTimeout(timeout);
+	}, [clientsSearch, open, t]);
+
+	useEffect(() => {
 		const fetchCountries = async () => {
 			try {
 				const response = await fetch("https://restcountries.com/v3.1/all?fields=name");
@@ -241,6 +272,8 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 						...data,
 						birthdate: data.birthdate ? new Date(data.birthdate).toISOString().split('T')[0] : "",
 						lastContactAt: data.lastContactAt || null,
+						contactType: data.contactType || "client",
+						clients: data.clients || [],
 					};
 					
 					setContact(formattedData);
@@ -266,9 +299,13 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 
 	const handleSaveContact = async (values) => {
 		try {
+			const { clients, ...rest } = values;
+
 			const dataToSend = {
-				...values,
-				birthdate: values.birthdate || null,
+				...rest,
+				birthdate: rest.birthdate || null,
+				contactType: rest.contactType || "client",
+				clientIds: (clients || []).map((client) => client.id),
 			};
 
 			if (contactId) {
@@ -399,6 +436,55 @@ const ContactModal = ({ open, onClose, contactId, initialValues, onSave }) => {
 													<Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
 														{t("contactModal.messageHandling.note", { defaultValue: "Elegí cómo tratar los mensajes que llegan de este contacto." })}
 													</Typography>
+												</FieldContainer>
+											</FieldRow>
+										)}
+										{contactId && (
+											<FieldRow>
+												<FieldContainer>
+													<FieldLabel>{t("contactModal.clientSection.type")}</FieldLabel>
+													<Select
+														value={values.contactType || "client"}
+														fullWidth
+														variant="outlined"
+														onChange={(e) => {
+															const valor = e.target.value;
+															setFieldValue("contactType", valor);
+
+															if (valor === "client") {
+																setFieldValue("clients", (values.clients || []).slice(0, 1));
+															}
+														}}
+													>
+														<MenuItem value="client">{t("contactModal.clientSection.typeClient")}</MenuItem>
+														<MenuItem value="external">{t("contactModal.clientSection.typeExternal")}</MenuItem>
+													</Select>
+												</FieldContainer>
+												<FieldContainer>
+													<FieldLabel>{t("contactModal.clientSection.clients")}</FieldLabel>
+													<Autocomplete
+														multiple
+														size="small"
+														options={clientsOptions}
+														value={values.clients || []}
+														onChange={(e, value) => setFieldValue("clients", value)}
+														onInputChange={(e, value) => setClientsSearch(value)}
+														getOptionLabel={(option) => option.name || ""}
+														isOptionEqualToValue={(option, value) => option.id === value.id}
+														noOptionsText={t("clientsModal.form.noOptions")}
+														renderInput={(params) => (
+															<TextField
+																{...params}
+																variant="outlined"
+																placeholder={t("contactModal.clientSection.clients")}
+																helperText={
+																	(values.contactType || "client") === "client"
+																		? t("contactModal.clientSection.clientsHelpSingle")
+																		: t("contactModal.clientSection.clientsHelpMultiple")
+																}
+															/>
+														)}
+													/>
 												</FieldContainer>
 											</FieldRow>
 										)}

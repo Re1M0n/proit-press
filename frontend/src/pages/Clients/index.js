@@ -26,6 +26,7 @@ import Edit from "@mui/icons-material/Edit";
 import Search from "@mui/icons-material/Search";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import ClientsModal from "../../components/ClientsModal";
@@ -116,11 +117,14 @@ const ButtonContainer = styled(Box)(({ theme }) => ({
 
 const Clients = () => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [searchParam, setSearchParam] = useState("");
+  const [searchParam, setSearchParam] = useState(
+    () => new URLSearchParams(location.search).get("searchParam") || ""
+  );
   const [subscriberFilter, setSubscriberFilter] = useState("");
   const [clients, dispatch] = useReducer(reducer, []);
   const [selectedClient, setSelectedClient] = useState(null);

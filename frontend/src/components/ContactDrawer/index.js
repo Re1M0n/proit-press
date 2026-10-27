@@ -8,6 +8,7 @@ import {
   Paper, 
   Divider,
   Box,
+  Chip,
   Select,
   MenuItem,
   Tooltip
@@ -16,6 +17,7 @@ import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import React, { useContext, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
@@ -99,6 +101,7 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading, isGroup, mes
   const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const displayContact = (() => {
     if (isGroup) {
       if (contact?.isGroup) return contact; 
@@ -277,6 +280,41 @@ const ContactDrawer = ({ open, handleDrawerClose, contact, loading, isGroup, mes
             <GroupActionsPanel groupId={groupJid} />
           )}
           <TagsContainer contact={contact} sx={{ marginTop: 2 }} />
+          {displayContact?.clients?.length > 0 && (
+            <ContactDetails square variant="outlined">
+              <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 1.5, mt: 1 }}>
+                {displayContact.contactType === "external"
+                  ? t("contactDrawer.contactTypeExternal")
+                  : t("contactDrawer.client")}
+              </Typography>
+              <Divider sx={{ mb: 1 }} />
+              {displayContact.clients.map((client) => (
+                <Box
+                  key={client.id}
+                  sx={{ display: "flex", gap: 1, alignItems: "center", mt: 1 }}
+                >
+                  <Link
+                    component="button"
+                    onClick={() =>
+                      navigate(`/clients?searchParam=${encodeURIComponent(client.name)}`)
+                    }
+                    sx={{ textAlign: "left" }}
+                  >
+                    {client.name}
+                  </Link>
+                  <Chip
+                    size="small"
+                    color={client.isSubscriber ? "primary" : "default"}
+                    label={
+                      client.isSubscriber
+                        ? t("clients.filters.subscribers")
+                        : t("clients.filters.nonSubscribers")
+                    }
+                  />
+                </Box>
+              ))}
+            </ContactDetails>
+          )}
           {(displayContact?.technicalHardware || displayContact?.technicalOperatingSystem || displayContact?.technicalApplications) && (
             <ContactDetails square variant="outlined">
               <Typography variant="subtitle1" sx={{ fontWeight: 500, mb: 1.5, mt: 1 }}>
