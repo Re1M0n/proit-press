@@ -2,6 +2,8 @@ import AppError from "../../errors/AppError";
 import Contact from "../../models/Contact";
 import ContactCustomField from "../../models/ContactCustomField";
 import { normalizarMessageHandling } from "../../helpers/MessageHandling";
+import { normalizarContactType } from "../../helpers/ClientContactRules";
+import SetContactClientsService from "./SetContactClientsService";
 
 interface ExtraInfo {
   id?: number;
@@ -30,6 +32,9 @@ interface ContactData {
   technicalHardware?: string;
   technicalOperatingSystem?: string;
   technicalApplications?: string;
+  /** "client" | "external" — ver helpers/ClientContactRules.ts */
+  contactType?: string;
+  clientIds?: Array<number | string>;
 }
 
 interface Request {
@@ -41,7 +46,7 @@ const UpdateContactService = async ({
   contactData,
   contactId
 }: Request): Promise<Contact> => {
-  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf, messageHandling, technicalHardware, technicalOperatingSystem, technicalApplications } = contactData;
+  const { email, address, name, number, extraInfo, birthdate, gender, status, lastContactAt, country, zip, addressNumber, addressComplement, neighborhood, city, state, cpf, messageHandling, technicalHardware, technicalOperatingSystem, technicalApplications, contactType, clientIds } = contactData;
 
   const contact = await Contact.findOne({
     where: { id: contactId },
@@ -120,6 +125,9 @@ const UpdateContactService = async ({
       ? { technicalOperatingSystem }
       : {}),
     ...(technicalApplications !== undefined ? { technicalApplications } : {}),
+    ...(contactType !== undefined
+      ? { contactType: normalizarContactType(contactType) }
+      : {}),
     messageHandling:
       messageHandling !== undefined
         ? normalizarMessageHandling(messageHandling)
@@ -135,6 +143,7 @@ const UpdateContactService = async ({
       "address",
       "email",
       "messageHandling",
+      "contactType",
       "technicalHardware",
       "technicalOperatingSystem",
       "technicalApplications",
@@ -146,6 +155,12 @@ const UpdateContactService = async ({
     ],
     include: ["extraInfo"]
   });
+
+  // Las fichas se guardan después del contacto: así el servicio lee el tipo ya
+  // actualizado (un externo puede estar en varias, un cliente en una sola).
+  if (clientIds !== undefined) {
+    return SetContactClientsService({ contactId: contact.id, clientIds });
+  }
 
   return contact;
 };

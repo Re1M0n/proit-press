@@ -1,4 +1,9 @@
-import { Filterable, Includeable, Op, Sequelize } from "sequelize";
+import { Includeable, Op, Sequelize } from "sequelize";
+import {
+  CONTACT_TYPE_CLIENT,
+  CONTACT_TYPE_EXTERNAL
+} from "../../helpers/ClientContactRules";
+import resolverFiltroDeCliente from "../../helpers/ClientFilter";
 import Contact from "../../models/Contact";
 import Tag from "../../models/Tag";
 
@@ -6,8 +11,12 @@ interface Request {
   searchParam?: string;
   pageNumber?: string;
   tags?: number[];
-  isGroup?: string; 
+  isGroup?: string;
   status?: string;
+  contactType?: string;
+  clientId?: string;
+  /** "subscriber" | "nonSubscriber" | "external" */
+  clientFilter?: string;
 }
 
 interface Response {
@@ -21,7 +30,10 @@ const ListContactsService = async ({
   pageNumber = "1",
   tags,
   isGroup,
-  status
+  status,
+  contactType,
+  clientId,
+  clientFilter
 }: Request): Promise<Response> => {
   const whereCondition: any = {
     [Op.or]: [
@@ -68,6 +80,34 @@ const ListContactsService = async ({
     whereCondition[Op.and].push({
       status: status
     });
+  }
+
+  if (
+    contactType === CONTACT_TYPE_CLIENT ||
+    contactType === CONTACT_TYPE_EXTERNAL
+  ) {
+    whereCondition[Op.and].push({ contactType });
+  }
+
+  if (clientId) {
+    whereCondition[Op.and].push({
+      id: {
+        [Op.in]: Sequelize.literal(`(
+          SELECT cc.contactId FROM ClientContacts AS cc
+          WHERE cc.clientId = ${Number(clientId)}
+        )`)
+      }
+    });
+  }
+
+  const filtroDeCliente = await resolverFiltroDeCliente(clientFilter);
+
+  if (filtroDeCliente.contactType) {
+    whereCondition[Op.and].push({ contactType: filtroDeCliente.contactType });
+  }
+
+  if (filtroDeCliente.contactIds) {
+    whereCondition[Op.and].push({ id: { [Op.in]: filtroDeCliente.contactIds } });
   }
 
   const includeCondition: Includeable[] = [

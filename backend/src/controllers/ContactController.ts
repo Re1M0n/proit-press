@@ -33,6 +33,9 @@ type IndexQuery = {
   tags?: string;
   isGroup?: string;
   status?: string;
+  contactType?: string;
+  clientId?: string;
+  clientFilter?: string;
 };
 
 export const getBlockStatus = async (
@@ -205,10 +208,22 @@ interface ContactData {
   technicalHardware?: string;
   technicalOperatingSystem?: string;
   technicalApplications?: string;
+  /** "client" | "external" */
+  contactType?: string;
+  clientIds?: Array<number | string>;
 }
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
-  const { searchParam, pageNumber, tags, isGroup, status } = req.query as IndexQuery;
+  const {
+    searchParam,
+    pageNumber,
+    tags,
+    isGroup,
+    status,
+    contactType,
+    clientId,
+    clientFilter
+  } = req.query as IndexQuery;
 
   const tagIds = tags ? tags.split(",").map(tag => Number(tag)) : [];
 
@@ -217,7 +232,10 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     pageNumber,
     tags: tagIds,
     isGroup,
-    status
+    status,
+    contactType,
+    clientId,
+    clientFilter
   });
 
   return res.json({ contacts, count, hasMore });
