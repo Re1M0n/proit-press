@@ -1,5 +1,7 @@
 import { endOfDay, parseISO, startOfDay } from "date-fns";
 import { col, fn, Includeable, Op, where } from "sequelize";
+import resolverFiltroDeCliente from "../../helpers/ClientFilter";
+import Client from "../../models/Client";
 import Contact from "../../models/Contact";
 import Message from "../../models/Message";
 import Queue from "../../models/Queue";
@@ -22,6 +24,8 @@ interface Request {
   channelIds?: number[];
   all?: string;
   isGroup?: string;
+  /** "subscriber" | "nonSubscriber" | "external" */
+  clientFilter?: string;
 }
 
 interface Response {
@@ -43,7 +47,8 @@ const ListTicketsService = async ({
   queueIds = [],
   channelIds = [],
   all,
-  isGroup
+  isGroup,
+  clientFilter
 }: Request): Promise<Response> => {
   try {
 
@@ -71,7 +76,16 @@ const ListTicketsService = async ({
         "technicalHardware",
         "technicalOperatingSystem",
         "technicalApplications",
-        "isGroup"
+        "isGroup",
+        "contactType"
+      ],
+      include: [
+        {
+          model: Client,
+          as: "clients",
+          attributes: ["id", "name", "isSubscriber"],
+          through: { attributes: [] }
+        }
       ]
     },
     {
@@ -93,6 +107,20 @@ const ListTicketsService = async ({
 
   if (status) {
     whereCondition.status = status;
+  }
+
+  if (clientFilter) {
+    // El filtro se resuelve antes y termina siendo un IN de contactos: una condición
+    // anidada sobre el include desincroniza el count de findAndCountAll.
+    const filtroDeCliente = await resolverFiltroDeCliente(clientFilter);
+
+    if (filtroDeCliente.contactType) {
+      whereCondition.contactType = filtroDeCliente.contactType;
+    }
+
+    if (filtroDeCliente.contactIds) {
+      whereCondition.contactId = { [Op.in]: filtroDeCliente.contactIds };
+    }
   }
 
   if (searchParam) {

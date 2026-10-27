@@ -47,6 +47,7 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
     const withUnreadMessages = req.query.withUnreadMessages as string;
     const all = req.query.all as string;
     const isGroup = req.query.isGroup as string;
+    const clientFilter = req.query.clientFilter as string;
 
     let userId = "0";
     let isAdmin = false;
@@ -117,7 +118,8 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
         channelIds,
         withUnreadMessages,
         all,
-        isGroup
+        isGroup,
+        clientFilter
       });
 
       return res.status(200).json({ tickets, count, hasMore });
