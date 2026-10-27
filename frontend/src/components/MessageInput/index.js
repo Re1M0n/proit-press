@@ -59,6 +59,10 @@ import StrikethroughSIcon from "@mui/icons-material/StrikethroughS";
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
+// Las respuestas rápidas se cachean para que el filtrado sea local (sin ida y vuelta
+// al backend en cada tecla) y Enter pueda insertar sin demora.
+const QUICK_ANSWERS_CACHE_MS = 60000;
+
 const MainWrapper = styled(Paper)(({ theme }) => ({
   background: theme.palette.mode === 'dark' ? theme.palette.background.paper : "#f5f5f5",
   display: "flex",
@@ -226,6 +230,10 @@ const MessageContactName = styled(Box)(({ theme }) => ({
 }));
 
 const MessageQuickAnswersWrapper = styled('ul')(({ theme }) => ({
+  "& a[data-selected='true']": {
+    background: theme.palette.action.selected,
+    boxShadow: `inset 3px 0 0 ${theme.palette.primary.main}`,
+  },
   margin: 0,
   position: "absolute",
   bottom: "60px",
@@ -353,12 +361,16 @@ const MessageInput = ({ ticketStatus }) => {
   const [recording, setRecording] = useState(false);
   const [quickAnswers, setQuickAnswer] = useState([]);
   const [typeBar, setTypeBar] = useState(false);
+  const [quickAnswerIndex, setQuickAnswerIndex] = useState(0);
   const [showMentions, setShowMentions] = useState(false);
   const [mentionsList, setMentionsList] = useState([]);
   const [mentionSearch, setMentionSearch] = useState("");
   const [mentionStartPos, setMentionStartPos] = useState(0);
   const [selectedMentions, setSelectedMentions] = useState([]);
   const inputRef = useRef();
+  const quickAnswerItemRefs = useRef([]);
+  const quickAnswersCacheRef = useRef({ data: [], fetchedAt: 0 });
+  const quickAnswerQueryRef = useRef("");
   const [onDragEnter, setOnDragEnter] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [attachmentMenuAnchor, setAttachmentMenuAnchor] = useState(null);
@@ -399,6 +411,14 @@ const MessageInput = ({ ticketStatus }) => {
   useEffect(() => {
     inputRef.current.focus();
   }, [replyingMessage, editingMessage]);
+
+  useEffect(() => {
+    if (!typeBar) return;
+    const item = quickAnswerItemRefs.current[quickAnswerIndex];
+    if (item && item.scrollIntoView) {
+      item.scrollIntoView({ block: "nearest" });
+    }
+  }, [quickAnswerIndex, typeBar, quickAnswers]);
 
   useEffect(() => {
     return () => {
@@ -720,6 +740,7 @@ const MessageInput = ({ ticketStatus }) => {
   const handleChangeInput = (e) => {
     const value = e.target.value;
     setInputMessage(value);
+    setQuickAnswerIndex(0);
     handleLoadQuickAnswer(value);
     
     if (isGroup && mentionsList.length > 0) {
@@ -742,7 +763,25 @@ const MessageInput = ({ ticketStatus }) => {
     }
   };
 
-  const handleQuickAnswersClick = async (quickAnswer) => {
+  const handleQuickAnswerKeyDown = (e) => {
+    if (!typeBar || quickAnswers.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setQuickAnswerIndex(i => (i + 1) % quickAnswers.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setQuickAnswerIndex(i => (i - 1 + quickAnswers.length) % quickAnswers.length);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setTypeBar(false);
+    } else if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+      applyQuickAnswer(quickAnswers[quickAnswerIndex] || quickAnswers[0]);
+    }
+  };
+
+  const applyQuickAnswer = async (quickAnswer) => {
     setTypeBar(false);
     setInputMessage("");
     
@@ -1140,23 +1179,52 @@ const MessageInput = ({ ticketStatus }) => {
     }
   };
 
+  const filtrarRespuestasRapidas = (lista, consulta) => {
+    const q = (consulta || "").toLowerCase();
+    const rank = (s) => (s === q ? 0 : s.startsWith(q) ? 1 : 2);
+
+    return lista
+      .filter(item => (item.shortcut || "").toLowerCase().includes(q))
+      .sort((a, b) => {
+        const sa = (a.shortcut || "").toLowerCase();
+        const sb = (b.shortcut || "").toLowerCase();
+        return rank(sa) - rank(sb) || sa.localeCompare(sb);
+      });
+  };
+
   const handleLoadQuickAnswer = async (value) => {
-    if (value && value.indexOf("/") === 0) {
-      try {
-        const shortcut = value.substring(1).trim();
+    if (!value || value.indexOf("/") !== 0) {
+      setTypeBar(false);
+      return;
+    }
+
+    const shortcut = value.substring(1).trim().toLowerCase();
+    quickAnswerQueryRef.current = shortcut;
+
+    try {
+      const cache = quickAnswersCacheRef.current;
+
+      if (!cache.fetchedAt || Date.now() - cache.fetchedAt > QUICK_ANSWERS_CACHE_MS) {
         const { data } = await api.get("/quickAnswers/", {
-          params: { searchParam: shortcut },
+          params: { pageNumber: 1 },
         });
-        setQuickAnswer(data.quickAnswers);
-        if (data.quickAnswers.length > 0) {
-          setTypeBar(true);
-        } else {
-          setTypeBar(false);
-        }
-      } catch (err) {
-        setTypeBar(false);
+        quickAnswersCacheRef.current = {
+          data: data.quickAnswers || [],
+          fetchedAt: Date.now()
+        };
       }
-    } else {
+
+      if (quickAnswerQueryRef.current !== shortcut) return;
+
+      const matches = filtrarRespuestasRapidas(
+        quickAnswersCacheRef.current.data,
+        shortcut
+      );
+
+      setQuickAnswer(matches);
+      setTypeBar(matches.length > 0);
+      setQuickAnswerIndex(0);
+    } catch (err) {
       setTypeBar(false);
     }
   };
@@ -1517,6 +1585,7 @@ const MessageInput = ({ ticketStatus }) => {
               onPaste={(e) => {
                 ticketStatus === "open" && handleInputPaste(e);
               }}
+              onKeyDown={handleQuickAnswerKeyDown}
               onMouseUp={showFormatMenu}
               onKeyUp={showFormatMenu}
               onKeyPress={(e) => {
@@ -1546,6 +1615,11 @@ const MessageInput = ({ ticketStatus }) => {
                 } else if (e.ctrlKey && e.key === 'l') {
                   e.preventDefault();
                   formatListBulleted();
+                } else if (e.key === "Enter" && !e.shiftKey && typeBar && quickAnswers.length > 0) {
+                  // El atajo exacto queda primero en la lista, así que Enter inserta
+                  // directo; con una búsqueda parcial inserta la opción resaltada.
+                  e.preventDefault();
+                  applyQuickAnswer(quickAnswers[quickAnswerIndex] || quickAnswers[0]);
                 } else if (loading || e.shiftKey) return;
                 else if (e.key === "Enter") {
                   handleSendMessage();
@@ -1669,18 +1743,23 @@ const MessageInput = ({ ticketStatus }) => {
               </ClickAwayListener>
             ) : typeBar ? (
               <MessageQuickAnswersWrapper>
-                {quickAnswers.map((value, index) => {
-                  return (
-                    <li
-                      key={index}
+                {quickAnswers.map((value, index) => (
+                  <li key={index}>
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <a
+                      href="#"
+                      data-selected={index === quickAnswerIndex}
+                      ref={el => { quickAnswerItemRefs.current[index] = el; }}
+                      onMouseEnter={() => setQuickAnswerIndex(index)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        applyQuickAnswer(value);
+                      }}
                     >
-                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                      <a onClick={() => handleQuickAnswersClick(value)}>
-                        {`${value.shortcut} - ${value.message}${value.mediaPath ? ' 📎' : ''}`}
-                      </a>
-                    </li>
-                  );
-                })}
+                      {`${value.shortcut} - ${value.message}${value.mediaPath ? ' 📎' : ''}`}
+                    </a>
+                  </li>
+                ))}
               </MessageQuickAnswersWrapper>
             ) : (
               <div></div>
