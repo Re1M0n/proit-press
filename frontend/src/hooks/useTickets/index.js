@@ -16,7 +16,8 @@ const useTickets = ({
     channelIds,
     withUnreadMessages,
     all,
-    isGroup
+    isGroup,
+    clientFilter
 }) => {
     const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
@@ -54,7 +55,8 @@ const useTickets = ({
                             channelIds,
                             withUnreadMessages,
                             all,
-                            isGroup
+                            isGroup,
+                            clientFilter
                         },
                     });
                     setTickets(data.tickets);
@@ -174,6 +176,7 @@ const useTickets = ({
         withUnreadMessages,
         all,
         isGroup,
+        clientFilter,
         t
     ]);
 

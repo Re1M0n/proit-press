@@ -191,6 +191,7 @@ const Contacts = () => {
   const [channelsModalOpen, setChannelsModalOpen] = useState(false);
   const [selectedChannels, setSelectedChannels] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
+  const [clientFilter, setClientFilter] = useState("");
   const [clientStatusList, setClientStatusList] = useState([]);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
@@ -248,7 +249,7 @@ const Contacts = () => {
   useEffect(() => {
     dispatch({ type: "RESET" });
     setPageNumber(1);
-  }, [searchParam, typeFilter, statusFilter]);
+  }, [searchParam, typeFilter, statusFilter, clientFilter]);
 
   useEffect(() => {
     setLoading(true);
@@ -263,7 +264,8 @@ const Contacts = () => {
               pageNumber,
               tags: filteredTags.map(tag => tag.id).join(","),
               ...(isGroupParam ? { isGroup: isGroupParam } : {}),
-              ...(statusFilter ? { status: statusFilter } : {})
+              ...(statusFilter ? { status: statusFilter } : {}),
+              ...(clientFilter ? { clientFilter } : {})
             }
           });
 
@@ -279,7 +281,7 @@ const Contacts = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchParam, pageNumber, filteredTags, typeFilter, statusFilter]);
+  }, [searchParam, pageNumber, filteredTags, typeFilter, statusFilter, clientFilter]);
 
   useEffect(() => {
     const socket = openSocket();
@@ -811,6 +813,18 @@ const Contacts = () => {
             {clientStatusList.map((status) => (
               <MenuItem key={status.id} value={status.name}>{status.name}</MenuItem>
             ))}
+          </Select>
+        </FormControl>
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <Select
+            value={clientFilter}
+            displayEmpty
+            onChange={e => setClientFilter(e.target.value)}
+          >
+            <MenuItem value="">{t("clients.filters.all")}</MenuItem>
+            <MenuItem value="subscriber">{t("clients.filters.subscribers")}</MenuItem>
+            <MenuItem value="nonSubscriber">{t("clients.filters.nonSubscribers")}</MenuItem>
+            <MenuItem value="external">{t("clients.filters.external")}</MenuItem>
           </Select>
         </FormControl>
       </Box>

@@ -1,5 +1,8 @@
 import List from '@mui/material/List';
 import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import React, { useContext, useEffect, useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -207,6 +210,7 @@ const TicketsList = (props) => {
         const { queues } = user || {};
         const [, setSettings] = useState([]);
         const [filteredTags, setFilteredTags] = useState([]);
+        const [clientFilter, setClientFilter] = useState("");
 
         const statusRef = useRef(status);
         const userRef = useRef(user);
@@ -229,7 +233,7 @@ const TicketsList = (props) => {
         useEffect(() => {
                 dispatch({ type: "RESET" });
                 setPageNumber(1);
-        }, [status, searchParam, dispatch, showAll, selectedQueueIds, selectedChannelIds, tags]);
+        }, [status, searchParam, dispatch, showAll, selectedQueueIds, selectedChannelIds, tags, clientFilter]);
 
         const queueIdsToSend = selectedQueueIds && selectedQueueIds.length > 0
                 ? selectedQueueIds
@@ -244,6 +248,7 @@ const TicketsList = (props) => {
                 queueIds: JSON.stringify(queueIdsToSend),
                 channelIds: JSON.stringify(selectedChannelIds),
                 isGroup,
+                clientFilter,
         });
 
         useEffect(() => {
@@ -484,6 +489,18 @@ const TicketsList = (props) => {
         return (
                 <TicketsListWrapper sx={style}>
                         <TagsFilter onFiltered={handleTagFilter} />
+                        <FormControl size="small" sx={{ minWidth: 200, margin: 1 }}>
+                                <Select
+                                        value={clientFilter}
+                                        displayEmpty
+                                        onChange={e => setClientFilter(e.target.value)}
+                                >
+                                        <MenuItem value="">{t("clients.filters.all")}</MenuItem>
+                                        <MenuItem value="subscriber">{t("clients.filters.subscribers")}</MenuItem>
+                                        <MenuItem value="nonSubscriber">{t("clients.filters.nonSubscribers")}</MenuItem>
+                                        <MenuItem value="external">{t("clients.filters.external")}</MenuItem>
+                                </Select>
+                        </FormControl>
                         <TicketsListStyled
                                 square
                                 name="closed"
