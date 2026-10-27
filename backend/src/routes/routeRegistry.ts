@@ -15,6 +15,7 @@ import * as SessionController from "../controllers/SessionController";
 import * as UserController from "../controllers/UserController";
 import * as BackupController from "../controllers/BackupController";
 import * as CacheController from "../controllers/CacheController";
+import * as ClientController from "../controllers/ClientController";
 import * as ClientStatusController from "../controllers/ClientStatusController";
 import * as ContactController from "../controllers/ContactController";
 import * as ImportPhoneContactsController from "../controllers/ImportPhoneContactsController";
@@ -139,6 +140,17 @@ export const routeRegistry: RouteGroup[] = [
     { method: "get", path: "/cache/stats", middlewares: [isAuth], handler: CacheController.getCacheStats },
     { method: "get", path: "/cache/keys", middlewares: [isAuth], handler: CacheController.getCacheKeys },
     { method: "post", path: "/cache/flush", middlewares: [isAuth], handler: CacheController.flushCache }
+    ]
+  },
+  // clients
+  {
+    routes: [
+    { method: "get", path: "/clients", middlewares: [isAuth], handler: ClientController.index },
+    { method: "post", path: "/clients", middlewares: [isAuth], handler: ClientController.store },
+    { method: "get", path: "/clients/:clientId", middlewares: [isAuth], handler: ClientController.show },
+    { method: "put", path: "/clients/:clientId", middlewares: [isAuth], handler: ClientController.update },
+    { method: "delete", path: "/clients/:clientId", middlewares: [isAuth], handler: ClientController.remove },
+    { method: "put", path: "/clients/:clientId/contacts", middlewares: [isAuth], handler: ClientController.setContacts }
     ]
   },
   // clientStatus
