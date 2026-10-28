@@ -29,7 +29,6 @@ const messages = {
           videos: "Vídeos",
           users: "Usuários",
           quickAnswers: "Respostas Rápidas",
-          clientStatus: "Status de Clientes",
           clients: "Clientes",
           whatsappGroups: "Grupos do WhatsApp",
           presence: "Presença (Indicadores)",
@@ -89,10 +88,6 @@ const messages = {
           readQuickAnswers: "Visualizar Respostas Rápidas",
           updateQuickAnswers: "Editar Respostas Rápidas",
           deleteQuickAnswers: "Deletar Respostas Rápidas",
-          createClientStatus: "Criar Status de Clientes",
-          readClientStatus: "Visualizar Status de Clientes",
-          updateClientStatus: "Editar Status de Clientes",
-          deleteClientStatus: "Deletar Status de Clientes",
           readGroups: "Visualizar Grupos do WhatsApp",
           writeGroups: "Gerenciar Grupos do WhatsApp",
           writePresence: "Enviar Indicadores de Digitação/Gravação",
@@ -842,7 +837,6 @@ const messages = {
           dashboard: "Dashboard",
           quickAnswers: "Respostas Rápidas",
           tags: "Tags",
-          clientStatus: "Status de Clientes",
           channels: "Canais",
           queues: "Setores",
           users: "Atendentes",
@@ -1491,31 +1485,6 @@ const messages = {
         },
         success: "Tag salva com sucesso!",
       },
-      clientStatus: {
-        title: "Status de Clientes",
-        table: {
-          id: "ID",
-          name: "Status",
-          color: "Cor",
-          contacts: "Contatos",
-          actions: "Ação"
-        },
-        toasts: {
-          deleted: "Status excluído com sucesso!",
-          deletedAll: "Todos os Status excluídos com sucesso!",
-        },
-        buttons: {
-          add: "Adicionar",
-          deleteAll: "Deletar Todos",
-          viewContacts: "Ver contatos com este status"
-        },
-        confirmationModal: {
-          deleteTitle: "Deletar ",
-          deleteAllTitle: "Deletar Todos",
-          deleteMessage: "Tem certeza que deseja deletar este Status?",
-          deleteAllMessage: "Tem certeza que deseja deletar todos os Status?",
-        },
-      },
       clients: {
         title: "Clientes",
         searchPlaceholder: "Buscar por nome",
@@ -1579,22 +1548,6 @@ const messages = {
           nameRequired: "O nome é obrigatório",
           alreadyLinked: "Esse contato já é cliente de outra ficha: marque-o como externo para vinculá-lo a esta.",
         },
-      },
-      clientStatusModal: {
-        title: {
-          add: "Adicionar Status",
-          edit: "Editar Status",
-        },
-        buttons: {
-          okAdd: "Salvar",
-          okEdit: "Editar",
-          cancel: "Cancelar",
-        },
-        form: {
-          name: "Nome do Status",
-          color: "Cor do Status"
-        },
-        success: "Status salvo com sucesso!",
       },
       ticketsManager: {
         buttons: {

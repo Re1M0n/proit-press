@@ -42,7 +42,6 @@ import NetworkCheckIcon from "@mui/icons-material/NetworkCheck";
 import QueueMonitorIcon from '@mui/icons-material/Assessment';
 import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import SystemUpdateIcon from "@mui/icons-material/SystemUpdate";
-import LabelOutlined from "@mui/icons-material/LabelOutlined";
 import BusinessIcon from "@mui/icons-material/Business";
 import BlockIcon from "@mui/icons-material/Block";
 import GroupIcon from '@mui/icons-material/Group';
@@ -188,12 +187,6 @@ const Documentation = () => {
           description: t("documentation.general.tags"),
           icon: <LocalOffer />,
           path: "/tags"
-        },
-        {
-          name: t("mainDrawer.listItems.clientStatus"),
-          description: t("documentation.general.clientStatus"),
-          icon: <LabelOutlined />,
-          path: "/ClientStatus"
         },
         {
           name: t("mainDrawer.listItems.clients"),

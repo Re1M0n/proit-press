@@ -321,12 +321,6 @@ const ApiKey = () => {
             'update:quickAnswers': t("apiKey.permissions.updateQuickAnswers"),
             'delete:quickAnswers': t("apiKey.permissions.deleteQuickAnswers"),
             
-            // Status de Clientes
-            'create:client-status': t("apiKey.permissions.createClientStatus"),
-            'read:client-status': t("apiKey.permissions.readClientStatus"),
-            'update:client-status': t("apiKey.permissions.updateClientStatus"),
-            'delete:client-status': t("apiKey.permissions.deleteClientStatus"),
-            
             // Grupos do WhatsApp
             'read:groups': t("apiKey.permissions.readGroups"),
             'write:groups': t("apiKey.permissions.writeGroups"),
@@ -533,8 +527,6 @@ const ApiKey = () => {
                                             'create:users', 'read:users', 'update:users', 'delete:users',
                                             // Respostas Rápidas
                                             'create:quickAnswers', 'read:quickAnswers', 'update:quickAnswers', 'delete:quickAnswers',
-                                            // Status de Clientes
-                                            'create:client-status', 'read:client-status', 'update:client-status', 'delete:client-status',
                                             // Grupos do WhatsApp
                                             'read:groups', 'write:groups',
                                             // Presença
@@ -1151,40 +1143,6 @@ const ApiKey = () => {
                                 </Grid>
                             </AccordionDetails>
                         </Accordion>
-
-                        <Accordion sx={{ mb: 1, boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderRadius: '4px !important', '&:before': { display: 'none' } }}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                sx={{ 
-                                    backgroundColor: theme.palette.background.default,
-                                    borderRadius: '4px',
-                                }}
-                            >
-                                <Typography variant="subtitle2" fontWeight={500}>
-                                    {t("apiKey.categories.clientStatus")}
-                                </Typography>
-                            </AccordionSummary>
-                            <AccordionDetails sx={{ pt: 2 }}>
-                                <Grid container spacing={1}>
-                                    {['create:client-status', 'read:client-status', 'update:client-status', 'delete:client-status'].map((permission) => (
-                                        <Grid item xs={12} sm={6} key={permission}>
-                                            <FormControlLabel
-                                                control={
-                                                    <Checkbox
-                                                        checked={newToken.permissions.includes(permission)}
-                                                        onChange={() => handlePermissionChange(permission)}
-                                                        color="primary"
-                                                        size="small"
-                                                    />
-                                                }
-                                                label={<Typography variant="body2">{renderPermissionName(permission)}</Typography>}
-                                            />
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </AccordionDetails>
-                        </Accordion>
-
                         <Accordion sx={{ mb: 1, boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderRadius: '4px !important', '&:before': { display: 'none' } }}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}

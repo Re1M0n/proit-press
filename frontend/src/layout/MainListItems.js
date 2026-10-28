@@ -21,7 +21,6 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DashboardOutlined from "@mui/icons-material/DashboardOutlined";
 import LocalOffer from "@mui/icons-material/LocalOffer";
-import LabelOutlined from "@mui/icons-material/LabelOutlined";
 import BusinessIcon from "@mui/icons-material/Business";
 import MenuBook from "@mui/icons-material/MenuBook";
 import MemoryIcon from '@mui/icons-material/Memory';
@@ -369,13 +368,6 @@ const MainListItems = (props) => {
         primary={t("mainDrawer.listItems.tags")}
         icon={<LocalOffer />}
         active={location.pathname === '/tags'}
-        drawerClose={drawerClose}
-      />
-      <ListItemLink
-        to="/ClientStatus"
-        primary={t("mainDrawer.listItems.clientStatus")}
-        icon={<LabelOutlined />}
-        active={location.pathname === '/ClientStatus'}
         drawerClose={drawerClose}
       />
       <ListItemLink

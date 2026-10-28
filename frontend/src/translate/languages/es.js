@@ -29,7 +29,6 @@ const messages = {
         videos: "Videos",
         users: "Usuarios",
         quickAnswers: "Respuestas rápidas",
-        clientStatus: "Estado de clientes",
         clients: "Clientes",
         whatsappGroups: "Grupos de WhatsApp",
         presence: "Presencia (indicadores)",
@@ -89,10 +88,6 @@ const messages = {
         readQuickAnswers: "Ver respuestas rápidas",
         updateQuickAnswers: "Editar respuestas rápidas",
         deleteQuickAnswers: "Eliminar respuestas rápidas",
-        createClientStatus: "Crear estado de clientes",
-        readClientStatus: "Ver estado de clientes",
-        updateClientStatus: "Editar estado de clientes",
-        deleteClientStatus: "Eliminar estado de clientes",
         readGroups: "Ver grupos de WhatsApp",
         writeGroups: "Gestionar grupos de WhatsApp",
         writePresence: "Enviar indicadores de escritura/grabación",
@@ -919,7 +914,6 @@ const messages = {
         dashboard: "Dashboard",
         quickAnswers: "Respuestas Rápidas",
         tags: "Etiquetas",
-        clientStatus: "Estado de clientes",
         channels: "Canales",
         queues: "Sectores",
         users: "Agentes",
@@ -1571,31 +1565,6 @@ const messages = {
       },
       success: "Etiqueta guardada con éxito!"
     },
-    clientStatus: {
-      title: "Estado de clientes",
-      table: {
-        id: "ID",
-        name: "Estado",
-        color: "Color",
-        contacts: "Contactos",
-        actions: "Acción"
-      },
-      toasts: {
-        deleted: "¡Estado eliminado con éxito!",
-        deletedAll: "¡Todos los estados eliminados con éxito!"
-      },
-      buttons: {
-        add: "Agregar",
-        deleteAll: "Eliminar todos",
-        viewContacts: "Ver contactos con este estado"
-      },
-      confirmationModal: {
-        deleteTitle: "Eliminar ",
-        deleteAllTitle: "Eliminar todos",
-        deleteMessage: "¿Está seguro de que desea eliminar este estado?",
-        deleteAllMessage: "¿Está seguro de que desea eliminar todos los estados?"
-      }
-    },
     clients: {
       title: "Clientes",
       searchPlaceholder: "Buscar por nombre",
@@ -1659,22 +1628,6 @@ const messages = {
         nameRequired: "El nombre es obligatorio",
         alreadyLinked: "Ese contacto ya es cliente de otra ficha: marcalo como externo para vincularlo a esta."
       }
-    },
-    clientStatusModal: {
-      title: {
-        add: "Agregar estado",
-        edit: "Editar estado"
-      },
-      buttons: {
-        okAdd: "Guardar",
-        okEdit: "Editar",
-        cancel: "Cancelar"
-      },
-      form: {
-        name: "Nombre del estado",
-        color: "Color del estado"
-      },
-      success: "¡Estado guardado con éxito!"
     },
     ticketsManager: {
       buttons: {

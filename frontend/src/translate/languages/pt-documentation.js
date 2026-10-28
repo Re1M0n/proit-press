@@ -12,7 +12,6 @@ const documentationMessages = {
       blockedContacts: "A seção de Contatos Bloqueados permite gerenciar todos os contatos bloqueados no WhatsApp. Visualize todos os contatos bloqueados por canal, consulte informações detalhadas e desbloqueie contatos quando necessário.",
       quickAnswers: "As Respostas Rápidas são mensagens pré-definidas que agilizam seu atendimento. Crie atalhos de texto para respostas frequentes e economize tempo durante as conversas.",
       tags: "Com as Tags você organiza e categoriza contatos de forma eficiente. Crie etiquetas coloridas personalizadas que facilitam a busca e filtragem de seus contatos.",
-      clientStatus: "A seção de Status de Clientes permite criar e gerenciar diferentes status personalizados para classificar seus contatos. Organize seus clientes por categorias como 'Ativo', 'Inativo', 'Potencial', 'VIP', entre outros, facilitando o acompanhamento e segmentação do seu público.",
       clients: "Na seção Clientes você agrupa os contatos de um mesmo cliente em uma ficha, marca se ele é assinante ou não e distingue os contatos externos, como o designer que trabalha com esse cliente. Aqui também aparece quantos contatos cada ficha tem.",
       videos: "A seção de Vídeos permite gerenciar e compartilhar conteúdo em vídeo com sua equipe. Adicione vídeos do YouTube, controle quais usuários podem visualizá-los, organize-os em formato de galeria ou lista, e reproduza-os diretamente na plataforma sem precisar sair do sistema."
     },
