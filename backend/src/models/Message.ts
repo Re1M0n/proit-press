@@ -55,7 +55,7 @@ class Message extends Model<Message> {
   @Column
   albumId: string;
 
-  @Column
+  @Column(DataType.BIGINT)
   fileSize: number;
 
   @Column
