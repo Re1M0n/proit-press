@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { literal, Op } from "sequelize";
 import Client from "../models/Client";
 import ClientContact from "../models/ClientContact";
 import {
@@ -51,6 +51,50 @@ export const resolverFiltroDeCliente = async (
   return {
     contactType: CONTACT_TYPE_CLIENT,
     contactIds: [...new Set(vinculos.map(vinculo => Number(vinculo.contactId)))]
+  };
+};
+
+/**
+ * El mismo filtro, pero expresado para listados cuya consulta principal es Tickets.
+ *
+ * Tickets no tiene `contactType`: esa columna vive en Contacts. Ponerla en el where
+ * del listado devolvía "Unknown column 'Ticket.contactType' in 'WHERE'" y filtrar por
+ * abonado terminaba en 500. Acá el filtro se traduce a una subconsulta sobre
+ * `Tickets.contactId`, que sí existe y se sigue evaluando dentro de la subconsulta
+ * que arma el limit (por eso no se puede apoyar en el join: en ese punto no existe).
+ */
+export const resolverFiltroDeClienteEnTickets = (
+  clientFilter?: string
+): { contactId?: { [Op.in]: ReturnType<typeof literal> } } => {
+  if (clientFilter === CONTACT_TYPE_EXTERNAL) {
+    return {
+      contactId: {
+        [Op.in]: literal(
+          `(SELECT contacto.id FROM Contacts AS contacto WHERE contacto.contactType = '${CONTACT_TYPE_EXTERNAL}')`
+        )
+      }
+    };
+  }
+
+  if (clientFilter !== "subscriber" && clientFilter !== "nonSubscriber") {
+    return {};
+  }
+
+  // Sólo los contactos de tipo cliente: un externo puede estar en una ficha abonada
+  // y aun así no cuenta como abonado (cae en "Externo").
+  const abonado = clientFilter === "subscriber" ? 1 : 0;
+
+  return {
+    contactId: {
+      [Op.in]: literal(`(
+        SELECT vinculo.contactId
+        FROM ClientContacts AS vinculo
+        INNER JOIN Clients AS ficha ON ficha.id = vinculo.clientId
+        INNER JOIN Contacts AS contacto ON contacto.id = vinculo.contactId
+        WHERE ficha.isSubscriber = ${abonado}
+          AND contacto.contactType = '${CONTACT_TYPE_CLIENT}'
+      )`)
+    }
   };
 };
 

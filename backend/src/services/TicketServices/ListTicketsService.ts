@@ -1,6 +1,6 @@
 import { endOfDay, parseISO, startOfDay } from "date-fns";
 import { col, fn, Includeable, Op, where } from "sequelize";
-import resolverFiltroDeCliente from "../../helpers/ClientFilter";
+import { resolverFiltroDeClienteEnTickets } from "../../helpers/ClientFilter";
 import Client from "../../models/Client";
 import Contact from "../../models/Contact";
 import Message from "../../models/Message";
@@ -110,16 +110,14 @@ const ListTicketsService = async ({
   }
 
   if (clientFilter) {
-    // El filtro se resuelve antes y termina siendo un IN de contactos: una condición
-    // anidada sobre el include desincroniza el count de findAndCountAll.
-    const filtroDeCliente = await resolverFiltroDeCliente(clientFilter);
+    // El filtro se resuelve por `Tickets.contactId`. Tickets no tiene `contactType`
+    // (esa columna vive en Contacts): ponerla acá rompía con "Unknown column
+    // 'Ticket.contactType' in 'WHERE'". Y una condición anidada sobre el include
+    // desincroniza el count de findAndCountAll.
+    const filtroDeCliente = resolverFiltroDeClienteEnTickets(clientFilter);
 
-    if (filtroDeCliente.contactType) {
-      whereCondition.contactType = filtroDeCliente.contactType;
-    }
-
-    if (filtroDeCliente.contactIds) {
-      whereCondition.contactId = { [Op.in]: filtroDeCliente.contactIds };
+    if (filtroDeCliente.contactId) {
+      whereCondition.contactId = filtroDeCliente.contactId;
     }
   }
 
