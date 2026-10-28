@@ -94,9 +94,13 @@ const downloaded = await msg.downloadMedia();
     logger.error(err);
   }
 
+  // Un sticker llega como image/webp, así que sin esta excepción entraba al
+  // agrupado de álbumes y dos figuritas seguidas se veían como un álbum.
+  const esSticker = msg.type === "sticker";
+
   let albumId = null;
   const mediaType = media.mimetype.split("/")[0];
-  if (mediaType === "image" || mediaType === "video") {
+  if (!esSticker && (mediaType === "image" || mediaType === "video")) {
     const roundedTimestamp = Math.floor(msg.timestamp / 5) * 5;
     albumId = `${msg.from}_${roundedTimestamp}`;
   }
@@ -107,7 +111,9 @@ const downloaded = await msg.downloadMedia();
     id: msg.id.id,
     ticketId: ticket.id,
     contactId: msg.fromMe ? undefined : contact.id,
-    body: msg.body || media.filename,
+    // Un sticker no trae texto. Sin esto el body caía en el nombre del archivo y
+    // el panel mostraba "Contacto_123456.webp" debajo de la figurita.
+    body: esSticker ? "" : msg.body || media.filename,
     fromMe: msg.fromMe,
     read: msg.fromMe,
     mediaUrl: media.filename,

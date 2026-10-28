@@ -14,6 +14,7 @@ import getProfilePicUrlSafe from "../../helpers/GetProfilePicUrlSafe";
 import formatBody from "../../helpers/Mustache";
 import {
   contatoIgnoraMensagens,
+  mensagemDescartadaPelaGuardaGlobal,
   noLeidasDoContato
 } from "../../helpers/MessageHandling";
 import { logger } from "../../utils/logger";
@@ -115,12 +116,10 @@ const chat = await getSafeChat(wbot, msg);
 
 const chat = await getSafeChat(wbot, msg);
     if (
-      msg.type === "sticker" ||
-      msg.type === "e2e_notification" ||
-      msg.type === "notification_template" ||
-      msg.from === "status@broadcast" ||
-      // msg.author !== null ||
-      chat.isGroup
+      mensagemDescartadaPelaGuardaGlobal(
+        { type: msg.type, from: msg.from, chatIsGroup: chat.isGroup },
+        true
+      )
     ) {
       return;
     }

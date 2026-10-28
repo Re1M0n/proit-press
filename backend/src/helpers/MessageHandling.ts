@@ -2,9 +2,9 @@
  * Manejo de mensajes por contacto.
  *
  * Por qué existe: la guarda global `CheckMsgIsGroup` es todo-o-nada (ignora
- * *todos* los stickers y *todos* los grupos) y no cubre los casos que aparecen
- * en producción: canales de difusión (@newsletter, que no son grupos), números
- * que mandan promociones y contactos que no necesitan generar ticket.
+ * *todos* los grupos y las notificaciones internas) y no cubre los casos que
+ * aparecen en producción: canales de difusión (@newsletter, que no son grupos),
+ * números que mandan promociones y contactos que no necesitan generar ticket.
  *
  * Acá queda el criterio por contacto, definido desde el modal del contacto:
  *   - "normal": flujo completo (crea/actualiza ticket y cuenta como no leída).
@@ -37,6 +37,38 @@ export const normalizarMessageHandling = (
   return (MESSAGE_HANDLING_MODES as string[]).includes(normalizado)
     ? (normalizado as MessageHandlingMode)
     : MESSAGE_HANDLING_PADRAO;
+};
+
+/**
+ * Guarda global `CheckMsgIsGroup`, cuando el ajuste está activo.
+ *
+ * Descartar acá significa no guardar nada: el mensaje no llega al historial ni
+ * suma no leídas. Por eso la lista es corta y explícita: grupos (el ajuste
+ * apunta a eso), estados y notificaciones internas de WhatsApp.
+ *
+ * Los stickers quedaron afuera de la lista a propósito: son mensajes de un
+ * contacto en un chat individual y el panel los muestra como imagen. Mientras
+ * estuvieron acá, con el ajuste activo no se guardaba ninguno y el sticker se
+ * veía en WhatsApp pero no en el panel.
+ */
+export const mensagemDescartadaPelaGuardaGlobal = (
+  { type, from, chatIsGroup }: {
+    type?: string;
+    from?: string;
+    chatIsGroup?: boolean;
+  },
+  checkMsgIsGroup: boolean
+): boolean => {
+  if (!checkMsgIsGroup) {
+    return false;
+  }
+
+  return (
+    type === "e2e_notification" ||
+    type === "notification_template" ||
+    from === "status@broadcast" ||
+    Boolean(chatIsGroup)
+  );
 };
 
 type ContatoComManejo = { messageHandling?: string | null } | null | undefined;
