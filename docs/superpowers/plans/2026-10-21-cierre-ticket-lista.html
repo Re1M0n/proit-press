@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cierre inmediato de tickets desde la lista — Plan de implementación</title>
+<style>
+  :root { --paper:#fff; --bg:#f5f6f8; --ink:#1b1f24; --muted:#5b6470; --line:#e3e7ec; --accent:#0f766e; --accent-soft:#e6f4f1; --code:#f2f4f7; --task:#fffdf5; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 36px auto 80px; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:44px 52px; box-shadow:0 8px 30px rgba(16,24,40,.06); }
+  h1 { font-size:29px; line-height:1.25; margin:0 0 18px; border-bottom:1px solid var(--line); padding-bottom:18px; }
+  h2 { font-size:22px; margin:42px 0 10px; padding-top:14px; border-top:2px solid var(--line); }
+  h3 { font-size:18px; margin:34px 0 10px; padding:10px 14px; background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:0 8px 8px 0; }
+  h4 { font-size:16px; margin:24px 0 8px; }
+  p, li { color:#242a31; }
+  ul, ol { padding-left:24px; }
+  li { margin:4px 0; }
+  ul.tasks { list-style:none; padding-left:4px; }
+  ul.tasks li { display:flex; gap:10px; align-items:flex-start; background:var(--task); border:1px solid #f0e7c8; border-radius:8px; padding:8px 12px; margin:6px 0; }
+  ul.tasks .box { width:15px; height:15px; border:2px solid #b7a24a; border-radius:4px; flex:none; margin-top:3px; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:14.5px; }
+  th, td { text-align:left; padding:8px 11px; border:1px solid var(--line); vertical-align:top; }
+  th { background:#f7f9fb; }
+  code { font-family:"Cascadia Code", Consolas, monospace; font-size:13.5px; background:var(--code); padding:1px 5px; border-radius:4px; }
+  pre.code { background:var(--code); border:1px solid var(--line); border-radius:8px; padding:14px 16px; overflow-x:auto; font-size:13px; line-height:1.5; }
+  pre.code code { background:none; padding:0; }
+  blockquote { border-left:4px solid var(--accent); background:var(--accent-soft); margin:14px 0; padding:10px 16px; border-radius:0 8px 8px 0; }
+  a { color:var(--accent); }
+  @media (max-width:760px) { main { margin:0; border:0; border-radius:0; padding:26px 18px; } }
+  @media print { body { background:#fff; } main { margin:0; border:0; box-shadow:none; padding:0; } h3 { break-after:avoid; } pre.code, table { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<main>
+<h1 id="hpnscoq">Cierre inmediato de tickets desde la lista — Plan de implementación</h1>
+<blockquote><strong>Para agentes:</strong> SUB-SKILL REQUERIDA: usar <code>superpowers:executing-plans</code> para implementar esta tarea. Los pasos usan checkbox (<code>- [ ]</code>).</blockquote>
+<p><strong>Goal:</strong> Al cerrar un ticket desde la lista, quitarlo de la pestaña actual tras el éxito del API, sin navegar ni recargar.</p>
+<p><strong>Architecture:</strong> <code>TicketsList</code> es dueño del reducer de filas y entrega a cada <code>TicketListItem</code> un callback opcional. El item invoca el callback únicamente después de que <code>PUT /tickets/:id</code> termina con éxito. El evento Socket.IO y el conteo backend siguen funcionando para otros clientes.</p>
+<p><strong>Tech Stack:</strong> React 18, React Router 6, MUI 5 y CRA.</p>
+<p><strong>Spec:</strong> <code>docs/superpowers/specs/2026-10-21-cierre-ticket-lista-design.md</code></p>
+<h2 id="hh2e87o">Restricciones globales</h2>
+<ul>
+<li>La UI permanece en español.</li>
+<li>No agregar dependencias.</li>
+<li>Mantener el estado del ticket <code>closed</code> gestionado por el backend.</li>
+<li>No cambiar el comportamiento del <code>TicketListItem</code> usado en NotificationsPopOver cuando no se le entrega callback.</li>
+<li>En error del <code>PUT</code>, conservar la fila y usar el toast existente.</li>
+</ul>
+<h2 id="hafx06x">Archivos</h2>
+<table><thead><tr>
+<th>Archivo</th>
+<th>Responsabilidad</th>
+</tr></thead><tbody>
+<tr>
+<td><code>frontend/src/components/TicketsList/index.js</code></td>
+<td>lista/reducer y ownership de la fila</td>
+</tr>
+<tr>
+<td><code>frontend/src/components/TicketListItem/index.js</code></td>
+<td>acción de cierre y callback opcional</td>
+</tr>
+</tbody></table>
+<p>---</p>
+<h3 id="hlp8wpc">Task 1: Conectar el cierre exitoso con el reducer de la lista</h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>frontend/src/components/TicketListItem/index.js:270,480-499</code></li>
+<li>Modify: <code>frontend/src/components/TicketsList/index.js:503-507</code></li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li><code>TicketListItem</code> consume <code>onTicketClosed?: (ticketId: number) =&gt; void</code>.</li>
+<li><code>TicketsList</code> implementa el callback con <code>dispatch({ type: "DELETE_TICKET", payload: ticketId })</code>.</li>
+<li>No cambia el contrato REST ni el evento Socket.IO existente.</li>
+</ul>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 1: Pasar callback desde la lista</strong></li>
+</ul>
+<p>En el <code>.map</code> que renderiza <code>TicketListItem</code>:</p>
+<pre class="code jsx"><code>{ticketsList.map(ticket =&gt; (
+  &lt;TicketListItem
+    key={ticket.id}
+    ticket={ticket}
+    filteredTags={filteredTags}
+    onTicketClosed={ticketId =&gt;
+      dispatch({ type: "DELETE_TICKET", payload: ticketId })
+    }
+  /&gt;
+))}</code></pre>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 2: Quitar la fila solo después del cierre exitoso</strong></li>
+</ul>
+<p>Cambiar la firma del componente:</p>
+<pre class="code js"><code>const TicketListItem = ({ ticket, filteredTags, onTicketClosed }) =&gt; {</code></pre>
+<p>En <code>handleClosedTicket</code>, después del <code>await api.put(...)</code> y antes de terminar:</p>
+<pre class="code js"><code>if (onTicketClosed) {
+  onTicketClosed(id);
+} else {
+  navigate("/tickets");
+}</code></pre>
+<p>El callback queda dentro del <code>try</code>. El <code>catch</code> conserva la fila y muestra el</p>
+<p>toast actual. NotificationsPopOver no entrega callback y conserva su navegación.</p>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 3: Compilar y verificar manualmente</strong></li>
+</ul>
+<p>Run: <code>npm run build</code> (en <code>frontend/</code>, <code>CI=false</code>).</p>
+<p>Expected: <code>Compiled successfully</code>.</p>
+<p>Checklist:</p>
+<ol>
+<li>Cerrar un ticket abierto: desaparece en esa respuesta, sin cambiar de</li>
+</ol>
+<p>   pestaña; el contador de abiertos baja.</p>
+<ol>
+<li>Abrir <strong>Cerrados</strong> y confirmar que aparece el ticket.</li>
+<li>Repetir el cierre desde <strong>Pendientes</strong>.</li>
+<li>Confirmar que un fallo del <code>PUT</code> deja la fila visible y muestra el toast.</li>
+<li>Confirmar que cerrar desde NotificationsPopOver conserva la navegación actual.</li>
+</ol>
+<ul class="tasks">
+<li><span class="box"></span><strong>Step 4: Commit</strong></li>
+</ul>
+<pre class="code bash"><code>git add frontend/src/components/TicketListItem/index.js frontend/src/components/TicketsList/index.js</code></pre>
+</main>
+</body>
+</html>
