@@ -45,11 +45,12 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.removeIndex("MessageReactions", "idx_message_reactions_message_emoji");
-    await queryInterface.removeIndex("MessageReactions", "uniq_message_reactions_message_sender");
-    await queryInterface.removeIndex("MessageReactions", "idx_message_reactions_senderId");
-    await queryInterface.removeIndex("MessageReactions", "idx_message_reactions_emoji");
-    await queryInterface.removeIndex("MessageReactions", "idx_message_reactions_messageId");
+    // dropTable se lleva índices y constraints juntos. Borrar primero los índices
+    // falla en MySQL/MariaDB: la FK MessageReactions_ibfk_1 (messageId -> Messages)
+    // se apoya en idx_message_reactions_messageId, que es el único índice sobre
+    // messageId, y el motor no deja eliminarlo mientras la FK exista ->
+    // "Cannot drop index 'idx_message_reactions_messageId': needed in a foreign
+    // key constraint".
     await queryInterface.dropTable("MessageReactions");
   }
 };

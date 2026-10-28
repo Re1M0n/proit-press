@@ -43,6 +43,15 @@ export default {
       );
     }
 
+    // El `up` agrega su propia FK pero nunca borra la original
+    // (Tickets_queueId_foreign_idx, la que Sequelize creó al agregar la columna
+    // en 20210108164504), así que en la tabla conviven las dos. Si la original
+    // sigue ahí no hay nada que reponer: intentarlo falla con
+    // errno 121 "Duplicate key on write or update" por nombre duplicado.
+    if (createTableSql.includes("CONSTRAINT `Tickets_queueId_foreign_idx`")) {
+      return;
+    }
+
     await queryInterface.addConstraint("Tickets", ["queueId"], {
       type: "foreign key",
       name: "Tickets_queueId_foreign_idx",
