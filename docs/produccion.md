@@ -4,7 +4,8 @@
 - **Servidor:** VM `pressticket` (Ubuntu 24.04, detrás de CGNAT)
 - **Panel:** https://press.professionalit.com.ar
 - **API:** https://pressapi.professionalit.com.ar
-- **Servidor anterior:** `prometheus` — retirado de producción el 24/10/2026
+- **Servidor anterior:** `prometheus` — retirado de producción el 24/10/2026. Su copia
+  quedó **archivada** el 27/10/2026 como reserva de emergencia (ver [Rollback](#rollback))
 
 ## Servicios y rutas
 
@@ -254,13 +255,25 @@ quedar a mitad de build: revisar `df -h /` después de cada deploy.
 
 ## Rollback
 
-`prometheus` conserva la copia previa: base, `backend/public` y las carpetas
-`session-itn_press_4/_9` en `/home/deploy/Press-Ticket`.
+`prometheus` conserva la copia previa **comprimida**, no desplegada, en
+`/mnt/storage/backups/pressticket-prometheus-20261027/`:
+
+| Archivo | Qué es |
+|---|---|
+| `pressticket-app.tar.zst` (3,8 G) | `/home/deploy/Press-Ticket` completo: código, `.env`, `.git`, `backend/public`, `dist`, `build` y las 7 carpetas `.wwebjs_auth`. Sin `node_modules` |
+| `database.sql.gz` (3,0 M) | dump de MySQL `press_ticket` |
+| `SHA256SUMS` | verificación (`sha256sum -c`) |
+| `RESTORE.md` | procedimiento paso a paso |
+
+El directorio vivo se borró y `itn-backend`/`itn-frontend` se sacaron de PM2
+(`pm2 delete` + `pm2 save`): así un reinicio de Prometheus no puede levantar la app
+vieja y pelear las mismas sesiones de WhatsApp.
 
 Para volver atrás:
 
-1. Detener producción primero (`pm2 stop proit-back proit-front`).
-2. Recién entonces arrancar `itn-backend` en Prometheus.
+1. Detener producción primero (`pm2 stop proit-back proit-front` en `pressticket`).
+2. Restaurar según `RESTORE.md` y recién entonces arrancar `itn-backend` en Prometheus.
 
 Arrancar los dos a la vez deja las mismas sesiones de WhatsApp abiertas en dos
-servidores, lo que termina en desconexión o bloqueo.
+servidores, lo que termina en desconexión o bloqueo. Los perfiles archivados son del
+24/10: hay que contar con re-escanear el QR de cada canal.
