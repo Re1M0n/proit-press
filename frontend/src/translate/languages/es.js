@@ -914,6 +914,7 @@ const messages = {
         dashboard: "Dashboard",
         quickAnswers: "Respuestas Rápidas",
         tags: "Etiquetas",
+        clients: "Clientes",
         channels: "Canales",
         queues: "Sectores",
         users: "Agentes",
