@@ -211,6 +211,8 @@ interface ContactData {
   /** "client" | "external" */
   contactType?: string;
   clientIds?: Array<number | string>;
+  /** Conexión de WhatsApp a la que pertenece el contacto. */
+  whatsappId?: number;
 }
 
 export const index = async (req: Request, res: Response): Promise<Response> => {
@@ -330,9 +332,20 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     technicalApplications
   } = newContact;
 
+  // Si el panel manda la conexión (ej. al abrir un chat desde una vCard),
+  // el contacto queda atado a esa línea y no a la que sea "default" después.
+  let contactWhatsappId: number | undefined;
+  if (newContact.whatsappId) {
+    const channel = await Whatsapp.findByPk(newContact.whatsappId);
+    if (channel) {
+      contactWhatsappId = channel.id;
+    }
+  }
+
   const contact = await CreateContactService({
     name,
     number,
+    whatsappId: contactWhatsappId,
     address,
     email,
     extraInfo,

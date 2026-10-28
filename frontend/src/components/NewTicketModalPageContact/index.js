@@ -37,7 +37,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const NewTicketModalPageContact = ({ modalOpen, onClose, initialContact }) => {
+const NewTicketModalPageContact = ({ modalOpen, onClose, initialContact, whatsappId }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { user } = useContext(AuthContext);
@@ -66,11 +66,15 @@ const NewTicketModalPageContact = ({ modalOpen, onClose, initialContact }) => {
     setLoading(true);
     try {
       const queueId = selectedQueue !== "" ? selectedQueue : null;
+      // La conexión manda: si el contacto se abrió desde una vCard recibida en
+      // ProIT, el ticket sale por ProIT aunque el contacto tenga guardada otra
+      // línea (o una línea que ya no existe, que antes caía en la default).
       const { data: ticket } = await api.post("/tickets", {
         contactId: contact.id,
         queueId,
         userId: user?.id,
         status: "open",
+        whatsappId,
       });
       setLoading(false);
       onClose(ticket);
@@ -78,7 +82,7 @@ const NewTicketModalPageContact = ({ modalOpen, onClose, initialContact }) => {
       setLoading(false);
       toastError(err);
     }
-  }, [contact, selectedQueue, user, t, onClose]);
+  }, [contact, selectedQueue, user, t, onClose, whatsappId]);
 
   return (
     <StyledDialog

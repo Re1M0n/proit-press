@@ -581,7 +581,7 @@ const reducer = (state, action) => {
   }
 };
 
-const MessagesList = ({ ticketId, isGroup, onClick }) => {
+const MessagesList = ({ ticketId, isGroup, onClick, whatsappId }) => {
   const [messagesList, dispatch] = useReducer(reducer, []);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(false);
@@ -1089,10 +1089,10 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
           }
         }
         
-        return <VcardPreview contact={contact} numbers={numbers} />
+        return <VcardPreview contact={contact} numbers={numbers} whatsappId={whatsappId} />
       } catch (error) {
         console.error("Error processing vcard in MessagesList:", error);
-        return <VcardPreview contact="Contacto" numbers={["Número no disponible"]} />
+        return <VcardPreview contact="Contacto" numbers={["Número no disponible"]} whatsappId={whatsappId} />
       }
     }
     else if (message.mediaType === "multi_vcard") {
@@ -1127,7 +1127,7 @@ const MessagesList = ({ ticketId, isGroup, onClick }) => {
                 justifyContent: message.fromMe ? "flex-end" : "flex-start",
                 width: "100%"
               }}>
-                <MultiVcardPreview contacts={contacts} timestamp={message.createdAt} />
+                <MultiVcardPreview contacts={contacts} timestamp={message.createdAt} whatsappId={whatsappId} />
               </Box>
             );
           }

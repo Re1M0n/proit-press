@@ -120,7 +120,7 @@ const LabelText = styled(Typography)(({ theme }) => ({
         alpha(theme.palette.primary.main, 0.08)
 }));
 
-const VcardPreview = ({ contact, numbers }) => {
+const VcardPreview = ({ contact, numbers, whatsappId }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [newTicketModalOpen, setNewTicketModalOpen] = useState(false);
@@ -308,7 +308,8 @@ const VcardPreview = ({ contact, numbers }) => {
                 if (!contactId) {
                     const { data: newContact } = await api.post("/contacts", {
                         name: selectedContact.name,
-                        number: selectedContact.number
+                        number: selectedContact.number,
+                        whatsappId
                     });
                     contactId = newContact.id;
                     setContact(prev => ({ ...prev, id: newContact.id }));
@@ -360,7 +361,8 @@ const VcardPreview = ({ contact, numbers }) => {
             if (!contactId) {
                 const { data: newContact } = await api.post("/contacts", {
                     name: selectedContact.name,
-                    number: cleanNumber
+                    number: cleanNumber,
+                    whatsappId
                 });
                 contactId = newContact.id;
                 const contactWithSelectedNumber = {
@@ -393,6 +395,7 @@ const VcardPreview = ({ contact, numbers }) => {
                 <NewTicketModalPageContact
                     modalOpen={newTicketModalOpen}
                     initialContact={contactTicket}
+                    whatsappId={whatsappId}
                     onClose={(ticket) => {
                         handleCloseOrOpenTicket(ticket);
                     }}

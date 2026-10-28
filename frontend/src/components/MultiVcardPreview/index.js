@@ -90,7 +90,7 @@ const ContactCounter = styled(Box)(({ theme }) => ({
   justifyContent: "center"
 }));
 
-const MultiVcardPreview = ({ contacts }) => {
+const MultiVcardPreview = ({ contacts, whatsappId }) => {
   const { t } = useTranslation();
   const [showAllContacts, setShowAllContacts] = useState(false);
   const [processedContacts, setProcessedContacts] = useState([]);
@@ -175,6 +175,7 @@ const MultiVcardPreview = ({ contacts }) => {
                 <VcardPreview 
                   contact={contact.name || "Contato"} 
                   numbers={contact.number || "Número no disponible"} 
+                  whatsappId={whatsappId}
                 />
               </Box>
             ))}

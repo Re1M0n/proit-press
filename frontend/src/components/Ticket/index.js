@@ -292,6 +292,7 @@ const Ticket = () => {
             <MessagesList
               ticketId={ticketId}
               isGroup={ticket.isGroup}
+              whatsappId={ticket.whatsappId}
               onClick={handleDrawerOpen}
             ></MessagesList>
             <MessageInput ticketStatus={ticket.status} />
