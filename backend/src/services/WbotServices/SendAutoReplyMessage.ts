@@ -20,14 +20,16 @@ const VENTANA_CONVERSACION_MS = 12 * 60 * 60 * 1000;
 const avisosFueraDeHorario = new Map<string, number>();
 
 /**
- * Antepone el nombre de la conexión como firma ("*MCSI*").
+ * Antepone el nombre de la conexión como firma ("*MCSI:*").
  * Si el texto ya viene firmado, no lo duplica.
  */
 const conFirma = (texto: string, nombreConexion: string): string => {
-  const firma = `*${nombreConexion}*`;
+  const firma = `*${nombreConexion}:*`;
   const cuerpo = texto.trim();
 
-  if (cuerpo.startsWith(firma)) {
+  // Vale tanto "*MCSI:*" como la forma vieja sin dos puntos, para no firmar
+  // dos veces un texto que ya trae el nombre de la conexión arriba.
+  if (cuerpo.startsWith(firma) || cuerpo.startsWith(`*${nombreConexion}*`)) {
     return cuerpo;
   }
 
