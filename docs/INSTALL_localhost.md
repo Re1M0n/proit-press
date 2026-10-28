@@ -309,3 +309,31 @@ Eso confirma que los headers se están enviando a través del Helmet.
 - ✅ **Sin configuración extra**: Funciona out-of-the-box
 
 **Nota**: Cuando hagas deploy a producción (VPS), basta con cambiar `NODE_ENV=production` y el sistema automáticamente deshabilita los headers en el Helmet, dejando que el Nginx gestione todo.
+
+## Tests del backend (suites de integración)
+
+`npm test` del backend **no** puede correr contra la base de arriba: el runner migra y
+seedéa, y las suites de `User/*` hacen `TRUNCATE` de todas las tablas. Necesita una base
+de test aparte, que se levanta como contenedor en `prometheus` (escuchando solo en
+`127.0.0.1`, sin exponer nada a la LAN) y se alcanza por túnel SSH.
+
+```bash
+# desde la raíz del repo
+bash scripts/test-db.sh up      # contenedor + túnel + escribe backend/.env.test
+bash scripts/test-db.sh test    # up + build + npm test
+bash scripts/test-db.sh status  # estado y prueba de conexión real
+bash scripts/test-db.sh down    # baja túnel y contenedor (los datos quedan)
+bash scripts/test-db.sh clean   # además borra contenedor y volumen
+```
+
+El aislamiento depende de `backend/.env.test`: `bootstrap.ts` carga ese archivo en lugar
+de `.env` cuando `NODE_ENV=test`. Lo genera el script con credenciales descartables, y
+está ignorado por git. Nunca lo apuntes a una base con datos reales.
+
+Cada corrida **recrea la base** (drop + create), migra, seedea y corre Jest: es
+determinista y no depende de lo que dejó la corrida anterior. El CLI de migraciones lee
+`dist/`, así que si tocaste migraciones corré `npm run build` antes (`test-db.sh test` ya
+lo hace).
+
+El contenedor usa **MariaDB 10.11** a propósito: es la versión con la que corrió
+Press-Ticket en ese servidor, para que las migraciones se comporten igual.
