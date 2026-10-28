@@ -294,40 +294,16 @@ const ListTicketsService = async ({
   }
 
   if (isGroup !== undefined) {
-    if (isGroup === "true") {
-      whereCondition = {
-        ...whereCondition,
-        "$contact.isGroup$": true
-      };
-    } else if (isGroup === "false") {
-      const hasExistingOr = whereCondition[Op.or] !== undefined;
-      
-      if (hasExistingOr) {
-        const existingOr = whereCondition[Op.or];
-        delete whereCondition[Op.or];
-        
-        whereCondition = {
-          ...whereCondition,
-          [Op.and]: [
-            { [Op.or]: existingOr },
-            {
-              [Op.or]: [
-                { "$contact.isGroup$": false },
-                { "$contact.isGroup$": null }
-              ]
-            }
-          ]
-        };
-      } else {
-        whereCondition = {
-          ...whereCondition,
-          [Op.or]: [
-            { "$contact.isGroup$": false },
-            { "$contact.isGroup$": null }
-          ]
-        };
-      }
-    }
+    // Ticket.isGroup se copia del contacto al crear el ticket (CreateTicketService y
+    // FindOrCreateTicketService), así que el filtro se resuelve en la propia tabla.
+    // Con `$contact.isGroup$` Sequelize metía la condición dentro de la subconsulta
+    // que arma por el limit, donde el join de Contacts todavía no existe, y MySQL
+    // respondía "Unknown column 'contact.isGroup' in 'WHERE'": el listado entero
+    // devolvía 500 y el panel se quedaba sin conversaciones.
+    whereCondition = {
+      ...whereCondition,
+      isGroup: isGroup === "true" ? true : { [Op.or]: [false, null] }
+    };
   }
 
   if (channelIds && channelIds.length > 0) {
