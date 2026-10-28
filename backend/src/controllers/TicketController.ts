@@ -125,11 +125,11 @@ export const index = async (req: Request, res: Response): Promise<Response> => {
       return res.status(200).json({ tickets, count, hasMore });
     } catch (serviceError) {
       console.error("Erro no serviço de listagem de tickets:", serviceError);
-      return res.status(500).json({ error: "Erro ao processar a listagem de tickets" });
+      return res.status(500).json({ error: "Error al procesar la lista de tickets" });
     }
   } catch (error) {
     console.error("Erro ao listar tickets:", error);
-    return res.status(500).json({ error: "Erro interno ao listar tickets" });
+    return res.status(500).json({ error: "Error interno al listar tickets" });
   }
 };
 

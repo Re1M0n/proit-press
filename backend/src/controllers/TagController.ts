@@ -121,7 +121,7 @@ export const update = async (
       return res.status(error.statusCode).json({ error: error.message });
     }
     console.error("Erro ao atualizar tag:", error);
-    return res.status(500).json({ error: "Erro interno do servidor" });
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
@@ -206,6 +206,6 @@ export const syncTags = async (req: Request, res: Response): Promise<Response> =
     }
     
     console.error("Erro ao sincronizar tags:", err);
-    return res.status(500).json({ error: "Erro ao sincronizar tags" });
+    return res.status(500).json({ error: "No se pudieron sincronizar las etiquetas" });
   }
 };

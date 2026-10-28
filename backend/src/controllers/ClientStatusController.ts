@@ -104,7 +104,7 @@ export const update = async (
       return res.status(error.statusCode).json({ error: error.message });
     }
     console.error("Erro ao atualizar status:", error);
-    return res.status(500).json({ error: "Erro interno do servidor" });
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 

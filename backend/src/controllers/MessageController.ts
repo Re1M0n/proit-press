@@ -648,7 +648,7 @@ export const markAsRead = async (req: Request, res: Response): Promise<Response>
     }
   } catch (error) {
     console.error("Erro ao marcar mensagens como lidas:", error);
-    return res.status(500).json({ error: "Erro ao marcar mensagens como lidas" });
+    return res.status(500).json({ error: "No se pudieron marcar los mensajes como leídos" });
   }
 };
 
@@ -695,7 +695,7 @@ export const sendContacts = async (req: Request, res: Response): Promise<Respons
     return res.json({ id: messageId });
   } catch (error) {
     console.error("Erro ao enviar contatos:", error);
-    return res.status(500).json({ error: "Erro ao enviar contatos" });
+    return res.status(500).json({ error: "No se pudieron enviar los contactos" });
   }
 };
 
@@ -819,7 +819,7 @@ export const sendPoll = async (req: Request, res: Response): Promise<Response> =
     return res.json(message);
   } catch (error: any) {
     console.error("Erro ao enviar enquete:", error);
-    return res.status(500).json({ error: error.message || "Erro ao enviar enquete" });
+    return res.status(500).json({ error: error.message || "No se pudo enviar la encuesta" });
   }
 };
 

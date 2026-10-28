@@ -109,7 +109,7 @@ export const blockContact = async (
     result = await (wContact as any).block();
   } catch (err) {
     console.warn(`[FALLBACK] Erro ao obter/bloquear contato: ${err.message || err}`);
-    return res.status(500).json({ error: "Erro ao bloquear contato no WhatsApp" });
+    return res.status(500).json({ error: "No se pudo bloquear el contacto en WhatsApp" });
   }
 
   await logActivity(req, {
@@ -157,7 +157,7 @@ export const unblockContact = async (
     result = await (wContact as any).unblock();
   } catch (err) {
     console.warn(`[FALLBACK] Erro ao obter/desbloquear contato: ${err.message || err}`);
-    return res.status(500).json({ error: "Erro ao desbloquear contato no WhatsApp" });
+    return res.status(500).json({ error: "No se pudo desbloquear el contacto en WhatsApp" });
   }
 
   await logActivity(req, {

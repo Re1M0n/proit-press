@@ -32,7 +32,7 @@ export const deleteFiles = async (req: Request, res: Response): Promise<Response
     }
   } catch (err) {
     console.error('Erro ao deletar arquivos:', err);
-    return res.status(500).json({ error: 'Erro ao deletar arquivos' });
+    return res.status(500).json({ error: 'No se pudieron eliminar los archivos' });
   }
 };
 
@@ -56,7 +56,7 @@ export const downloadFile = async (req: Request, res: Response): Promise<void> =
     res.download(fullPath, fileName);
   } catch (err) {
     console.error('Erro ao baixar arquivo:', err);
-    res.status(500).json({ error: 'Erro ao baixar arquivo' });
+    res.status(500).json({ error: 'No se pudo descargar el archivo' });
   }
 };
 
@@ -112,6 +112,6 @@ export const viewFile = async (req: Request, res: Response): Promise<void> => {
     res.sendFile(fullPath);
   } catch (err) {
     console.error('Erro ao visualizar arquivo:', err);
-    res.status(500).json({ error: 'Erro ao visualizar arquivo' });
+    res.status(500).json({ error: 'No se pudo visualizar el archivo' });
   }
 };
