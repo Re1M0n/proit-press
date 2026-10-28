@@ -520,7 +520,14 @@ const TicketsList = (props) => {
                                         ) : (
                                                 <>
                                                         {ticketsList.map((ticket) => (
-                                                                <TicketListItem key={ticket.id} ticket={ticket} filteredTags={filteredTags} />
+                                                                <TicketListItem
+                                                                        key={ticket.id}
+                                                                        ticket={ticket}
+                                                                        filteredTags={filteredTags}
+                                                                        onTicketClosed={(ticketId) =>
+                                                                                dispatch({ type: "DELETE_TICKET", payload: ticketId })
+                                                                        }
+                                                                />
                                                         ))}
                                                 </>
                                         )}

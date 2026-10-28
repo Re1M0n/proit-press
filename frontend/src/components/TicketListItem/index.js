@@ -267,7 +267,7 @@ const CustomTooltip = styled(Tooltip)(({ theme }) => ({
 	}
 }));
 
-const TicketListItem = ({ ticket, filteredTags }) => {
+const TicketListItem = ({ ticket, filteredTags, onTicketClosed }) => {
 	const theme = useTheme();
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -477,7 +477,7 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 		}
 	};
 
-	const handleClosedTicket = async (id, status) => { 
+	const handleClosedTicket = async (id) => {
 		setLoading(true);
 		try {
 			
@@ -486,9 +486,12 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 				userId: user?.id,
 				queueId: ticket?.queueId || null,
 			});
-			
-			
-			navigate("/tickets");
+
+			if (onTicketClosed) {
+				onTicketClosed(id);
+			} else {
+				navigate("/tickets");
+			}
 		} catch (err) {
 			toastError(err, t);
 		} finally {
@@ -515,7 +518,7 @@ const TicketListItem = ({ ticket, filteredTags }) => {
 	};
 
 	const handleConfirmClose = () => {
-		handleClosedTicket(ticket.id, "closed");
+		handleClosedTicket(ticket.id);
 	};
 
 	const canTabsSettings = (ts) => {
