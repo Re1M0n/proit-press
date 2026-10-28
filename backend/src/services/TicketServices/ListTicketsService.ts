@@ -124,43 +124,49 @@ const ListTicketsService = async ({
   }
 
   if (searchParam) {
+    // La búsqueda se resuelve contra columnas de Tickets. Con `$contact.name$` y
+    // `$messages.body$` Sequelize metía esas condiciones dentro de la subconsulta que
+    // arma por el limit (la activa el include de fichas), donde los joins de Contacts
+    // y Messages todavía no existen: MySQL respondía "Unknown column 'contact.name'
+    // in 'WHERE'" y buscar devolvía 500.
     const sanitizedSearchParam = searchParam.toLocaleLowerCase().trim();
+    const patron = `%${sanitizedSearchParam}%`;
 
-    includeCondition = [
-      ...includeCondition,
-      {
-        model: Message,
-        as: "messages",
-        attributes: ["id", "body"],
+    const [contactos, mensajes] = await Promise.all([
+      Contact.findAll({
+        attributes: ["id"],
         where: {
-          body: where(
-            fn("LOWER", col("body")),
-            "LIKE",
-            `%${sanitizedSearchParam}%`
-          )
+          [Op.or]: [
+            where(fn("LOWER", col("name")), "LIKE", patron),
+            { number: { [Op.like]: patron } }
+          ]
         },
-        required: false,
-        duplicating: false
-      }
-    ];
+        raw: true
+      }),
+      Message.findAll({
+        attributes: ["ticketId"],
+        where: where(fn("LOWER", col("body")), "LIKE", patron),
+        raw: true
+      })
+    ]);
 
     whereCondition = {
       ...whereCondition,
-      [Op.or]: [
+      // Va en Op.and para no pisar (ni que lo pisen) los Op.or que arman los filtros
+      // de estado y de visibilidad más abajo.
+      [Op.and]: [
+        ...(whereCondition[Op.and] || []),
         {
-          "$contact.name$": where(
-            fn("LOWER", col("contact.name")),
-            "LIKE",
-            `%${sanitizedSearchParam}%`
-          )
-        },
-        { "$contact.number$": { [Op.like]: `%${sanitizedSearchParam}%` } },
-        {
-          "$messages.body$": where(
-            fn("LOWER", col("body")),
-            "LIKE",
-            `%${sanitizedSearchParam}%`
-          )
+          [Op.or]: [
+            { contactId: { [Op.in]: contactos.map(contacto => contacto.id) } },
+            {
+              id: {
+                [Op.in]: [
+                  ...new Set(mensajes.map(mensaje => mensaje.ticketId))
+                ]
+              }
+            }
+          ]
         }
       ]
     };
