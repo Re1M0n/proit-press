@@ -1,5 +1,13 @@
 import database from "../../database";
 
+// Los tipos publicados por sequelize@5 están incompletos: `Connection` está
+// declarado como `object` y `getConnection` exige un `opts` que el runtime
+// acepta vacío (`options = options || {}`). Declaramos acá lo poco que usamos
+// de la conexión del pool para poder hablarle con tipos.
+interface PoolConnection {
+  query(sql: string, callback: (err: Error | null) => void): void;
+}
+
 // MySQL no permite TRUNCATE sobre tablas referenciadas por claves foráneas
 // (el cascade de Sequelize es de Postgres). Para truncar todas las tablas:
 //  1. Tomamos UNA conexión del pool (así el SET FOREIGN_KEY_CHECKS aplica
@@ -7,7 +15,9 @@ import database from "../../database";
 //     del pool, el setting no aplica y vuelve a fallar).
 //  2. Deshabilitamos FK checks, truncamos cada tabla, y restauramos.
 const truncate = async (): Promise<void> => {
-  const connection = await database.connectionManager.getConnection();
+  const connection = (await database.connectionManager.getConnection({
+    type: "write"
+  })) as unknown as PoolConnection;
   const run = (sql: string): Promise<void> =>
     new Promise((resolve, reject) => {
       connection.query(sql, (err: Error | null) => {
